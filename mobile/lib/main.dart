@@ -1,5 +1,5 @@
 import 'package:reunionou/reunionou_app.dart';
-import 'package:reunionou/tasks_provider.dart';
+import 'package:reunionou/events_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +15,7 @@ void main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (context) => TasksProvider(),
+      create: (context) => EventsProvider(),
       child: const ReunionouApp(),
     ),
   );
