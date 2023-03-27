@@ -57,7 +57,12 @@ export default {
           "name": this.name,
           "email": this.email,
           "password": this.password,
-        }).then((response) => localStorage.setItem("token",response.data.token));
+        }).then((response) => {
+          this.$store.commit("setToken", response.data.token)
+          this.$store.commit("setConnected", true)
+          this.$router.push({ name: "HomePage" })
+        });
+        
       } else {
         this.errored = true;
       }
