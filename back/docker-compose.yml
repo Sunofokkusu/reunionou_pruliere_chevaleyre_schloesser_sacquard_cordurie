@@ -13,10 +13,10 @@ services:
       - ./Gateway/.env
     links:
       - user
-    networks:
-      - api
     depends_on:
       - user
+    networks:
+      - api
   user:
     image: node:alpine
     container_name: api-user
@@ -29,6 +29,8 @@ services:
     networks:
       - api
     depends_on:
+      - dbUser
+    links:
       - dbUser
   dbUser:
     image: mariadb
