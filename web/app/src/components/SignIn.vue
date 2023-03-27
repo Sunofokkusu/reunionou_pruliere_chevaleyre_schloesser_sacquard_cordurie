@@ -46,7 +46,7 @@ export default {
     signin() {
       if (this.name !== "" && this.email !== "" && this.password !== "") {
         this.errored = false;
-        this.axios.post("http://localhost:80/signin", {
+        this.axios.post("http://localhost:80/auth/signin", {
           name: this.name,
           email: this.email,
           password: this.password,
