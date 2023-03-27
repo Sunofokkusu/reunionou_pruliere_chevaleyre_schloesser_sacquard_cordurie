@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@quasar/extras": "^1.0.0",
+    "quasar": "^2.0.0"
+  },
+  "devDependencies": {
+    "sass": "1.32.12",
+    "sass-loader": "^12.0.0",
+    "vue-cli-plugin-quasar": "~5.0.1"
+  }
+}
