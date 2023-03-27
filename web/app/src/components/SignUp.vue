@@ -13,7 +13,7 @@
         <q-btn
           class="confirm"
           color="primary"
-          label="Inscription"
+          label="Connexion"
           @click="signup"
         />
         <div>Pas de compte ? <router-link to="signIn">inscription</router-link></div>
