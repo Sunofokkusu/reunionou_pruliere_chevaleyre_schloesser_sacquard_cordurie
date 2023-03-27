@@ -11,8 +11,10 @@ services:
       - ./Gateway/.env
     links:
       - user
+      - event
     depends_on:
       - user
+      - event
     networks:
       - api
   user:
@@ -40,6 +42,33 @@ services:
       - 3306:3306
     env_file:
       - ./User/.env
+    networks:
+      - api
+  event:
+    image: node:alpine
+    container_name: api-event
+    working_dir: /app
+    volumes:
+      - ./Event:/app
+    command: npm run dev
+    env_file:
+      - ./Event/.env
+    networks:
+      - api
+    depends_on:
+      - dbEvent
+    links:
+      - dbEvent
+  dbEvent:
+    image: mariadb
+    container_name: db-event
+    volumes:
+      - ./Event/db/data:/var/lib/mysql
+      - ./Event/db/sql/:/docker-entrypoint-initdb.d
+    ports:
+      - 3307:3306
+    env_file:
+      - ./Event/.env
     networks:
       - api
   ngnix:

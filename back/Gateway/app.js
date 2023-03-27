@@ -5,6 +5,7 @@ const axios = require("axios");
 app.use(express.json());
 
 app.use("/auth", require("./router/auth"));
+app.use("/event", require("./router/event"));
 
 const { errorhandler } = require("./handler/errorHandler");
 app.use(errorhandler);
