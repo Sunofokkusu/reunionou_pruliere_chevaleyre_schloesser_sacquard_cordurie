@@ -1,0 +1,13 @@
+{
+    "dependencies": {
+        "express": "^4.17.1",
+        "joi" : "^17.4.0",
+        "knex": "^0.21.5",
+        "mysql": "^2.18.1",
+        "nodemon": "^2.0.7",
+        "axios": "^0.21.1"
+    },
+    "scripts": {
+        "dev" : "npm i && nodemon --legacy-watch app.js"
+    }
+}

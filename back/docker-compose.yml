@@ -1,0 +1,57 @@
+version: '3.7'
+
+services:
+  gateway:
+    image: node:alpine
+    working_dir: /app
+    volumes:
+      - ./Gateway:/app
+    ports:
+      - 3000:3000
+    command: npm run dev
+    env_file:
+      - ./Gateway/.env
+    links:
+      - user
+    networks:
+      - api
+    depends_on:
+      - user
+  user:
+    image: node:alpine
+    container_name: api-user
+    working_dir: /app
+    volumes:
+      - ./User:/app
+    command: npm run dev
+    env_file:
+      - ./User/.env
+    networks:
+      - api
+    depends_on:
+      - dbUser
+  dbUser:
+    image: mariadb
+    container_name: db-user
+    volumes:
+      - ./User/db/data:/var/lib/mysql
+      - ./User/db/sql/:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    env_file:
+      - ./User/.env
+    networks:
+      - api
+  ngnix:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./conf/ngnix.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - gateway
+    networks:
+      - api
+networks:
+  api:
+    driver: bridge
