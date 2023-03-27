@@ -46,6 +46,7 @@ export default {
           email: this.email,
           password: this.password,
         }).then((response) => localStorage.setItem("token",response.data.token));
+        this.$router.push({ name: "HomePage" });
       } else {
         this.errored = true;
       }

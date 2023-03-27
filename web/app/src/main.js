@@ -6,4 +6,4 @@ import quasarUserOptions from './quasar-user-options'
 import axios from "axios";
 import VueAxios from 'vue-axios'
 
-createApp(App).use(Quasar, quasarUserOptions).use(Quasar, quasarUserOptions).use(VueAxios, axios).use(router).mount('#app')
+createApp(App).use(Quasar, quasarUserOptions).use(Quasar, quasarUserOptions).use(Quasar, quasarUserOptions).use(VueAxios, axios).use(router).mount('#app')
