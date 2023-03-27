@@ -1,8 +1,20 @@
 <template>
     <div class="main">
-        <div class="title unselectable">
+        <div class="title unselectable white">
             <h1 @click="this.$router.push({name:'HomePage'})">Reunionou</h1>
-        </div>
+            <div class="auth" v-if="connected">
+                <div>
+                    <router-link class="white" to="profile" scope="div"> 
+                        {{ name }} <q-icon name="fas fa-user"/>
+                    </router-link>
+                    /
+                    <a href="" class="white" @click="logout"> déconnexion <q-icon name="fas fa-door-open"/></a>
+                </div> 
+            </div>
+            <div v-else class="auth">
+                <router-link class="white" to="signUp" scope="div">Connexion/Inscription</router-link>
+            </div>
+        </div>   
         <router-view/>
     </div>
 </template>
@@ -11,6 +23,26 @@
 
 export default {
   name: 'LayoutDefault',
+    data () {
+        return {
+            name: 'pat'
+        }
+    },
+    computed :{
+        connected () {
+            return this.$store.state.connected
+        },
+    },
+    methods: {
+        /**
+         * Méthode qui permet de se déconnecter
+         * @return, inutilisable
+         */
+        logout () {
+            this.$store.commit("setToken", "")
+            this.$store.commit("setConnected", false)
+        }
+    }
 }
 </script>
 
@@ -29,20 +61,29 @@ body {
 .title{
     margin: -50px -10px -30px -10px;
     padding: 15px 10px 5px 20px;
-    font-size: 4em;
-    color: white;
     border-radius: 0 0 15px 15px;
     background-color: #3988ff;
+    display: flex;
+    align-items: center;
+}
+
+.auth{
+    margin-left: auto;
+    margin-right: 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.white{
+    color: white;
 }
 
 .title>h1{
-    font-size: 1em;
+    font-size: 4em;
     max-width: 490px;
     height: 90px;
     line-height: 90px;
     cursor: pointer;
-    color: white;
-    font-family: fredoka;
     display: block;
     background-size: 200% 100%;
     background-image: linear-gradient(to right, #ffffff 50%, #8be4ff 50%);
