@@ -30,7 +30,22 @@ async function login(mail, password) {
     return { token };
 }
 
+async function validate(token) {
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await db('users').where({ id: decoded.id }).first();
+        if (!user) {
+            return { error: 'User not found' };
+        }
+        return { id: user.id, name: user.name, email: user.email };
+    } catch (err) {
+        return { error: 'Invalid token' };
+    }
+}
+
+
 module.exports = {
     signup,
-    login
+    login,
+    validate
 }
