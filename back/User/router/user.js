@@ -7,7 +7,7 @@ const User = require('../model/User');
 // Validator
 const { userInsertValidator, userLoginValidator } = require('../validator/userValidator');
 
-router.post('/signup', userInsertValidator, async (req, res, next) => {
+router.post('/signin', userInsertValidator, async (req, res, next) => {
     try{
         const {email , name , password} = req.body;
         let token = await User.signup(name, email, password);
@@ -21,7 +21,7 @@ router.post('/signup', userInsertValidator, async (req, res, next) => {
     }
 });
 
-router.post('/signIn', userLoginValidator, async (req, res, next) => {
+router.post('/signup', userLoginValidator, async (req, res, next) => {
     try{
         const {email , password} = req.body;
         let token = await User.login(email, password);

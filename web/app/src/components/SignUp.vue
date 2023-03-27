@@ -5,6 +5,7 @@
         <h4>Connexion</h4>
         <q-input v-model="email" label="Adresse mail*" name="email" required />
         <q-input
+          type="password"
           v-model="password"
           label="Mot de passe*"
           name="password"
@@ -44,7 +45,7 @@ export default {
         this.axios.post("http://localhost:80/auth/signup", {
           email: this.email,
           password: this.password,
-        });
+        }).then((response) => localStorage.setItem("token",response.data.token));
       } else {
         this.errored = true;
       }

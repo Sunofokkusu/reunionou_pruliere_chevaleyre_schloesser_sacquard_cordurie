@@ -6,12 +6,14 @@
         <q-input v-model="name" label="Nom*" name="name" required />
         <q-input v-model="email" label="Adresse mail*" name="email" required />
         <q-input
+          type="password"
           v-model="password"
           label="Mot de passe*"
           name="password"
           required
         />
         <q-input
+          type="password"
           v-model="password_confirmed"
           label="Confirmer le mot de passe*"
           name="password_confirmed"
@@ -52,10 +54,10 @@ export default {
       if (this.name !== "" && this.email !== "" && this.password !== "") {
         this.errored = false;
         this.axios.post("http://localhost:80/auth/signin", {
-          name: this.name,
-          email: this.email,
-          password: this.password,
-        });
+          "name": this.name,
+          "email": this.email,
+          "password": this.password,
+        }).then((response) => localStorage.setItem("token",response.data.token));
       } else {
         this.errored = true;
       }
