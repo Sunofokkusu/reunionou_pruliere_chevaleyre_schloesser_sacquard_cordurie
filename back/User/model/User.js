@@ -17,6 +17,20 @@ async function signup(name, mail, password) {
     return { token };
 }
 
+async function login(mail, password) {
+    const user = await db('users').where({ email: mail }).first();
+    if (!user) {
+        return { error: 'User not found' };
+    }
+    const match = await bcrypt.compare(password, user.pass);
+    if (!match) {
+        return { error: 'Wrong password' };
+    }
+    const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return { token };
+}
+
 module.exports = {
-    signup
+    signup,
+    login
 }

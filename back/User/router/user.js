@@ -5,7 +5,7 @@ const router = express.Router();
 const User = require('../model/User');
 
 // Validator
-const { userInsertValidator } = require('../validator/userValidator');
+const { userInsertValidator, userLoginValidator } = require('../validator/userValidator');
 
 router.post('/signup', userInsertValidator, async (req, res, next) => {
     try{
@@ -14,10 +14,24 @@ router.post('/signup', userInsertValidator, async (req, res, next) => {
         if (token.error) {
             return next({ error: 400, message: token.error });
         }
-        res.header("Authorization", "Bearer " + token).json({ token : "Bearer " + token });
+        res.header("Authorization", "Bearer " + token.token).json({ token : "Bearer " + token.token });
     }
     catch(err){
-        next({ error: 500, message: err.message });
+        next({ error: 500, message: "Internal server error" });
+    }
+});
+
+router.post('/signIn', userLoginValidator, async (req, res, next) => {
+    try{
+        const {email , password} = req.body;
+        let token = await User.login(email, password);
+        if (token.error) {
+            return next({ error: 400, message: token.error });
+        }
+        res.header("Authorization", "Bearer " + token.token).json({ token : "Bearer " + token.token });
+    }
+    catch(err){
+        next({ error: 500, message: "Internal server error" });
     }
 });
 
