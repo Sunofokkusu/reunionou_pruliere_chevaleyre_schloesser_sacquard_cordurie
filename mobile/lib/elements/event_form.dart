@@ -102,7 +102,7 @@ class _EventFormState extends State<EventForm> {
                       Container(
                         margin: const EdgeInsets.only(left: 25.0),
                         child: Text(
-                          DateHelper.formatDate(datetime),
+                          DateHelper.formatDateTime(datetime),
                           style: const TextStyle(
                             fontSize: 18.0,
                           ),

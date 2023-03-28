@@ -4,6 +4,7 @@ import HomePage from "@/components/HomePage";
 import SignIn from "@/components/SignIn";
 import SignUp from "@/components/SignUp";
 import EventPage from "@/components/EventPage";
+import ProfileUser from "@/components/ProfileUser";
 
 const routes = [
     { name: 'NotFound', path: '/:pathMatch(.*)*', component: NotFound },
@@ -11,6 +12,7 @@ const routes = [
     { name: 'Event', path: '/event/:event_token', component: EventPage },
     { name: 'signIn', path: '/signin', component: SignIn },
     { name: 'signUp', path: '/signup', component: SignUp },
+    { name: 'ProfileUser', path: '/profile', component: ProfileUser },
 ];
 
 const router = createRouter({
