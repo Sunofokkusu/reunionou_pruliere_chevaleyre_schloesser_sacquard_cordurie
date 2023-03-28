@@ -8,12 +8,12 @@
 
            
 
-            <div class="eventCard col-2" v-for="event in events" :key="event.id" @click="this.$router.push({name:'eventCard', params:{event_id:event.id}})">
-                <button class="delete" @click.stop="deleteevent(event.id)">❌</button>
-                <p class="unselectable"><strong>{{ event.libelle }}</strong></p>
+            <div class="eventCard col-2" v-for="event in events" :key="event.id" @click="this.$router.push({name:'eventCard', params:{event_token:event.token}})">
+                <p class="unselectable">{{ event.title }}</p>
                 <p class="unselectable">{{ event.description }}</p>
                 <p class="unselectable">{{ event.meetingDate }}</p>
                 <p class="unselectable">{{ event.meetingHour }}</p>
+                <p class="unselectable">{{ event.adress }}</p>
             </div>
         </div>
 
@@ -28,18 +28,24 @@
                 <q-card-section class="row items-center">
                     <div class="q-ml-sm">
                         <p class="text-h6">Nouvel évènement</p>
-                        <q-input v-model="libelle" label="Libellé" autofocus/>
+                        <q-input v-model="title" label="Libellé*" autofocus/>
                         <q-input v-model="description" label="Description" />
-                        <q-input v-model="meetingDate" label="Date de rendez-vous" />
-                        <q-input v-model="meetingHour" label="Heure de rendez-vous" />
+                        <q-input v-model="meetingDate" type="date" label="Date de rendez-vous*" />
+                        <q-input v-model="meetingHour" type="time" label="Heure de rendez-vous*" />
+                        <q-input v-model="adress" label="Lieu de rendez-vous*" />
                     </div>
                 </q-card-section>
 
                 <q-card-actions align="right">
                     <q-btn flat label="Annuler" color="negative" v-close-popup @Click="reset"/>
-                    <q-btn flat label="Ajouter" color="primary" v-close-popup @Click="addevent" :disable="libelle.length === 0"/>
+                    <q-btn flat label="Ajouter" color="primary"  @Click="addevent" />
                 </q-card-actions>
+
+                <q-card-section v-if="errored" class="items-center">
+                    <div class="q-ml-sm red">Veuillez renseigner tous les champs obligatoires</div>
+                </q-card-section>
             </q-card>
+           
         </q-dialog>
     </div>
 </template>
@@ -50,13 +56,26 @@ export default {
     data(){
         return {
             confirm : false,
-            libelle : '',
+            title : '',
             description : '',
+            meetingDate : '',
+            meetingHour : '',
+            adress : '',
+            lat : 0,
+            lng : 0,
             events: [
-                {id:0, libelle: 'vacances', description:'voyage en corse', meetingDate:'27/07/2022', meetingHour:'7h00', location:'Nancy', members:[],},
-                {id:1, libelle: 'travaux', description:'travaux maison', meetingDate:'05/01/2022', meetingHour:'14h00', location:'Nancy', members: [], },
+                {token: '', title:'vacances', description:'voyage en corse', meetingDate:'27/07/2022', meetingHour:'7h00', adress:'Nancy'},
+                {token: '', title:'travaux', description:'travaux maison', meetingDate:'05/01/2022', meetingHour:'14h00', adress:'Nancy'},
             ],
-
+            errored: false,
+        }
+    },
+    mounted() {
+        //récupération des évènements enregistrés en local si il y en a
+        if(localStorage.getItem('events')){
+            this.events = JSON.parse(localStorage.getItem('events'))
+        } else {
+            localStorage.setItem('events', JSON.stringify(this.events))
         }
     },
     computed :{
@@ -64,7 +83,67 @@ export default {
             return this.$store.state.connected
         },
     },
-}
+    methods: {
+        /**
+         * permet d'ajouter un evenement
+         */
+        async addevent() {
+            if(this.title !== '' && this.meetingDate !== '' && this.meetingHour !== '' && this.adress !== ''){
+                this.errored = false
+                this.getadress(this.adress)
+                this.meetingDate = this.meetingDate + 'T' + this.meetingHour + ':00'
+                console.log(this.meetingDate)
+
+                try {
+                    this.axios.defaults.headers.post['Authorization'] = this.$store.state.token;               
+                    let response = await this.axios.post("http://localhost:80/event", {
+                        title: this.title,
+                        description: this.description,
+                        date: this.meetingDate,
+                        adress: this.adress,
+                        lat: this.lat,
+                        long: this.lng,
+                    })
+                    console.log(response)
+
+                    this.events.push({token: response.data.token, title: this.title, description: this.description, meetingDate: this.meetingDate, meetingHour: this.meetingHour, adress: this.adress})
+                    localStorage.setItem('events', JSON.stringify(this.events))
+
+                    this.reset()
+                } catch (error) {
+                    console.log(error)
+                }
+            } else {
+                this.errored = true
+            }
+        },
+
+        /**
+         * récupère la longitude et la latitude d'une adresse via l'api adresse.data.gouv.fr
+         * @param {String} adress
+         */
+        async getadress(adress) {
+            try {
+                let response = await this.axios.get("https://api-adresse.data.gouv.fr/search/?q="+encodeURI(adress))
+                this.lat = response.data.features[0].geometry.coordinates[1]
+                this.lng = response.data.features[0].geometry.coordinates[0]
+            } catch (error) {
+                console.log(error)
+            }
+        },
+
+        /**
+         * vide les champs du formulaire
+         */
+        reset() {
+            this.title = ''
+            this.description = ''
+            this.meetingDate = ''
+            this.meetingHour = ''
+            this.adress = ''
+        },
+        }
+    }
 </script>
 
 <style scoped>
@@ -73,12 +152,14 @@ export default {
     text-align: center;
     border-radius: 10px;
     background-color: #fff;
-    padding: 10px;
     margin: 8px;
     width: 200px !important;
     height: 200px !important;
     box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
     transition: width 0.2s, height 0.2s, margin 0.2s, padding 0.2s ,filter 0.1s;
+}
+.eventCard>p {
+    margin-top: -10px;
 }
 .eventCard:nth-child(1) {
     background-color: #e0e0e0;
@@ -87,7 +168,6 @@ export default {
     width: 207px !important;
     height: 207px !important;
     margin: 5px;
-    padding: 12px;
     filter: brightness(96%) ;
 }
 .eventCard:active {
@@ -96,13 +176,13 @@ export default {
 .eventCard:nth-child(1):hover>.add {
     color: #39c3ff;
 }
-
 .eventCard>p:first-of-type {
     margin-top: 30px;
     font-size: 1.5em;
 }
+
 .add {
-    margin-top: -45px;
+    margin-top: -45px !important;
     font-size: 7em;
     color: gray;
 }
@@ -122,6 +202,10 @@ export default {
 }
 .delete:hover {
     filter: hue-rotate(1deg);
+}
+
+.red {
+    color: red;
 }
 
 </style>
