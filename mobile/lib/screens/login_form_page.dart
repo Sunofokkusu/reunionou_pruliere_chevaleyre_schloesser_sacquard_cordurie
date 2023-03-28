@@ -77,14 +77,20 @@ class _LoginFormPageState extends State<LoginFormPage> {
                           }),
                         );
                         if (response.statusCode == 200) {
-                          auth.login((jsonDecode(response.body)['token']).toString().substring(7));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Login successful')),
-                          );
+                          Future<bool> success = auth.login((jsonDecode(response.body)['token']).toString().substring(7));
+                          if (await success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Login successful')),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Login failed')),
+                            );
+                          }
                         } else {
                           print(response.statusCode);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Login failed')),
+                            const SnackBar(content: Text('Wrong email or password')),
                           );
                         }
                       }

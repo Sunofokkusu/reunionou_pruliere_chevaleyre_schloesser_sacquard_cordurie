@@ -1,11 +1,16 @@
 class User {
   User({
-    required this.id,
     required this.name,
     required this.email,
   });
 
-  final String id;
   String name;
   String email;
+
+  static User fromJson(data) {
+    return User(
+      name: data['name'],
+      email: data['mail'],
+    );
+  }
 }
