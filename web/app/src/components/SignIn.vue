@@ -21,6 +21,7 @@
       </div> 
     </div>
     <div v-if="errored" class="error"><p>Veuillez remplir tous les champs.</p></div>
+    <div v-if="errorSignIn" class="error"><p>{{ errorMsg }}</p></div>
   </div>
 </template>
 
@@ -32,6 +33,8 @@ export default {
       email: "",
       password: "",
       errored: false,
+      errorSignIn: false,
+      errorMsg: ""
     };
   },
   methods: {
@@ -42,13 +45,20 @@ export default {
     signin() {
       if (this.email !== "" && this.password !== "") {
         this.errored = false;
+        this.errorSignIn = false;
+        this.errorMsg = ""
         this.axios.post("http://localhost:80/auth/signin", {
           email: this.email,
           password: this.password,
-        }).then((response) => {
+        })
+        .then((response) => {
           this.$store.commit("setToken", response.data.token)
           this.$store.commit("setConnected", true)
           this.$router.push({ name: "HomePage" })
+        })
+        .catch((error) => {
+          this.errorMsg = error.response.data.message;
+          this.errorSignIn = true;
         });
       } else {
         this.errored = true;
