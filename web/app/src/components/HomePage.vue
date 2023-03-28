@@ -5,8 +5,7 @@
                 <p class="unselectable">Nouvel évènement</p>
                 <p class="add unselectable">+</p>
             </div>
-
-           
+          
 
             <div class="eventCard col-2" v-for="event in events" :key="event.id" @click="this.$router.push({name:'eventCard', params:{event_token:event.token}})">
                 <p class="unselectable">{{ event.title }}</p>
@@ -196,18 +195,6 @@ export default {
 .modal {
     padding-right: 10px;
     text-align: center;
-}
-
-.delete {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    filter: hue-rotate(226deg) brightness(120%);
-    margin-left: -70px;
-    float: right;
-}
-.delete:hover {
-    filter: hue-rotate(1deg);
 }
 
 .red {
