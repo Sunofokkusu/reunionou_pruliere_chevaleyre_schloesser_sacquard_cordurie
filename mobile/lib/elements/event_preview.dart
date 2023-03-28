@@ -35,8 +35,7 @@ class _EventPreviewState extends State<EventPreview> {
           onTap: () => {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>
-                        EventDetailsPage(event: widget.event, creator: "bob"),
+                    builder: (context) => EventDetailsPage(event: widget.event),
                   ),
                 )
               });

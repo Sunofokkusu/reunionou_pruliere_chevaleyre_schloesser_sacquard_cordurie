@@ -8,10 +8,9 @@ import 'package:reunionou/models/user.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends StatefulWidget {
-  EventDetailsPage({super.key, required this.event, required this.creator});
+  EventDetailsPage({super.key, required this.event});
 
   late Event event;
-  late User creator;
 
   @override
   State<EventDetailsPage> createState() => _EventDetailsPageState();
