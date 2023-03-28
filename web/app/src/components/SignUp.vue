@@ -66,12 +66,21 @@ export default {
         .then((response) => {
           this.$store.commit("setToken", response.data.token)
           this.$store.commit("setConnected", true)
-          this.$router.push({ name: "HomePage" })
+          this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
+          this.axios.get("http://localhost:80/user/me")
+            .then(
+              this.$store.commit("setName", response.data.name)
+            ).catch((error) => {
+              console.log(error)
+            })
         })
         .catch((error) => {
           this.errorMsg = error.response.data.message;
           this.errorSignUp = true;
-        });
+        })
+        .finally(
+          this.$router.push({ name: "HomePage" })
+        );
       } else {
         this.errored = true;
       }

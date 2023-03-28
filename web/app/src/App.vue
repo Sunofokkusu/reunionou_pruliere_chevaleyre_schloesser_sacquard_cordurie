@@ -25,13 +25,16 @@ export default {
   name: 'LayoutDefault',
     data () {
         return {
-            name: 'pat'
+
         }
     },
     computed :{
         connected () {
             return this.$store.state.connected
         },
+        name(){
+            return this.$store.state.name;
+        }
     },
     methods: {
         /**
@@ -41,6 +44,7 @@ export default {
         logout () {
             this.$store.commit("setToken", "")
             this.$store.commit("setConnected", false)
+            this.$store.commit("setName", "")
         }
     }
 }
