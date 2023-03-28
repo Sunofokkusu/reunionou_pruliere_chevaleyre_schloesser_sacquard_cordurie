@@ -3,6 +3,8 @@ const router = express.Router();
 
 const Event = require('../model/event');
 
+// Logger
+const { info, error } = require('../helper/logger');
 
 router.get('/user/:id', async (req, res, next) => {
     try{
@@ -14,21 +16,25 @@ router.get('/user/:id', async (req, res, next) => {
         res.json(result);
     }
     catch(err){
-        next({ error: 500, message: "Internal server error" });
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
     }
 });
 
 router.post('/create', async (req, res, next) => {
     try{
         const {id, title, description, date, adress, lat, long} = req.body;
+        if(!id || !title || !description || !date || !adress || !lat || !long) return next({error : 400, message : "Mauvaise requête"});
         let result = await Event.createEvent(id, title,adress, description, date, lat, long);
         if (result.error) {
             return next({ error: 400, message: result.error });
         }
+        info(`L'utilisateur :  ${id} à crée un évenement`);
         res.json(result);
     }
     catch(err){
-        next({ error: 500, message: "Internal server error" });
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
     }
 });
 
