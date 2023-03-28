@@ -2,8 +2,7 @@
   <div>
     <div class="container">
       <div class="signinCard">
-        <h4>Inscription</h4>
-        <q-input v-model="name" label="Nom*" name="name" required />
+        <h4>Connexion</h4>
         <q-input v-model="email" label="Adresse mail*" name="email" required />
         <q-input
           type="password"
@@ -12,22 +11,14 @@
           name="password"
           required
         />
-        <q-input
-          type="password"
-          v-model="password_confirmed"
-          label="Confirmer le mot de passe*"
-          name="password_confirmed"
-          required
-        />
         <q-btn
           class="confirm"
           color="primary"
-          label="Inscription"
-          :disable="password !== password_confirmed"
+          label="Connexion"
           @click="signin"
         />
-        <div>Dejà un compte ? <router-link to="signUp">connexion</router-link></div>
-      </div>
+        <div>Pas de compte ? <router-link to="signUp">inscription</router-link></div>
+      </div> 
     </div>
     <div v-if="errored" class="error"><p>Veuillez remplir tous les champs.</p></div>
   </div>
@@ -38,31 +29,27 @@ export default {
   name: "SignIn",
   data() {
     return {
-      name: "",
       email: "",
       password: "",
-      password_confirmed: "",
       errored: false,
     };
   },
   methods: {
     /**
-     * Méthode qui permet de s'inscrire
+     * Méthode qui permet de se connecter
      * @return, inutilisable
      */
     signin() {
-      if (this.name !== "" && this.email !== "" && this.password !== "") {
+      if (this.email !== "" && this.password !== "") {
         this.errored = false;
         this.axios.post("http://localhost:80/auth/signin", {
-          "name": this.name,
-          "email": this.email,
-          "password": this.password,
+          email: this.email,
+          password: this.password,
         }).then((response) => {
           this.$store.commit("setToken", response.data.token)
           this.$store.commit("setConnected", true)
           this.$router.push({ name: "HomePage" })
         });
-        
       } else {
         this.errored = true;
       }
