@@ -12,7 +12,7 @@
                 </div> 
             </div>
             <div v-else class="auth">
-                <router-link class="white" to="signUp" scope="div">Connexion/Inscription</router-link>
+                <router-link class="white" to="signIn" scope="div">Connexion/Inscription</router-link>
             </div>
         </div>   
         <router-view/>
