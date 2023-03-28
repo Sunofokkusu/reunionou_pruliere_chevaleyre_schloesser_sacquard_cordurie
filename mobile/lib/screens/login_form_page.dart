@@ -68,13 +68,16 @@ class _LoginFormPageState extends State<LoginFormPage> {
                       if (_formKey.currentState!.validate()) {
                         final response = await http.post(
                           Uri.parse('http://localhost:80/auth/signin'),
-                          body: {
+                          headers: <String, String>{
+                            'Content-Type': 'application/json; charset=UTF-8',
+                          },
+                          body: jsonEncode(<String, String>{
                             'email': _emailController.text,
                             'password': _passwordController.text,
-                          },
+                          }),
                         );
                         if (response.statusCode == 200) {
-                          auth.login(jsonDecode(response.body)['token'].slice(7));
+                          auth.login((jsonDecode(response.body)['token']).toString().substring(7));
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Login successful')),
                           );

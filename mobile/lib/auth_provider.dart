@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AuthProvider with ChangeNotifier {
-  //remettre à false pour le login
+  // Mettre à false pour avoir le formulaire de login
   bool _isLoggedIn = true;
   String _authToken = '';
  
