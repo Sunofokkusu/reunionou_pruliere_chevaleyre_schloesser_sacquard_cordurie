@@ -1,6 +1,5 @@
 
 function errorhandler(err, req, res, next) {
-    console.log("errorhandler");
     let message = ""
     let errorCode = err.error || 500;
     switch (errorCode) {
