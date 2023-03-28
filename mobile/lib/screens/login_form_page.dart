@@ -7,14 +7,14 @@ import '../auth_provider.dart';
 
 
 
-class LoginForm extends StatefulWidget {
-  const LoginForm({super.key});
+class LoginFormPage extends StatefulWidget {
+  const LoginFormPage({super.key});
 
   @override
-  _LoginFormState createState() => _LoginFormState();
+  _LoginFormPageState createState() => _LoginFormPageState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginFormPageState extends State<LoginFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
