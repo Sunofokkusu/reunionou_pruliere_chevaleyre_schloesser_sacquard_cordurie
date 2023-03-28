@@ -18,12 +18,12 @@ router.post('/signup', userInsertValidator, async (req, res, next) => {
         if (token.error) {
             return next({ error: 400, message: token.error });
         }
-        info(`User ${name} signed up successfully.`)
+        info(`L'utilisateur :  ${name} à crée un compte`)
         res.header("Authorization", "Bearer " + token.token).json({ token : "Bearer " + token.token });
     }
     catch(err){
         error(err.message);
-        next({ error: 500, message: "Internal server error" });
+        next({ error: 500, message: "Erreur serveur" });
     }
 });
 
@@ -38,7 +38,7 @@ router.post('/signin', userLoginValidator, async (req, res, next) => {
     }
     catch(err){
         error(err.message);
-        next({ error: 500, message: "Internal server error" });
+        next({ error: 500, message: "Erreur serveur" });
     }
 });
 
@@ -46,7 +46,7 @@ router.post("/validate", async (req, res, next) => {
     try{
         const authorization = req.headers.authorization;
         if (!authorization) {
-            return next({ error: 401, message: "Unauthorized" });
+            return next({ error: 401, message: "Non autorisé" });
         }
         const token = authorization.split(" ")[1];
         let result = await User.validate(token);
@@ -57,7 +57,7 @@ router.post("/validate", async (req, res, next) => {
     }
     catch(err){
         error(err.message);
-        next({ error: 500, message: "Internal server error" });
+        next({ error: 500, message: "Erreur serveur" });
     }
 });
 
