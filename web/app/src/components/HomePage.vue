@@ -38,7 +38,7 @@
 
                 <q-card-actions align="right">
                     <q-btn flat label="Annuler" color="negative" v-close-popup @Click="reset"/>
-                    <q-btn flat label="Ajouter" color="primary"  @Click="addevent" />
+                    <q-btn flat label="Ajouter" color="primary" v-close-popup @Click="addevent" :disable="verifEmpty" />
                 </q-card-actions>
 
                 <q-card-section v-if="errored" class="items-center">
@@ -82,6 +82,14 @@ export default {
         connected () {
             return this.$store.state.connected
         },
+
+        verifEmpty () {
+            if(this.title !== '' && this.meetingDate !== '' && this.meetingHour !== '' && this.adress !== ''){
+                return false
+            } else {
+                return true
+            }
+        }
     },
     methods: {
         /**
@@ -90,9 +98,8 @@ export default {
         async addevent() {
             if(this.title !== '' && this.meetingDate !== '' && this.meetingHour !== '' && this.adress !== ''){
                 this.errored = false
-                this.getadress(this.adress)
-                this.meetingDate = this.meetingDate + 'T' + this.meetingHour + ':00'
-                console.log(this.meetingDate)
+                await this.getadress(this.adress)
+                this.meetingDate = this.meetingDate + 'T' + this.meetingHour + ':00'     
 
                 try {
                     this.axios.defaults.headers.post['Authorization'] = this.$store.state.token;               
@@ -104,7 +111,6 @@ export default {
                         lat: this.lat,
                         long: this.lng,
                     })
-                    console.log(response)
 
                     this.events.push({token: response.data.token, title: this.title, description: this.description, meetingDate: this.meetingDate, meetingHour: this.meetingHour, adress: this.adress})
                     localStorage.setItem('events', JSON.stringify(this.events))
