@@ -1,6 +1,9 @@
 <template>
   <div>
-    <button @click="getUser">ICIICICICICICI</button>
+    <div class="container">
+      {{ user.name }}
+      {{ user.mail }}
+    </div>
   </div>
 </template>
 
@@ -12,16 +15,14 @@ export default {
       user: "",
     };
   },
-  methods: {
-    getUser() {
+  mounted() {
+      this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
       this.axios
-        .get("http://localhost:80/user/me", {
-        })
+        .get("http://localhost:80/user/me?embed=events", {})
         .then((response) => {
-          console.log(response);
+          this.user = response.data;
         });
       return null;
-    },
   },
 };
 </script>
