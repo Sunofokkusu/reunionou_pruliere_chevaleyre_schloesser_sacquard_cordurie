@@ -11,7 +11,6 @@ router.post("/", async (req, res, next) => {
                 Authorization: req.headers.authorization
             }
         });
-        if( req.body.title == undefined || req.body.description == undefined || req.body.date == undefined || req.body.adress == undefined || req.body.lat == undefined || req.body.long == undefined ) return next({error : 400, message : "Bad request"});
         let event = await axios.post(process.env.EVENT_SERVICE , {
             id : validate.data.id,
             title : req.body.title,

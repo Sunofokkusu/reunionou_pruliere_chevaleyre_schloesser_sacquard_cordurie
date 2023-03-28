@@ -10,7 +10,6 @@ router.post('/', async (req, res, next) => {
     console.log(req.body);
     try{
         const {id, title, description, date, adress, lat, long} = req.body;
-        if(!id || !title || !description || !date || !adress || !lat || !long) return next({error : 400, message : "Mauvaise requête"});
         let result = await Event.createEvent(id, title,adress, description, date, lat, long);
         if (result.error) {
             return next({ error: 400, message: result.error });
