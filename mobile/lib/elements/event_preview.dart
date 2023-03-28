@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:reunionou/events_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
+import 'package:reunionou/screens/event_details_page.dart';
 
 class EventPreview extends StatefulWidget {
   const EventPreview({super.key, required this.event});
@@ -18,20 +19,27 @@ class _EventPreviewState extends State<EventPreview> {
   Widget build(BuildContext context) {
     return Consumer<EventsProvider>(builder: (context, builder, child) {
       return ListTile(
-        title: Row(
-          children: [
-            Text(widget.event.title),
-            const Spacer(),
-            Text(DateHelper.formatDate(widget.event.datetime),
-                style: const TextStyle(fontSize: 12)),
-          ],
-        ),
-        subtitle: Text(
-          widget.event.desc,
-          maxLines: widget.event.desc.isEmpty ? 0 : 3,
-          overflow: TextOverflow.ellipsis,
-        ),
-      );
+          title: Row(
+            children: [
+              Text(widget.event.title),
+              const Spacer(),
+              Text(DateHelper.formatDateTime(widget.event.datetime),
+                  style: const TextStyle(fontSize: 12)),
+            ],
+          ),
+          subtitle: Text(
+            widget.event.desc,
+            maxLines: widget.event.desc.isEmpty ? 0 : 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: () => {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EventDetailsPage(event: widget.event, creator: "bob"),
+                  ),
+                )
+              });
     });
   }
 }
