@@ -7,21 +7,27 @@ const User = require('../model/User');
 // Validator
 const { userInsertValidator, userLoginValidator } = require('../validator/userValidator');
 
-router.post('/signin', userInsertValidator, async (req, res, next) => {
+// Logger
+
+const {info , error} = require('../helper/logger');
+
+router.post('/signup', userInsertValidator, async (req, res, next) => {
     try{
         const {email , name , password} = req.body;
         let token = await User.signup(name, email, password);
         if (token.error) {
             return next({ error: 400, message: token.error });
         }
+        info(`User ${name} signed up successfully.`)
         res.header("Authorization", "Bearer " + token.token).json({ token : "Bearer " + token.token });
     }
     catch(err){
+        error(err.message);
         next({ error: 500, message: "Internal server error" });
     }
 });
 
-router.post('/signup', userLoginValidator, async (req, res, next) => {
+router.post('/signin', userLoginValidator, async (req, res, next) => {
     try{
         const {email , password} = req.body;
         let token = await User.login(email, password);
@@ -31,6 +37,7 @@ router.post('/signup', userLoginValidator, async (req, res, next) => {
         res.header("Authorization", "Bearer " + token.token).json({ token : "Bearer " + token.token });
     }
     catch(err){
+        error(err.message);
         next({ error: 500, message: "Internal server error" });
     }
 });
@@ -49,6 +56,7 @@ router.post("/validate", async (req, res, next) => {
         res.json(result);
     }
     catch(err){
+        error(err.message);
         next({ error: 500, message: "Internal server error" });
     }
 });
