@@ -1,10 +1,12 @@
 <template>
     <div>
-        <div class="row">
+        <div v-if="connected" class="row">
             <div class="eventCard col-2" label="Confirm" @click="confirm = true">
                 <p class="unselectable">Nouvel évènement</p>
                 <p class="add unselectable">+</p>
             </div>
+
+           
 
             <div class="eventCard col-2" v-for="event in events" :key="event.id" @click="this.$router.push({name:'eventCard', params:{event_id:event.id}})">
                 <button class="delete" @click.stop="deleteevent(event.id)">❌</button>
@@ -12,6 +14,12 @@
                 <p class="unselectable">{{ event.description }}</p>
                 <p class="unselectable">{{ event.meetingDate }}</p>
                 <p class="unselectable">{{ event.meetingHour }}</p>
+            </div>
+        </div>
+
+        <div v-else class="row">
+            <div class="col-12 eventCard">
+                <p>Vous devez être connecté pour accéder aux évènements</p>
             </div>
         </div>
 
@@ -51,7 +59,11 @@ export default {
 
         }
     },
-    
+    computed :{
+        connected () {
+            return this.$store.state.connected
+        },
+    },
 }
 </script>
 
