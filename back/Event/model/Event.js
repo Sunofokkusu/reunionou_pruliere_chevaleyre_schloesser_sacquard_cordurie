@@ -17,7 +17,7 @@ async function createEvent(id, title, adress, description, date, lat, long) {
     title: title,
     adress: adress,
     description: description,
-    date: date,
+    date: new Date(date),
     lat: lat,
     long: long,
     token : randToken.generate(16)
