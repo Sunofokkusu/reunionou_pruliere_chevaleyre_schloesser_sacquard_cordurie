@@ -12,7 +12,8 @@ const store = createStore({
     state () {
       return {
         connected: false,
-        token: ""
+        token: "",
+        name: ""
       }
     },
     mutations: {
@@ -22,6 +23,10 @@ const store = createStore({
 
         setToken(state, token) {
             state.token = token
+        },
+
+        setName(state, name){
+          state.name = name
         }
     }
   })

@@ -30,6 +30,7 @@
       </div>
     </div>
     <div v-if="errored" class="error"><p>Veuillez remplir tous les champs.</p></div>
+    <div v-if="errorSignUp" class="error"><p>{{errorMsg}}</p></div>
   </div>
 </template>
 
@@ -43,6 +44,8 @@ export default {
       password: "",
       password_confirmed: "",
       errored: false,
+      errorSignUp: false,
+      errorMsg: ""
     };
   },
   methods: {
@@ -53,16 +56,22 @@ export default {
     signup() {
       if (this.name !== "" && this.email !== "" && this.password !== "") {
         this.errored = false;
+        this.errorSignUp = false;
+        this.errorMsg = "";
         this.axios.post("http://localhost:80/auth/signup", {
           "name": this.name,
           "email": this.email,
           "password": this.password,
-        }).then((response) => {
+        })
+        .then((response) => {
           this.$store.commit("setToken", response.data.token)
           this.$store.commit("setConnected", true)
           this.$router.push({ name: "HomePage" })
+        })
+        .catch((error) => {
+          this.errorMsg = error.response.data.message;
+          this.errorSignUp = true;
         });
-        
       } else {
         this.errored = true;
       }
