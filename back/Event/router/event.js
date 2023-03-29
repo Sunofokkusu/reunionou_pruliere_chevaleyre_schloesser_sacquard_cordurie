@@ -10,7 +10,6 @@ const { info, error } = require('../helper/logger');
 const { eventInsertValidator, participantInsertValidator } = require('../validator/eventValidator');
 
 router.post('/', eventInsertValidator, async (req, res, next) => {
-    console.log(req.body);
     try{
         const {id, title, description, date, adress, lat, long} = req.body;
         if(!id || !title || !description || !date || !adress || !lat || !long) return next({error : 400, message : "Mauvaise requête"});
@@ -42,7 +41,6 @@ router.get('/:token', async (req, res, next) => {
             if(element.message == null) delete element.message;
         });
         event.participants = participant;
-        delete event.id;
         res.json(event);
     }
     catch(err){

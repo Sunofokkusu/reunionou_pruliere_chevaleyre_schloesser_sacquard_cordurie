@@ -13,7 +13,7 @@ const eventInsertSchema = joi.object({
 const participantInsertSchema = joi.object({
     name : joi.string().min(3).max(30).required(),
     id : joi.string(),
-    status : joi.string().valid("viens","ne viens pas").required(),
+    status : joi.number().valid(0,1,2).required(),
     message : joi.string(),
 });
 

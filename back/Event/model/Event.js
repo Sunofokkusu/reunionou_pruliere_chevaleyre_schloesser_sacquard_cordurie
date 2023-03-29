@@ -21,7 +21,6 @@ async function createEvent(id, title, adress, description, date, lat, long) {
     date: new Date(date),
     lat: lat,
     long: long,
-    token : randToken.generate(16)
   }).returning("id");
   if (!result) {
     return { error: "Error creating event" };

@@ -36,7 +36,6 @@ router.get("/:id", async (req, res, next) => {
         let event = await axios.get(process.env.EVENT_SERVICE + req.params.id);
         let creator = await axios.get(process.env.USER_SERVICE + event.data.id_creator);
         event.data.creator = creator.data;
-        delete event.data.id_creator;
         res.json(event.data);
     }catch(err){
         try {
