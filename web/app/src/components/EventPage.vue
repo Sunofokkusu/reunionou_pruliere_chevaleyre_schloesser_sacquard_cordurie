@@ -140,7 +140,6 @@ export default {
       status: 0,
       button: true,
       user: "",
-      canGet: true
     };
   },
   computed: {
@@ -151,17 +150,14 @@ export default {
   },
   methods: {
     async getEvent() {
-      if(this.canGet === true){
         try {
         let response = await this.axios.get(
           "http://localhost:80/event/" + this.$route.params.event_id
         );
         this.event = response.data;
         this.participants = response.data.participants;
-        this.canGet = false;
       } catch (error) {
         console.log(error);
-      }
       }
     },
     addParticipant() {

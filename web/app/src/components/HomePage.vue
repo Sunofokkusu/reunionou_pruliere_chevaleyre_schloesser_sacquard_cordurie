@@ -98,7 +98,6 @@ export default {
       lng: 0,
       events: [],
       errored: false,
-      canGet: true
     };
   },
   mounted() {
@@ -132,16 +131,15 @@ export default {
   },
   methods: {
     getEvents() {
-      if(this.canGet === true){
         this.axios.defaults.headers.get["Authorization"] =
         this.$store.state.token;
       this.axios
         .get("http://localhost:80/user/me?embed=all", {})
         .then((response) => {
-          this.events = response.data.events;
-          this.canGet = false;
+          if(response.data.events !== undefined || response.data.events !== []){
+            this.events = response.data.events;
+          }
         });
-      }
     },
 
     /**
