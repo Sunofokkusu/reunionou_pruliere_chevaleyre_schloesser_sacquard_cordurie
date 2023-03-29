@@ -131,17 +131,18 @@ export default {
   methods: {
     getEvents(){
         if (localStorage.getItem("events")) {
-      this.events = JSON.parse(localStorage.getItem("events"));
-    } else {
-      this.axios.defaults.headers.get["Authorization"] =
-        this.$store.state.token;
-      this.axios
-        .get("http://localhost:80/user/me?embed=events", {})
-        .then((response) => {
-          this.events = response.data.events;
-        });
-    }
+            this.events = JSON.parse(localStorage.getItem("events"));
+        } else {
+            this.axios.defaults.headers.get["Authorization"] =
+            this.$store.state.token;
+            this.axios
+            .get("http://localhost:80/user/me?embed=events", {})
+            .then((response) => {
+            this.events = response.data.events;
+            });
+        }   
     },
+
     /**
      * permet d'ajouter un evenement
      * @return inutilisable
