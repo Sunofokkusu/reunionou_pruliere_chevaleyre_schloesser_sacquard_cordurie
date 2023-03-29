@@ -14,7 +14,7 @@
             <p>{{ event.title }}</p>
             <p>{{ event.description }}</p>
             <p>{{ new Date(event.date).toLocaleDateString() }}</p>
-            <p>{{ new Date(event.date).getHours() }}h{{ new Date(event.date).getMinutes()-2 }}</p>
+            <p>{{ new Date(event.date).getHours()-2 }}h{{ new Date(event.date).getMinutes() }}</p>
             <p>{{ event.adress }}</p>
           </div>
         </div>
