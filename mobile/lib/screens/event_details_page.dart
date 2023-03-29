@@ -40,6 +40,23 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 16.0),
+                    Text(
+                      "Programmé pour le  ${DateHelper.formatDate(widget.event.datetime)} à ${DateHelper.formatTime(widget.event.datetime)}",
+                      style: const TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16.0),
+                    const Text(
+                      "Organisé par: BOB SINCLAIR",
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                    const Text(
+                      "Contact: buzzleclair@oupspardon.bobSinclair",
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () {
                         showDialog(
@@ -50,18 +67,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         );
                       },
                       child: const Text('Voir les participants'),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Text(
-                      "Programmé pour le  ${DateHelper.formatDate(widget.event.datetime)} à ${DateHelper.formatTime(widget.event.datetime)}",
-                      style: const TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16.0),
-                    const Text(
-                      "Organisé par: BOB SINCLAIR\nContact: buzzleclair@oupspardon.bobSinclair",
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16.0),
                     Text(

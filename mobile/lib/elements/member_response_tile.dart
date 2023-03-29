@@ -39,16 +39,22 @@ class _MemberResponseTileState extends State<MemberResponseTile> {
           iconColor = Colors.grey;
       }
 
-      return ListTile(
-          title: Text(widget.comment.name),
-          subtitle: Text(
-            widget.comment.text,
-            maxLines: widget.comment.text.isEmpty ? 0 : 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          leading: Icon(icon, color: iconColor),
-          tileColor: bgColor,
-          onTap: () => {});
+      return Card(
+        child: ListTile(
+            title: Text(widget.comment.name),
+            subtitle: Text(
+              widget.comment.text,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(height: 1.0),
+            ),
+            leading: Icon(
+              icon,
+              color: iconColor,
+            ),
+            tileColor: bgColor,
+            onTap: () => {}),
+      );
     });
   }
 }
