@@ -11,7 +11,7 @@
                 <p class="unselectable">{{ event.title }}</p>
                 <p class="unselectable">{{ event.description }}</p>
                 <p class="unselectable">{{ new Date(event.meetingDate).toLocaleDateString() }}</p>
-                <p class="unselectable">{{ new Date(event.meetingDate).toLocaleString({timeZone: "Europe/Paris"}).getHours() }}h{{ new Date(event.meetingDate).getMinutes() }}</p>
+                <p class="unselectable">{{ new Date(event.meetingDate).getHours()-2 }}h{{ new Date(event.meetingDate).getMinutes() }}</p>
                 <p class="unselectable">{{ event.adress }}</p>
             </div>
         </div>
@@ -102,10 +102,12 @@ export default {
         async addevent() {
             if(this.title !== '' && this.meetingDate !== '' && this.meetingHour !== '' && this.adress !== ''){
                 this.errored = false
-                await this.getadress(this.adress)
+
                 this.meetingDate = this.meetingDate + 'T' + this.meetingHour + ':00'     
 
                 try {
+                    await this.getadress(this.adress)
+                    console.log(this.lat)
                     this.axios.defaults.headers.post['Authorization'] = this.$store.state.token;               
                     let response = await this.axios.post("http://localhost:80/event", {
                         title: this.title,
