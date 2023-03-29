@@ -3,8 +3,8 @@ const joi = require('joi');
 const eventInsertSchema = joi.object({
     id : joi.string().required(),
     title : joi.string().min(3).max(30).required(),
-    adress : joi.string().min(3).max(30).required(),
-    description : joi.string().min(3).max(30),
+    adress : joi.string().min(3).max(100).required(),
+    description : joi.string().min(3).max(200),
     date : joi.string().required(),
     lat : joi.number().required(),
     long : joi.number().required(),
