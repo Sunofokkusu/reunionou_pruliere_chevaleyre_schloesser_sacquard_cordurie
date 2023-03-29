@@ -60,7 +60,7 @@ router.post("/:id/participant", async (req, res, next) => {
                     Authorization: req.headers.authorization
                 }
             });
-            let event = await axios.post(process.env.EVENT_SERVICE + req.params.token + "/participant", {
+            let event = await axios.post(process.env.EVENT_SERVICE + req.params.id + "/participant", {
                 id : validate.data.id,
                 name : validate.data.name,
                 status : req.body.status,
@@ -76,6 +76,36 @@ router.post("/:id/participant", async (req, res, next) => {
         }
     }
 });
+
+router.post("/:id/comment", async (req, res, next) => {
+    try{
+        if(!req.headers.authorization) {
+            let event = await axios.post(process.env.EVENT_SERVICE + req.params.id + "/comment", {
+                name : req.body.name,
+                message : req.body.message
+            })
+            res.json(event.data);
+        }
+        let validate = await axios.post(process.env.USER_SERVICE + "validate", {}, {
+            headers: {
+                Authorization: req.headers.authorization
+            }
+        });
+        let event = await axios.post(process.env.EVENT_SERVICE + req.params.id + "/comment", {
+            id : validate.data.id,
+            name : validate.data.name,
+            message : req.body.message
+        });
+        res.json(event.data);
+    }catch(err){
+        try {
+            return next(err.response.data);
+        } catch (error) {
+            return next(500);
+        }
+    }
+});
+
 
 
 
