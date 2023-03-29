@@ -32,132 +32,121 @@ class _EventFormState extends State<EventForm> {
           child: Form(
             key: _formKey,
             child: Column(
-              children: [
-                TextFormField(
-                  initialValue: widget.event?.title ?? "",
-                  decoration: const InputDecoration(
-                    labelText: "Titre*",
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      title = value;
-                    });
-                  },
-                  validator: (value) => (value == null || value.isEmpty)
-                      ? "Champ obligatoire"
-                      : null,
-                ),
-                TextFormField(
-                  initialValue: widget.event?.desc ?? "",
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: "Description",
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      desc = value;
-                    });
-                  },
-                ),
-                TextFormField(
-                  initialValue: widget.event?.place ?? "",
-                  decoration: const InputDecoration(
-                    labelText: "Lieu*",
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      place = value;
-                    });
-                  },
-                  validator: (value) => (value == null || value.isEmpty)
-                      ? "Champ obligatoire"
-                      : null,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 25.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize:
-                              Size(MediaQuery.of(context).size.width / 4, 40),
-                        ),
-                        onPressed: () {
-                          DatePicker.showDateTimePicker(context,
-                              showTitleActions: true,
-                              minTime: DateTime.now(), onConfirm: (date) {
-                            setState(() {
-                              datetime = date;
-                            });
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.fr);
-                        },
-                        child: const Text(
-                          'Choisir une date',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(children: [
+                    TextFormField(
+                      initialValue: widget.event?.title ?? "",
+                      decoration: const InputDecoration(
+                        labelText: "Titre*",
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 25.0),
-                        child: Text(
-                          DateHelper.formatDateTime(datetime),
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                          ),
-                        ),
+                      onChanged: (value) {
+                        setState(() {
+                          title = value;
+                        });
+                      },
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Champ obligatoire"
+                          : null,
+                    ),
+                    TextFormField(
+                      initialValue: widget.event?.desc ?? "",
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        labelText: "Description",
                       ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      alignment: Alignment.bottomCenter,
+                      onChanged: (value) {
+                        setState(() {
+                          desc = value;
+                        });
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: widget.event?.place ?? "",
+                      decoration: const InputDecoration(
+                        labelText: "Lieu*",
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          place = value;
+                        });
+                      },
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Champ obligatoire"
+                          : null,
+                    ),
+                    Container(
                       margin: const EdgeInsets.only(top: 25.0),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              if (!_formKey.currentState!.validate()) {
-                                return;
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: (widget.event == null
-                                        ? const Text("Événement ajoutée")
-                                        : const Text("Événement modifiée")),
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                              }
-
-                              // if (widget.event == null) {
-                              //   builder.addTask(Event(title, desc));
-                              // } else {
-                              //   widget.event!.title = title;
-                              //   widget.event!.desc = desc;
-                              //   builder.updateTask(widget.event!);
-                              // }
-
-                              // ignore: use_build_context_synchronously
-                              Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomePage()),
-                                  (route) => false);
-                            },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(double.infinity, 50),
+                              minimumSize: Size(
+                                  MediaQuery.of(context).size.width / 4, 40),
                             ),
-                            child: const Text("Enregistrer")),
+                            onPressed: () {
+                              DatePicker.showDateTimePicker(context,
+                                  showTitleActions: true,
+                                  minTime: DateTime.now(), onConfirm: (date) {
+                                setState(() {
+                                  datetime = date;
+                                });
+                              },
+                                  currentTime: DateTime.now(),
+                                  locale: LocaleType.fr);
+                            },
+                            child: const Text(
+                              'Choisir une date',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Text(
+                            DateHelper.formatDateTime(datetime),
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
+                  ]),
+                  ElevatedButton(
+                      onPressed: () async {
+                        if (!_formKey.currentState!.validate()) {
+                          return;
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: (widget.event == null
+                                  ? const Text("Événement ajoutée")
+                                  : const Text("Événement modifiée")),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+
+                        // if (widget.event == null) {
+                        //   builder.addTask(Event(title, desc));
+                        // } else {
+                        //   widget.event!.title = title;
+                        //   widget.event!.desc = desc;
+                        //   builder.updateTask(widget.event!);
+                        // }
+
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
+                            (route) => false);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                      child: const Text("Enregistrer"))
+                ]),
           ),
         ),
       );

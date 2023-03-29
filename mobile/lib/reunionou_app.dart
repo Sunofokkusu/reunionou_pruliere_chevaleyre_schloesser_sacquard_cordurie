@@ -25,11 +25,11 @@ class _ReunionouAppState extends State<ReunionouApp> {
                 color: Colors.white)),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 202, 63, 241),
+            backgroundColor: const Color.fromARGB(255, 221, 96, 255),
           ),
         ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color.fromARGB(255, 202, 63, 241),
+          backgroundColor: Color.fromARGB(255, 221, 96, 255),
         ),
       ),
     );

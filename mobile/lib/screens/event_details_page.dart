@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reunionou/elements/members_modal.dart';
 import 'package:reunionou/events_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
@@ -47,9 +48,25 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     ),
                     const SizedBox(height: 16.0),
                     const Text(
-                      "Organisé par: BOB SINCLAIR\nContact: buzzleclair@oupspardon.bobSinclair",
+                      "Organisé par: BOB SINCLAIR",
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                    const Text(
+                      "Contact: buzzleclair@oupspardon.bobSinclair",
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    const SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MembersModal();
+                          },
+                        );
+                      },
+                      child: const Text('Voir les participants'),
                     ),
                     const SizedBox(height: 16.0),
                     Text(
