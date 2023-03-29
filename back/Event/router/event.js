@@ -109,8 +109,20 @@ router.get('/user/:id', async (req, res, next) => {
     }
 });
 
-
-
+router.get('/user/:id/invited', async (req, res, next) => {
+    try{
+        const {id} = req.params;
+        let result = await Participant.getInvitedEvents(id);
+        if (result.error) {
+            return next(500)
+        }
+        res.json(result);
+    }
+    catch(err){
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
 
 
 module.exports = router;
