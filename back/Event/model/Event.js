@@ -11,8 +11,9 @@ async function getEventUser(id) {
 }
 
 async function createEvent(id, title, adress, description, date, lat, long) {
+  let idEvent = uuidv4();
   const result = await db("events").insert({
-    id: uuidv4(),
+    id: idEvent,
     id_creator: id,
     title: title,
     adress: adress,
@@ -21,14 +22,27 @@ async function createEvent(id, title, adress, description, date, lat, long) {
     lat: lat,
     long: long,
     token : randToken.generate(16)
-  });
+  }).returning("id");
   if (!result) {
     return { error: "Error creating event" };
   }
-  return result;
+  return { id: idEvent}
+}
+
+async function getEvent(id) {
+  try{
+    const result = await db("events").where({ id : id }).first();
+    if (!result) {
+      return { error: "Error getting event" };
+    }
+    return result;
+  }catch(err){
+    return { error: "Error getting event" };
+  }
 }
 
 module.exports = {
   getEventUser,
   createEvent,
+  getEvent
 };
