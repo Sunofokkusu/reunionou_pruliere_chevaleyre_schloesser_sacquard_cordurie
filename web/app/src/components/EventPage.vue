@@ -29,18 +29,42 @@
         meteo
       </div>
     </div>
-    <div class="card">
+
+    <div class="row">
+
+      <div style="height:300px; max-width:616px" class="card map col-6">
+        <l-map ref="map" :zoom="zoom" :center="[48.69, 6.18]">
+          <l-tile-layer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            layer-type="base"
+            name="OpenStreetMap"
+          ></l-tile-layer>
+        </l-map>
+      </div>
+
+      <div class="col-4 card">
 
       </div>
+
+    </div>
+   
   </div>
 </template>
 
 <script>
+import "leaflet/dist/leaflet.css";
+import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+
 export default {
   name: "EventPage",
+    components: {
+    LMap,
+    LTileLayer,
+  },
   data() {
     return {
       event: "",
+      zoom: 10,
     };
   },
   computed: {
@@ -75,6 +99,10 @@ export default {
     min-height: 300px !important;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.map { 
+  padding: 0;
 }
 
 .center {
