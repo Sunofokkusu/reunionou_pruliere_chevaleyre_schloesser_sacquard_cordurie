@@ -14,7 +14,7 @@ const participantInsertSchema = joi.object({
     name : joi.string().min(3).max(30).required(),
     id : joi.string(),
     status : joi.number().valid(0,1,2).required(),
-    message : joi.string(),
+    message : joi.string().allow('').max(200)
 });
 
 async function eventInsertValidator(req, res, next) {

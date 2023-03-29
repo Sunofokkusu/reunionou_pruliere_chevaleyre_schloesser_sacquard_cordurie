@@ -60,7 +60,7 @@ router.post("/:id/participant", async (req, res, next) => {
                     Authorization: req.headers.authorization
                 }
             });
-            let event = await axios.post(process.env.EVENT_SERVICE + req.params.token + "/participant", {
+            let event = await axios.post(process.env.EVENT_SERVICE + req.params.id + "/participant", {
                 id : validate.data.id,
                 name : validate.data.name,
                 status : req.body.status,
