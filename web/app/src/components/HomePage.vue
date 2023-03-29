@@ -82,6 +82,10 @@ export default {
             return this.$store.state.connected
         },
 
+        /**
+         * vérifie si les champs obligatoires sont remplis
+         * @returns {boolean} true si les champs obligatoires sont remplis, false sinon
+         */
         verifEmpty () {
             if(this.title !== '' && this.meetingDate !== '' && this.meetingHour !== '' && this.adress !== ''){
                 return false
@@ -93,6 +97,7 @@ export default {
     methods: {
         /**
          * permet d'ajouter un evenement
+         * @return inutilisable
          */
         async addevent() {
             if(this.title !== '' && this.meetingDate !== '' && this.meetingHour !== '' && this.adress !== ''){
@@ -118,6 +123,7 @@ export default {
                 } catch (error) {
                     console.log(error)
                 }
+                
             } else {
                 this.errored = true
             }
@@ -139,6 +145,7 @@ export default {
 
         /**
          * vide les champs du formulaire
+         * @return inutilisable
          */
         reset() {
             this.title = ''
