@@ -18,7 +18,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => EventsProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, EventsProvider>(
+            create: (_) => EventsProvider(null),
+            update: (context, auth, prev) => EventsProvider(auth)),
       ],
       child: const ReunionouApp(),
     ),

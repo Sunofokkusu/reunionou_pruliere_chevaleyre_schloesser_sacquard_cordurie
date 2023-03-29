@@ -117,45 +117,45 @@ class _HomePageState extends State<HomePage> {
   Future<List<Event>> _fetchEventsMember() async {
     return List.generate(15, (index) {
       return Event(
-          id: const Uuid().v4(),
-          idCreator: const Uuid().v4(),
-          title: faker.lorem.words(2).join(" "),
-          desc: faker.lorem.sentences(5).join(" "),
-          long: faker.randomGenerator.decimal(),
-          lat: faker.randomGenerator.decimal(),
-          place: faker.address.streetAddress(),
-          datetime: faker.date.dateTime(),
-          url: faker.internet.httpUrl());
+        id: const Uuid().v4(),
+        idCreator: const Uuid().v4(),
+        title: faker.lorem.words(2).join(" "),
+        desc: faker.lorem.sentences(5).join(" "),
+        long: faker.randomGenerator.decimal(),
+        lat: faker.randomGenerator.decimal(),
+        adress: faker.address.streetAddress(),
+        datetime: faker.date.dateTime(),
+      );
     });
   }
 
   Future<List<Event>> _fetchEventsCreator() async {
     return List.generate(2, (index) {
       return Event(
-          id: const Uuid().v4(),
-          idCreator: const Uuid().v4(),
-          title: faker.lorem.words(2).join(" "),
-          desc: faker.lorem.sentences(5).join(" "),
-          long: faker.randomGenerator.decimal(),
-          lat: faker.randomGenerator.decimal(),
-          place: faker.address.streetAddress(),
-          datetime: faker.date.dateTime(),
-          url: faker.internet.httpUrl());
+        id: const Uuid().v4(),
+        idCreator: const Uuid().v4(),
+        title: faker.lorem.words(2).join(" "),
+        desc: faker.lorem.sentences(5).join(" "),
+        long: faker.randomGenerator.decimal(),
+        lat: faker.randomGenerator.decimal(),
+        adress: faker.address.streetAddress(),
+        datetime: faker.date.dateTime(),
+      );
     });
   }
 
   Future<List<Event>> _fetchEventsInvited() async {
     return List.generate(4, (index) {
       return Event(
-          id: const Uuid().v4(),
-          idCreator: const Uuid().v4(),
-          title: faker.lorem.words(2).join(" "),
-          desc: faker.lorem.sentences(5).join(" "),
-          long: faker.randomGenerator.decimal(),
-          lat: faker.randomGenerator.decimal(),
-          place: faker.address.streetAddress(),
-          datetime: faker.date.dateTime(),
-          url: faker.internet.httpUrl());
+        id: const Uuid().v4(),
+        idCreator: const Uuid().v4(),
+        title: faker.lorem.words(2).join(" "),
+        desc: faker.lorem.sentences(5).join(" "),
+        long: faker.randomGenerator.decimal(),
+        lat: faker.randomGenerator.decimal(),
+        adress: faker.address.streetAddress(),
+        datetime: faker.date.dateTime(),
+      );
     });
   }
 }
