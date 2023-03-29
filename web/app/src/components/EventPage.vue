@@ -35,7 +35,7 @@
           </div>
         </div>
         <div class="center">
-          <div class="row">
+          <div class="row" v-if="button">
             <q-btn
               color="primary"
               class="col-5"
@@ -138,6 +138,8 @@ export default {
       message: "",
       choice: false,
       status: 0,
+      button: true,
+      user: ""
     };
   },
   computed: {
@@ -184,14 +186,30 @@ export default {
           }
         );
       }
+
       this.name = "";
       this.message = "";
+      this.button = false;
     },
     reset() {
       this.name = "";
       this.message = "";
     },
   },
+  mounted(){
+    if(this.$store.state.token !== ""){
+      this.axios
+        .get("http://localhost:80/user/me?embed=events", {})
+        .then((response) => {
+          this.user = response.data;
+          this.user.events.forEach((e) => {
+          if(e.id === this.$route.params.event_id){
+            this.button = false;
+          }
+        })
+        });
+    }
+  }
 };
 </script>
 
