@@ -9,7 +9,7 @@ import ProfileUser from "@/components/ProfileUser";
 const routes = [
     { name: 'NotFound', path: '/:pathMatch(.*)*', component: NotFound },
     { name: 'HomePage', path: '/', component: HomePage },
-    { name: 'Event', path: '/event/:event_token', component: EventPage },
+    { name: 'Event', path: '/event/:event_id', component: EventPage },
     { name: 'signIn', path: '/signin', component: SignIn },
     { name: 'signUp', path: '/signup', component: SignUp },
     { name: 'ProfileUser', path: '/profile', component: ProfileUser },
