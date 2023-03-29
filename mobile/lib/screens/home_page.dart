@@ -83,16 +83,14 @@ class _HomePageState extends State<HomePage> {
               return const Center(child: CircularProgressIndicator());
             });
       }),
-      floatingActionButton: _selectedIndex == 1
-          ? FloatingActionButton(
-              onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => EventFormPage(),
-                    ),
-                  ),
-              tooltip: 'Ajouter un événement',
-              child: const Icon(Icons.add))
-          : null,
+      floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => EventFormPage(),
+                ),
+              ),
+          tooltip: 'Ajouter un événement',
+          child: const Icon(Icons.add)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

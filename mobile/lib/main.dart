@@ -9,10 +9,9 @@ import 'package:flutter/services.dart';
 void main() async {
   // await dotenv.load(fileName: "assets/.env");
   WidgetsFlutterBinding.ensureInitialized();
-  // hide the bottom bar on android setEnabledSystemUIMode
+  // hide the bottom bar on android
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-      overlays: [SystemUiOverlay.bottom]);
-
+      overlays: [SystemUiOverlay.top]);
   // await Supabase.initialize(
   //   url: dotenv.env['SUPABASE_URL']!,
   //   anonKey: dotenv.env['SUPABASE_API_KEY']!,
