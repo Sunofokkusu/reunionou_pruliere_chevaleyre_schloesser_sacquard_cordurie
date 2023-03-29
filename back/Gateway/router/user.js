@@ -37,8 +37,7 @@ router.get("/me", async (req, res, next) => {
       res.json({
         name: validate.data.name,
         mail: validate.data.email,
-        events: events.data,
-        invited: invited.data,
+        events: events.data.concat(invited.data),
       });
     } else {
       res.json({
