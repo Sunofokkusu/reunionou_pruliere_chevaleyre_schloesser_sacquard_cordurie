@@ -62,4 +62,20 @@ router.post("/validate", async (req, res, next) => {
 });
 
 
+router.get("/:id", async (req, res, next) => {
+    try{
+        const {id} = req.params;
+        let result = await User.getUser(id);
+        if (result.error) {
+            return next({ error: 400, message: result.error });
+        }
+        res.json(result);
+    }
+    catch(err){
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
+
+
 module.exports = router;
