@@ -10,12 +10,26 @@ router.get('/me', async (req, res, next) => {
                 Authorization: req.headers.authorization
             }
         });
+        let events = await axios.get(process.env.EVENT_SERVICE + "user/" + validate.data.id);
+        let invited = await axios.get(process.env.EVENT_SERVICE + "user/" + validate.data.id + "/invited");
         if(req.query.embed === "events"){
-            let events = await axios.get(process.env.EVENT_SERVICE + "user/" + validate.data.id);
             res.json({
                 name : validate.data.name,
                 mail : validate.data.email,
                 events : events.data
+            });
+        }else if(req.query.embed === "invited"){
+            res.json({
+                name : validate.data.name,
+                mail : validate.data.email,
+                invited : invited.data
+            });
+        }else if(req.query.embed === "all"){
+            res.json({
+                name : validate.data.name,
+                mail : validate.data.email,
+                events : events.data,
+                invited : invited.data
             });
         }else{
             res.json({
