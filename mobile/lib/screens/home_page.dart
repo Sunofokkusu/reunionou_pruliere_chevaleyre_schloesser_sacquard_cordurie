@@ -7,6 +7,8 @@ import 'package:reunionou/models/event.dart';
 import 'package:reunionou/screens/event_form_page.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:reunionou/screens/profile_page.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -34,6 +36,21 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.account_circle_rounded,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ProfilePage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Consumer<EventsProvider>(builder: (context, builder, child) {
         return FutureBuilder<List<Event>>(

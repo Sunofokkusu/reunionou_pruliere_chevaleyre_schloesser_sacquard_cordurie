@@ -23,6 +23,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Login'),
       ),
       body: Padding(
@@ -76,6 +77,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
                             'password': _passwordController.text,
                           }),
                         );
+                        // TODO: handle errors
                         if (response.statusCode == 200) {
                           Future<bool> success = auth.login((jsonDecode(response.body)['token']).toString().substring(7));
                           if (await success) {
@@ -84,13 +86,17 @@ class _LoginFormPageState extends State<LoginFormPage> {
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Login failed')),
+                              const SnackBar(content: Text('Wrong email or password')),
                             );
                           }
+                        } else if (response.statusCode == 502) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Service unavailable')),
+                          );
                         } else {
                           print(response.statusCode);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Wrong email or password')),
+                            const SnackBar(content: Text('Login failed')),
                           );
                         }
                       }
