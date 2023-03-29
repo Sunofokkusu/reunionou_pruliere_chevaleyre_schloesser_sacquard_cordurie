@@ -68,8 +68,9 @@ export default {
           this.$store.commit("setConnected", true)
           this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
           this.axios.get("http://localhost:80/user/me")
-            .then(
+            .then((response) => {
               this.$store.commit("setName", response.data.name)
+            }
             ).catch((error) => {
               console.log(error)
             })

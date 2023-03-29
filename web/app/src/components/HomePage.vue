@@ -10,8 +10,8 @@
             <div class="eventCard col-2" v-for="event in events" :key="event.id" @click="this.$router.push({name:'eventCard', params:{event_token:event.token}})">
                 <p class="unselectable">{{ event.title }}</p>
                 <p class="unselectable">{{ event.description }}</p>
-                <p class="unselectable">{{ event.meetingDate }}</p>
-                <p class="unselectable">{{ event.meetingHour }}</p>
+                <p class="unselectable">{{ new Date(event.meetingDate).toLocaleDateString() }}</p>
+                <p class="unselectable">{{ new Date(event.meetingDate).getHours()-2 }}h{{ new Date(event.meetingDate).getMinutes() }}</p>
                 <p class="unselectable">{{ event.adress }}</p>
             </div>
         </div>
@@ -63,8 +63,8 @@ export default {
             lat : 0,
             lng : 0,
             events: [
-                {token: '', title:'vacances', description:'voyage en corse', meetingDate:'27/07/2022', meetingHour:'7h00', adress:'Nancy'},
-                {token: '', title:'travaux', description:'travaux maison', meetingDate:'05/01/2022', meetingHour:'14h00', adress:'Nancy'},
+                {token: '', title:'vacances', description:'voyage en corse', meetingDate:'2022-07-27T07:00:00', adress:'Nancy'},
+                {token: '', title:'travaux', description:'travaux maison', meetingDate:'2022-05-06T14:00:00', adress:'Nancy'},
             ],
             errored: false,
         }
@@ -102,10 +102,12 @@ export default {
         async addevent() {
             if(this.title !== '' && this.meetingDate !== '' && this.meetingHour !== '' && this.adress !== ''){
                 this.errored = false
-                await this.getadress(this.adress)
+
                 this.meetingDate = this.meetingDate + 'T' + this.meetingHour + ':00'     
 
                 try {
+                    await this.getadress(this.adress)
+                    console.log(this.lat)
                     this.axios.defaults.headers.post['Authorization'] = this.$store.state.token;               
                     let response = await this.axios.post("http://localhost:80/event", {
                         title: this.title,
@@ -123,7 +125,7 @@ export default {
                 } catch (error) {
                     console.log(error)
                 }
-                
+
             } else {
                 this.errored = true
             }
