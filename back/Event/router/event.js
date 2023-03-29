@@ -7,7 +7,7 @@ const Comment = require('../model/comment');
 
 const { info, error } = require('../helper/logger');
 
-const { eventInsertValidator, participantInsertValidator } = require('../validator/eventValidator');
+const { eventInsertValidator, participantInsertValidator, commentInsertValidator } = require('../validator/eventValidator');
 
 router.post('/', eventInsertValidator, async (req, res, next) => {
     try{
@@ -71,7 +71,28 @@ router.post('/:id/participant', participantInsertValidator, async (req, res, nex
     }
 });
 
-
+router.post('/:id/comment', commentInsertValidator, async (req, res, next) => {
+    try{
+        const idEvent = req.params.id;
+        const {message} = req.body;
+        let event = await Event.getEvent(idEvent);
+        if (event.error) {
+            return next(event);
+        }
+        const {id, name} = req.body;
+        let comment = await Comment.addComment(event.id, id, name, message);
+        if (comment.error) {
+            return next(500)
+        }
+        res.json({
+            "type" : "info",
+            "message" : "Commentaire ajouté"
+        })
+    }catch(err){
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
 
 router.get('/user/:id', async (req, res, next) => {
     try{
