@@ -31,6 +31,11 @@ export default {
       user: "",
     };
   },
+  /**
+   * Permet de récupérer toutes les informations sur l'utilisateur connecté au chargement de la page 
+   * en les passant dans la data du component
+   * @return, inutilisable
+   */
   mounted() {
       this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
       this.axios
