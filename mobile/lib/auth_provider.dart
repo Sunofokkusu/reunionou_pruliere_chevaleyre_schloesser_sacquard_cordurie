@@ -15,11 +15,12 @@ class AuthProvider with ChangeNotifier {
   String get token => _authToken;
   User? get user => _user;
 
+
   Future<bool> login(String token) async {
     final response = await http.get(
       Uri.parse('http://localhost:80/user/me'),
-      headers: <String, String> {
-        'Authorization' : 'Bearer $token',
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
       },
     );
     if (response.statusCode == 200) {

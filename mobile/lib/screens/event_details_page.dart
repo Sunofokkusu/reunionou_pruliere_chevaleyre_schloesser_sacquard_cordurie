@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reunionou/auth_provider.dart';
+import 'package:reunionou/elements/members_modal.dart';
 import 'package:reunionou/events_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
@@ -17,6 +19,8 @@ class EventDetailsPage extends StatefulWidget {
 }
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
+  late String message = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,9 +35,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
         body: SingleChildScrollView(
           child: Consumer<EventsProvider>(
-            builder: (context, builder, child) {
-              // final creator = widget.event.idCreator;
-
+            builder: (context, events, child) {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -47,16 +49,92 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     ),
                     const SizedBox(height: 16.0),
                     const Text(
-                      "Organisé par: BOB SINCLAIR\nContact: buzzleclair@oupspardon.bobSinclair",
+                      "Organisé par: BOB SINCLAIR",
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                    const Text(
+                      "Contact: buzzleclair@oupspardon.bobSinclair",
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    const SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MembersModal();
+                          },
+                        );
+                      },
+                      child: const Text('Voir les participants'),
                     ),
                     const SizedBox(height: 16.0),
                     Text(
                       widget.event.desc,
                       style: const TextStyle(
-                          fontSize: 18.0, fontStyle: FontStyle.italic),
+                          fontSize: 16.0, fontStyle: FontStyle.italic),
                     ),
+                    const SizedBox(height: 16.0),
+                    Consumer<AuthProvider>(builder: (context, auth, child) {
+                      return Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Container(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Form(
+                              child: Column(children: [
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                  minHeight: 60.0, maxHeight: 180.0),
+                              child: TextFormField(
+                                initialValue: message,
+                                maxLength: 200,
+                                maxLines: null,
+                                decoration: const InputDecoration(
+                                  labelText: "Message optionnel",
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    message = value;
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 16.0),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.grey,
+                                          fixedSize: Size(
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.3,
+                                              40)),
+                                      onPressed: () {},
+                                      child: const Text('Désolé',
+                                          style: TextStyle(fontSize: 18))),
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          fixedSize: Size(
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.3,
+                                              40)),
+                                      child: const Text('J\'y serai !',
+                                          style: TextStyle(fontSize: 18)),
+                                      onPressed: () {}),
+                                ])
+                          ])),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               );

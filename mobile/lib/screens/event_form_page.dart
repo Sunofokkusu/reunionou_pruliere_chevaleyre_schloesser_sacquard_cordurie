@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reunionou/elements/event_form.dart';
@@ -20,9 +21,14 @@ class _EventFormPageState extends State<EventFormPage> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: widget.event == null
-              ? const Text("Nouvelle événement")
-              : const Text("Modifier l'événement"),
+          title: AutoSizeText(
+            widget.event == null
+                ? ("Nouvel événement")
+                : ("Modifier l'événement"),
+            minFontSize: 15.0,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
         ),
         body: Consumer<EventsProvider>(builder: (context, builder, child) {
           return EventForm(event: widget.event);

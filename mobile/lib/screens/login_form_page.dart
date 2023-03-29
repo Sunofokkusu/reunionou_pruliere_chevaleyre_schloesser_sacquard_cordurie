@@ -1,11 +1,10 @@
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../auth_provider.dart';
-
-
 
 class LoginFormPage extends StatefulWidget {
   const LoginFormPage({super.key});
@@ -24,7 +23,12 @@ class _LoginFormPageState extends State<LoginFormPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Login'),
+        title: const AutoSizeText(
+          'Login',
+          minFontSize: 15.0,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -79,7 +83,10 @@ class _LoginFormPageState extends State<LoginFormPage> {
                         );
                         // TODO: handle errors
                         if (response.statusCode == 200) {
-                          Future<bool> success = auth.login((jsonDecode(response.body)['token']).toString().substring(7));
+                          Future<bool> success = auth.login(
+                              (jsonDecode(response.body)['token'])
+                                  .toString()
+                                  .substring(7));
                           if (await success) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Login successful')),
@@ -103,7 +110,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
                     },
                     child: const Text('Login'),
                   );
-                },                  
+                },
               )
             ],
           ),
