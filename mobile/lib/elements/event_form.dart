@@ -37,45 +37,62 @@ class _EventFormState extends State<EventForm> {
                 children: [
                   Column(children: [
                     TextFormField(
-                      initialValue: widget.event?.title ?? "",
-                      decoration: const InputDecoration(
-                        labelText: "Titre*",
+                        initialValue: title,
+                        maxLength: 30,
+                        decoration: const InputDecoration(
+                          labelText: "Titre*",
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            title = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Champ obligatoire";
+                          } else if (value.length < 3) {
+                            return "Le titre doit contenir au moins 3 caractères";
+                          } else {
+                            return null;
+                          }
+                        }),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                          minHeight: 60.0, maxHeight: 180.0),
+                      child: TextFormField(
+                        initialValue: desc,
+                        maxLines: null,
+                        maxLength: 200,
+                        decoration: const InputDecoration(
+                          labelText: "Description",
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            desc = value;
+                          });
+                        },
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          title = value;
-                        });
-                      },
-                      validator: (value) => (value == null || value.isEmpty)
-                          ? "Champ obligatoire"
-                          : null,
                     ),
                     TextFormField(
-                      initialValue: widget.event?.desc ?? "",
-                      maxLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: "Description",
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          desc = value;
-                        });
-                      },
-                    ),
-                    TextFormField(
-                      initialValue: widget.event?.place ?? "",
-                      decoration: const InputDecoration(
-                        labelText: "Lieu*",
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          place = value;
-                        });
-                      },
-                      validator: (value) => (value == null || value.isEmpty)
-                          ? "Champ obligatoire"
-                          : null,
-                    ),
+                        initialValue: place,
+                        maxLength: 100,
+                        decoration: const InputDecoration(
+                          labelText: "Adresse*",
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            place = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Champ obligatoire";
+                          } else if (value.length < 3) {
+                            return "Le titre doit contenir au moins 3 caractères";
+                          } else {
+                            return null;
+                          }
+                        }),
                     Container(
                       margin: const EdgeInsets.only(top: 25.0),
                       child: Row(

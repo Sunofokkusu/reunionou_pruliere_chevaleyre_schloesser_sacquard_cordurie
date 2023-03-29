@@ -8,10 +8,14 @@ class AuthProvider with ChangeNotifier {
   // Mettre à false pour avoir le formulaire de login
   bool _isLoggedIn = true;
   String _authToken = '';
-  late User _user;
+  late User _user = User(
+    name: 'Lucas',
+    email: 'lucasCordurie@gmail.com',
+  );
 
   bool get isLoggedIn => _isLoggedIn;
   String get token => _authToken;
+  User get user => _user;
 
   Future<bool> login(String token) async {
     final response = await http.get(
