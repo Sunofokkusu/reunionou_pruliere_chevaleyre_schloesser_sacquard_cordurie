@@ -4,25 +4,25 @@ function errorhandler(err, req, res, next) {
     let errorCode = err.error || 500;
     switch (errorCode) {
         case 400:
-            message = "Mauvaise requête";
+            message = "Bad Request";
             break;
         case 401:
-            message = "Non autorisé";
+            message = "Unauthorized";
             break;
         case 403:
-            message = "Interdit";
+            message = "Forbidden";
             break;
         case 404:
-            message = "Page non trouvée";
+            message = "Not Found";
             break;
         case 405:
-            message = "Methode non autorisée";
+            message = "Method Not Allowed";
             break;
         case 500:
-            message = "Erreur serveur";
+            message = "Internal Server Error";
             break;
         default:
-            message = "Erreur inconnue";
+            message = "Internal Server Error";
             break;
     }
     res.setHeader("Content-Type", "application/json");

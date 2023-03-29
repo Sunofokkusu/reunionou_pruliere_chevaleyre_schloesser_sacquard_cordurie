@@ -9,11 +9,12 @@ async function signup(name, mail, password) {
         return { error: 'Utilisateur déjà existant' };
     }
     const hash = await bcrypt.hash(password, 10);
-    const newUser = await db('users').insert({ id: uuidv4(), name: name, email: mail, pass: hash });
+    let id = uuidv4();
+    const newUser = await db('users').insert({ id: id, name: name, email: mail, pass: hash })
     if (!newUser) {
         return { error: 'Erreur lors de la création de l\'utilisateur' };
     }
-    const token = jwt.sign({ id: newUser[0], name: name, email: mail }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: id, name: name, email: mail }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return { token };
 }
 
@@ -43,9 +44,18 @@ async function validate(token) {
     }
 }
 
+async function getUser(id) {
+    const user = await db('users').select('name', 'email').where({ id: id }).first();
+    if (!user) {
+        return { error: 'Utilisateur non trouvé' };
+    }
+    return { id: user.id, name: user.name, email: user.email };
+}
+
 
 module.exports = {
     signup,
     login,
-    validate
+    validate,
+    getUser
 }
