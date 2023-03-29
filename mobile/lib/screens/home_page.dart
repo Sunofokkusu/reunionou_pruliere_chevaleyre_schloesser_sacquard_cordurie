@@ -15,6 +15,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +45,11 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Consumer<EventsProvider>(builder: (context, builder, child) {
         return FutureBuilder<List<Event>>(
-            future: _fetchEvents(),
+            future: _selectedIndex == 0
+                ? _fetchEventsMember()
+                : _selectedIndex == 1
+                    ? _fetchEventsCreator()
+                    : _fetchEventsInvited(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -54,19 +66,69 @@ class _HomePageState extends State<HomePage> {
               return const Center(child: CircularProgressIndicator());
             });
       }),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => EventFormPage(),
-                ),
-              ),
-          tooltip: 'Ajouter un événement',
-          child: const Icon(Icons.add)),
+      floatingActionButton: _selectedIndex == 1
+          ? FloatingActionButton(
+              onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => EventFormPage(),
+                    ),
+                  ),
+              tooltip: 'Ajouter un événement',
+              child: const Icon(Icons.add))
+          : null,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.groups),
+            label: 'Participant',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.engineering),
+            label: 'Créateur',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mail),
+            label: 'Invitations',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
     );
   }
 
-  Future<List<Event>> _fetchEvents() async {
+  Future<List<Event>> _fetchEventsMember() async {
     return List.generate(15, (index) {
+      return Event(
+          id: const Uuid().v4(),
+          idCreator: const Uuid().v4(),
+          title: faker.lorem.words(2).join(" "),
+          desc: faker.lorem.sentences(5).join(" "),
+          long: faker.randomGenerator.decimal(),
+          lat: faker.randomGenerator.decimal(),
+          place: faker.address.streetAddress(),
+          datetime: faker.date.dateTime(),
+          url: faker.internet.httpUrl());
+    });
+  }
+
+  Future<List<Event>> _fetchEventsCreator() async {
+    return List.generate(2, (index) {
+      return Event(
+          id: const Uuid().v4(),
+          idCreator: const Uuid().v4(),
+          title: faker.lorem.words(2).join(" "),
+          desc: faker.lorem.sentences(5).join(" "),
+          long: faker.randomGenerator.decimal(),
+          lat: faker.randomGenerator.decimal(),
+          place: faker.address.streetAddress(),
+          datetime: faker.date.dateTime(),
+          url: faker.internet.httpUrl());
+    });
+  }
+
+  Future<List<Event>> _fetchEventsInvited() async {
+    return List.generate(4, (index) {
       return Event(
           id: const Uuid().v4(),
           idCreator: const Uuid().v4(),
