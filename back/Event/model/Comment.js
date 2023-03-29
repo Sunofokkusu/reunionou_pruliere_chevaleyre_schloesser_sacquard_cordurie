@@ -11,16 +11,29 @@ async function addComment(idEvent, idUser, name, comment) {
             comment: comment
         });
         if (!result) {
-            console.log("Error adding comment top");
             return { error: "Error adding comment" };
         }
         return result;
     } catch (err) {
-        console.log("Error adding comment");
         return { error: "Error adding comment" };
     }
 }
 
+async function getComments(idEvent) {
+    try {
+        const result = await db('comment').where({ id_event: idEvent });
+        if (!result) {
+            return { error: "Error getting comments" };
+        }
+        return result;
+    } catch (err) {
+        return { error: "Error getting comments" };
+    }
+}
+
+
+
 module.exports = {
-    addComment
+    addComment,
+    getComments
 }
