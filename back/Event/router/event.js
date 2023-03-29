@@ -121,7 +121,15 @@ router.get('/user/:id/invited', async (req, res, next) => {
         if (result.error) {
             return next(500)
         }
-        res.json(result);
+        let events = [];
+        for (let i = 0; i < result.length; i++) {
+            let event = await Event.getEvent(result[i].id_event);
+            if (event.error) {
+                return next(500)
+            }
+            events.push(event);
+        }
+        res.json(events);
     }
     catch(err){
         error(err.message);
