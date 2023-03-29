@@ -8,13 +8,15 @@ async function addComment(idEvent, idUser, name, comment) {
             id_event: idEvent,
             id_user: idUser,
             name: name,
+            comment: comment
         });
         if (!result) {
+            console.log("Error adding comment top");
             return { error: "Error adding comment" };
         }
         return result;
     } catch (err) {
-        console.log(err);
+        console.log("Error adding comment");
         return { error: "Error adding comment" };
     }
 }
