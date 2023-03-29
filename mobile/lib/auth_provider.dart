@@ -6,18 +6,18 @@ import 'package:reunionou/models/user.dart';
 
 class AuthProvider with ChangeNotifier {
   // Mettre à false pour avoir le formulaire de login
-  bool _isLoggedIn = false;
+  bool _isLoggedIn = true;
   String _authToken = '';
   late User _user;
- 
+
   bool get isLoggedIn => _isLoggedIn;
   String get token => _authToken;
 
   Future<bool> login(String token) async {
     final response = await http.get(
       Uri.parse('http://localhost:80/user/me'),
-      headers: <String, String> {
-        'Authorization' : 'Bearer $token',
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
       },
     );
     if (response.statusCode == 200) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reunionou/elements/members_modal.dart';
 import 'package:reunionou/events_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
@@ -39,6 +40,17 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MembersModal();
+                          },
+                        );
+                      },
+                      child: const Text('Voir les participants'),
+                    ),
                     const SizedBox(height: 16.0),
                     Text(
                       "Programmé pour le  ${DateHelper.formatDate(widget.event.datetime)} à ${DateHelper.formatTime(widget.event.datetime)}",
