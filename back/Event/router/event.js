@@ -25,10 +25,10 @@ router.post('/', eventInsertValidator, async (req, res, next) => {
     }
 });
 
-router.get('/:token', async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
     try{
-        const {token} = req.params;
-        let event = await Event.getEvent(token);
+        const {id} = req.params;
+        let event = await Event.getEvent(id);
         if (event.error) {
             return next(500)
         }
@@ -39,6 +39,11 @@ router.get('/:token', async (req, res, next) => {
         participant.forEach(element => {
             if(element.message == null) delete element.message;
         });
+        let comment = await Comment.getComments(event.id);
+        if (comment.error) {
+            return next(500)
+        }
+        event.comments = comment;
         event.participants = participant;
         res.json(event);
     }
