@@ -139,7 +139,8 @@ export default {
       choice: false,
       status: 0,
       button: true,
-      user: ""
+      user: "",
+      canGet: true
     };
   },
   computed: {
@@ -150,14 +151,17 @@ export default {
   },
   methods: {
     async getEvent() {
-      try {
+      if(this.canGet === true){
+        try {
         let response = await this.axios.get(
           "http://localhost:80/event/" + this.$route.params.event_id
         );
         this.event = response.data;
         this.participants = response.data.participants;
+        this.canGet = false;
       } catch (error) {
         console.log(error);
+      }
       }
     },
     addParticipant() {
@@ -199,10 +203,15 @@ export default {
   mounted(){
     if(this.$store.state.token !== ""){
       this.axios
-        .get("http://localhost:80/user/me?embed=events", {})
+        .get("http://localhost:80/user/me?embed=all", {})
         .then((response) => {
           this.user = response.data;
           this.user.events.forEach((e) => {
+          if(e.id === this.$route.params.event_id){
+            this.button = false;
+          }
+        })
+        this.user.invited.forEach((e) => {
           if(e.id === this.$route.params.event_id){
             this.button = false;
           }

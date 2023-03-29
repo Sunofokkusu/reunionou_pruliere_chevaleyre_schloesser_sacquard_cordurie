@@ -10,7 +10,9 @@
         class="eventCard col-2"
         v-for="event in getEvent"
         :key="event.id"
-        @click="this.$router.push({ name: 'Event', params: { event_id: event.id } })"
+        @click="
+          this.$router.push({ name: 'Event', params: { event_id: event.id } })
+        "
       >
         <p class="unselectable">{{ event.title }}</p>
         <p class="unselectable">{{ event.description }}</p>
@@ -96,16 +98,16 @@ export default {
       lng: 0,
       events: [],
       errored: false,
+      canGet: true
     };
   },
   mounted() {
     //récupération des évènements enregistrés en local si il y en a
-   
   },
   computed: {
-    getEvent(){
-        this.getEvents();
-        return this.events;
+    getEvent() {
+      this.getEvents();
+      return this.events;
     },
     connected() {
       return this.$store.state.connected;
@@ -129,18 +131,17 @@ export default {
     },
   },
   methods: {
-    getEvents(){
-        if (localStorage.getItem("events")) {
-            this.events = JSON.parse(localStorage.getItem("events"));
-        } else {
-            this.axios.defaults.headers.get["Authorization"] =
-            this.$store.state.token;
-            this.axios
-            .get("http://localhost:80/user/me?embed=events", {})
-            .then((response) => {
-            this.events = response.data.events;
-            });
-        }   
+    getEvents() {
+      if(this.canGet === true){
+        this.axios.defaults.headers.get["Authorization"] =
+        this.$store.state.token;
+      this.axios
+        .get("http://localhost:80/user/me?embed=all", {})
+        .then((response) => {
+          this.events = response.data.events;
+          this.canGet = false;
+        });
+      }
     },
 
     /**
