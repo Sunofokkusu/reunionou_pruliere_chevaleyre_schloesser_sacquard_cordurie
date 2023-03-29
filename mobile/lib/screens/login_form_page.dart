@@ -22,6 +22,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const AutoSizeText(
           'Login',
           minFontSize: 15.0,
@@ -80,6 +81,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
                             'password': _passwordController.text,
                           }),
                         );
+                        // TODO: handle errors
                         if (response.statusCode == 200) {
                           Future<bool> success = auth.login(
                               (jsonDecode(response.body)['token'])
@@ -91,14 +93,17 @@ class _LoginFormPageState extends State<LoginFormPage> {
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Login failed')),
+                              const SnackBar(content: Text('Wrong email or password')),
                             );
                           }
+                        } else if (response.statusCode == 502) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Service unavailable')),
+                          );
                         } else {
                           print(response.statusCode);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Wrong email or password')),
+                            const SnackBar(content: Text('Login failed')),
                           );
                         }
                       }
