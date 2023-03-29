@@ -15,11 +15,11 @@
         <p class="unselectable">{{ event.title }}</p>
         <p class="unselectable">{{ event.description }}</p>
         <p class="unselectable">
-          {{ new Date(event.meetingDate).toLocaleDateString() }}
+          {{ new Date(event.date).toLocaleDateString() }}
         </p>
         <p class="unselectable">
-          {{ new Date(event.meetingDate).getHours() - 2 }}h{{
-            new Date(event.meetingDate).getMinutes()
+          {{ new Date(event.date).getHours() - 2 }}h{{
+            new Date(event.date).getMinutes()
           }}
         </p>
         <p class="unselectable">{{ event.adress }}</p>
@@ -175,9 +175,10 @@ export default {
             token: response.data.token,
             title: this.title,
             description: this.description,
-            meetingDate: this.meetingDate,
-            meetingHour: this.meetingHour,
+            date: this.meetingDate,
             adress: this.adress,
+            lat: this.lat,
+            long: this.lng,
           });
           localStorage.setItem("events", JSON.stringify(this.events));
 
