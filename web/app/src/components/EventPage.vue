@@ -60,7 +60,23 @@
       </div>
 
       <div class="card col-3">
-        meteo
+        <div v-if="meteoLoading">
+          <SpinnerComp>
+            Recherche de prévisions météo en cours...
+          </SpinnerComp>
+        </div>
+        <div v-if="meteoError">
+          Erreur lors de la recherche de prévisions météo
+        </div>
+        <div v-else>
+          <div v-if="meteo">
+            <p>ville: {{ getMeteoComputed.name }}</p>
+            <p>tendance: {{getMeteoComputed.weather[0].description}}</p>
+            <p>température: {{(getMeteoComputed.main.temp - 273.15).toFixed(2)}}°C</p>
+            <p>pression: {{getMeteoComputed.main.pressure}} hPa</p>
+            <p>humidité: {{getMeteoComputed.main.humidity}} %</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -121,12 +137,13 @@
 <script>
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
-
+import SpinnerComp from "@/components/Spinner.vue";
 export default {
   name: "EventPage",
     components: {
     LMap,
     LTileLayer,
+    SpinnerComp,
   },
   data() {
     return {
@@ -138,17 +155,42 @@ export default {
       message: "",
       choice: false,
       status: 0,
+      meteo: "",
+      meteoLoading: false,
+      meteoError: false,
       button: true,
       user: "",
     };
   },
+  async mounted() {
+      this.meteoLoading = true;
+      let apiKey = "fb5491e240ff2f7ced5a60bd2e08e545"
+      try {
+        let response = await this.axios.get("https://api.openweathermap.org/data/2.5/weather?q=" + "Nancy" + "&APPID=" + apiKey + "&lang=fr")
+        console.log(response.data);
+        this.meteo = response.data;
+        this.meteoLoading = false;
+      } catch (error) {
+        this.meteoLoading = false;
+        console.log(error);
+        this.meteoError = true;
+      }
+  },
   computed: {
+    /**
+     * récupère l'événement
+     * @returns {Object} l'événement
+     */
     getEventComputed() {
       this.getEvent();
       return this.event;
     },
   },
   methods: {
+    /**
+     * récupère l'événement et le stocke dans la variable event
+     * @return inutilisable
+     */
     async getEvent() {
         try {
         let response = await this.axios.get(
@@ -160,6 +202,11 @@ export default {
         console.log(error);
       }
     },
+
+    /**
+     * ajoute un participant à l'évènement
+     * @return inutilisable
+     */
     addParticipant() {
       if (this.choice === false) {
         this.status = 2;
@@ -186,11 +233,16 @@ export default {
           }
         );
       }
-
-      this.name = "";
-      this.message = "";
+      this.reset();
       this.button = false;
     },
+
+
+
+    /**
+     * réinitialise les champs
+     * @return inutilisable
+     */
     reset() {
       this.name = "";
       this.message = "";
