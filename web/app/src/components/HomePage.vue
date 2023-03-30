@@ -1,7 +1,19 @@
 <template>
   <div>
+    <div class="card">
+      <div class="white">
+        Une application pour se fixer un rendez-vous en groupe
+      </div>
+    </div>
     <div v-if="connected" class="row">
-      <div class="eventCard col-2" label="Confirm" @click="confirm = true">
+
+      <div class="cardNav">
+        <p class="unselectable card-select" @click="this.getEvents('all')">Voir tout</p>
+        <p class="unselectable card-select" @click="this.getEvents('events')">Mes évènements</p>
+        <p class="unselectable card-select" @click="this.getEvents('invited')">Mes participations</p>
+      </div>
+
+      <div class="eventCard addCard col-2" label="Confirm" @click="confirm = true">
         <p class="unselectable">Nouvel évènement</p>
         <p class="add unselectable">+</p>
       </div>
@@ -13,7 +25,7 @@
       <div v-if="this.eventError" class="eventCard col-2">
         <p class="unselectable">Erreur lors de la récupération des évènements</p>
       </div>
-      <div v-else class="eventCard col-2" v-for="event in getEvent" :key="event.id" @click="this.$router.push({ name: 'Event', params: { event_id: event.id } })">
+      <div v-else class="eventCard col-2" v-for="event in events" :key="event.id" @click="this.$router.push({ name: 'Event', params: { event_id: event.id } })">
         <p class="unselectable">{{ event.title }}</p>
         <p class="unselectable">{{ event.description }}</p>
         <p class="unselectable">
@@ -28,7 +40,7 @@
 
     <div v-else class="row">
       <div class="col-12 eventCard">
-        <p>Vous devez être connecté pour accéder aux évènements</p>
+        <p class="unselectable">Vous devez être connecté pour accéder aux évènements</p>
       </div>
     </div>
 
@@ -39,16 +51,8 @@
             <p class="text-h6">Nouvel évènement</p>
             <q-input v-model="title" label="Libellé*" autofocus />
             <q-input v-model="description" label="Description" />
-            <q-input
-              v-model="meetingDate"
-              type="date"
-              label="Date de rendez-vous*"
-            />
-            <q-input
-              v-model="meetingHour"
-              type="time"
-              label="Heure de rendez-vous*"
-            />
+            <q-input v-model="meetingDate" type="date" label="Date de rendez-vous*"/>
+            <q-input v-model="meetingHour" type="time" label="Heure de rendez-vous*"/>
             <q-input v-model="adress" label="Lieu de rendez-vous*" />
           </div>
         </q-card-section>
@@ -92,13 +96,9 @@ export default {
     };
   },
   mounted() {
-    //récupération des évènements enregistrés en local si il y en a
+    this.getEvents('all');
   },
   computed: {
-    getEvent() {
-      this.getEvents();
-      return this.events;
-    },
     connected() {
       return this.$store.state.connected;
     },
@@ -125,10 +125,10 @@ export default {
      * Fonction qui permet de récupérer tous les évènements où l'utilisateur participe ou ceux qu'il a créer
      * @return intutilisable
      */
-    async getEvents() {
+    async getEvents(select) {
       try {
         this.axios.defaults.headers.get["Authorization"] = this.$store.state.token
-        let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=all", {})
+        let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed="+select, {})
         if(response.data.events !== undefined || response.data.events !== []){
           this.events = response.data.events;
         }
@@ -222,6 +222,19 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  border-radius: 10px;
+  background-color: #fff;
+  padding: 10px;
+  margin: 8px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+  min-height: 100px;
+  background-image: url("../assets/5120x2160.png");
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  filter: hue-rotate(40deg) brightness(120%) saturate(60%);
+}
+
 .eventCard {
   cursor: pointer;
   text-align: center;
@@ -236,7 +249,7 @@ export default {
 .eventCard > p {
   margin-top: -10px;
 }
-.eventCard:nth-child(1) {
+.addCard {
   background-color: #e0e0e0;
 }
 .eventCard:hover {
@@ -248,7 +261,7 @@ export default {
 .eventCard:active {
   filter: brightness(90%);
 }
-.eventCard:nth-child(1):hover > .add {
+.addCard:hover > .add {
   color: #39c3ff;
 }
 .eventCard > p:first-of-type {
@@ -270,4 +283,47 @@ export default {
 .red {
   color: red;
 }
+
+.white {
+  font-size: 220%;
+  padding: 15px 10px 10px 10px;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.cardNav {
+  text-align: center;
+  border-radius: 10px;
+  background-color: #fff;
+  margin: 8px;
+  width: 200px !important;
+  height: 200px !important;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+}
+.card-select {
+  display: flex;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 10px;
+  margin: 12px;
+  height: 50px !important;
+  background-color: #e0e0e0;
+  font-size: 1.1em !important;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.2s, height 0.2s, margin 0.2s, padding 0.2s, filter 0.1s;
+}
+.card-select:first-of-type {
+  margin-top: 11px !important;
+}
+.card-select:hover {
+  filter: brightness(96%);
+  margin-left: 7px !important;
+  margin-right: 7px !important;
+}
+.card-select:active {
+  filter: brightness(90%);
+}
+
+
 </style>
