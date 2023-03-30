@@ -163,6 +163,7 @@ export default {
     };
   },
   async mounted() {
+      //permet de récupérer les données météo de la ville de l'événement
       this.meteoLoading = true;
       let apiKey = "fb5491e240ff2f7ced5a60bd2e08e545"
       try {
@@ -175,6 +176,22 @@ export default {
         console.log(error);
         this.meteoError = true;
       }
+
+      //permet de désactiver les boutons si l'utilisateur est déjà inscrit à l'événement
+      if(this.$store.state.token !== ""){
+        try {
+          let response = await this.axios.get("http://localhost:80/user/me?embed=all", {})
+          this.user = response.data;
+          this.user.events.forEach((e) => {
+            if(e.id === this.$route.params.event_id){
+              this.button = false;
+            }
+          })
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      
   },
   computed: {
     /**
@@ -247,25 +264,6 @@ export default {
       this.name = "";
       this.message = "";
     },
-  },
-  mounted(){
-    if(this.$store.state.token !== ""){
-      this.axios
-        .get("http://localhost:80/user/me?embed=all", {})
-        .then((response) => {
-          this.user = response.data;
-          this.user.events.forEach((e) => {
-          if(e.id === this.$route.params.event_id){
-            this.button = false;
-          }
-        })
-        this.user.invited.forEach((e) => {
-          if(e.id === this.$route.params.event_id){
-            this.button = false;
-          }
-        })
-        });
-    }
   }
 };
 </script>
