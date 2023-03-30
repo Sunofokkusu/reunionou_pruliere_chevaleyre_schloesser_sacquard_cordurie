@@ -127,31 +127,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             const SnackBar(content: Text('Pas de changement')),
                           );
                           Navigator.of(context).pop();
+                        } 
+                        print(_newPassword);
+                        Future<bool> updated = auth.update(
+                          _name,
+                          _password,
+                          _newPassword,
+                        );
+                        if (await updated) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Informations mises à jour')),
+                          );
+                          Navigator.of(context).pop();
                         } else {
-                          if (canUpdate == false) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Mauvais mot de passe')),
-                            );
-                            return;
-                          } else {
-                            print(_newPassword);
-                            Future<bool> updated = auth.update(
-                              _name,
-                              _password,
-                              _newPassword,
-                            );
-                            if (await updated) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Informations mises à jour')),
-                              );
-                              Navigator.of(context).pop();
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Erreur lors de la mise à jour')),
-                              );
-                            }    
-                          }                           
-                        }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Erreur lors de la mise à jour')),
+                          );
+                        }    
                       }
                     },
                     child: const Text('Update'),
