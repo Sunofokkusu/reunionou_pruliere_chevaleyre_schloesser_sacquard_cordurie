@@ -92,19 +92,5 @@ router.put("/", async (req, res, next) => {
     }
 });
 
-router.post("/verifyPassword", async (req, res, next) => {
-    try{
-        const {id , password } = req.body;
-        let result = await User.verifyPassword(id, password);
-        if (result.error) {
-            return next({ error: 400, message: result.error });
-        }
-        res.json(result);
-    }
-    catch(err){
-        error(err.message);
-        next({ error: 500, message: "Erreur serveur" });
-    }
-});
 
 module.exports = router;

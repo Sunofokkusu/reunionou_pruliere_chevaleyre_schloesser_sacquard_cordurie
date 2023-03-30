@@ -81,29 +81,6 @@ router.put('/', async (req, res, next) => {
     }
 });
 
-router.post('/verifyPassword', async (req, res, next) => {
-    try{
-        if(!req.headers.authorization) return next({error : 401, message : "Unauthorized"});
-        let validate = await axios.post(process.env.USER_SERVICE + "validate", {}, {
-            headers: {
-                Authorization: req.headers.authorization
-            }
-        });
-        let verify = await axios.post(process.env.USER_SERVICE + "verifyPassword", {
-            id : validate.data.id,
-            password : req.body.password
-        },
-        {
-            headers: {
-                Authorization: req.headers.authorization
-            }
-        });
-        res.json(verify.data);
-    }catch(err){
-        console.log(err);
-        return next(err.response.data);
-    }
-});
 
 
 module.exports = router; 
