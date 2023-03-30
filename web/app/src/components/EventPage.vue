@@ -3,27 +3,28 @@
     <div class="row">
       <div class="card col-3">
         <div v-if="eventLoading">
-          <SpinnerComp>
-            Récupération de l'événement en cours...
-          </SpinnerComp>
+          <SpinnerComp> Récupération de l'événement en cours... </SpinnerComp>
         </div>
         <div v-if="eventError">
           Erreur lors de la récupération de l'événement
         </div>
         <div v-else>
-          <div v-if="getEventComputed.title">    
+          <div v-if="getEventComputed.title">
             <h4>{{ getEventComputed.title }}</h4>
             <p>Description: {{ getEventComputed.description }}</p>
             <p>
-              Date de rendez-vous: {{ new Date(getEventComputed.date).toLocaleDateString() }}
+              Date de rendez-vous:
+              {{ new Date(getEventComputed.date).toLocaleDateString() }}
             </p>
             <p>
-              Heure de rendez-vous: {{ new Date(getEventComputed.date).getHours() - 2 }}h{{ new Date(getEventComputed.date).getMinutes() }}
+              Heure de rendez-vous:
+              {{ new Date(getEventComputed.date).getHours() - 2 }}h{{
+                new Date(getEventComputed.date).getMinutes()
+              }}
             </p>
             <p>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
           </div>
         </div>
-        
       </div>
 
       <div class="card col-3">
@@ -70,9 +71,7 @@
 
       <div class="card col-3">
         <div v-if="meteoLoading">
-          <SpinnerComp>
-            Recherche de prévisions météo en cours...
-          </SpinnerComp>
+          <SpinnerComp> Recherche de prévisions météo en cours... </SpinnerComp>
         </div>
         <div v-if="meteoError">
           Erreur lors de la recherche de prévisions météo
@@ -80,17 +79,20 @@
         <div v-else>
           <div v-if="meteo">
             <p>ville: {{ getMeteoComputed.name }}</p>
-            <p>tendance: {{getMeteoComputed.weather[0].description}}</p>
-            <p>température: {{(getMeteoComputed.main.temp - 273.15).toFixed(2)}}°C</p>
-            <p>pression: {{getMeteoComputed.main.pressure}} hPa</p>
-            <p>humidité: {{getMeteoComputed.main.humidity}} %</p>
+            <p>tendance: {{ getMeteoComputed.weather[0].description }}</p>
+            <p>
+              température:
+              {{ (getMeteoComputed.main.temp - 273.15).toFixed(2) }}°C
+            </p>
+            <p>pression: {{ getMeteoComputed.main.pressure }} hPa</p>
+            <p>humidité: {{ getMeteoComputed.main.humidity }} %</p>
           </div>
         </div>
       </div>
     </div>
 
     <div class="row">
-      <div style="height:300px; max-width:616px" class="card map col-6">
+      <div style="height: 300px; max-width: 616px" class="card map col-6">
         <l-map ref="map" :zoom="zoom" :center="[48.69, 6.18]">
           <l-tile-layer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -99,48 +101,108 @@
           ></l-tile-layer>
         </l-map>
       </div>
-      <div class="col-4 card"></div>
-    </div>
-   
-      <q-dialog v-model="join" persistent>
-        <q-card class="modal">
-          <q-card-section class="row items-center">
-            <div class="q-ml-sm">
-              <q-input
-                v-if="this.$store.state.token === ''"
-                v-model="name"
-                label="Nom"
-                autofocus
-              />
-              <q-input v-model="message" label="Message (optionnel)" />
-            </div>
-          </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn
-              flat
-              label="Annuler"
-              color="negative"
-              v-close-popup
-              @Click="reset"
+      <div class="col-4 card">
+        <div class="history_comments">
+          <div v-for="com in comments" :key="com.id">
+            <p>
+              <strong>{{ com.name }}</strong>: {{ com.comment }}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-9">
+            <q-input
+              standout="bg-grey-3 text-black"
+              v-model="comment"
+              label="Commentaire"
+              autofocus
             />
+          </div>
+          <div class="col-3">
             <q-btn
-              flat
-              label="Ajouter"
-              color="primary"
-              v-close-popup
-              @Click="addParticipant"
-            />
-          </q-card-actions>
-
-          <q-card-section v-if="errored" class="items-center">
-            <div class="q-ml-sm red">
-              Veuillez renseigner tous les champs obligatoires
-            </div>
-          </q-card-section>
-        </q-card>
-      </q-dialog>
+          flat
+          label="Valider"
+          color="primary"
+          v-close-popup
+          @Click="addcomment"
+        />
+          </div>
+        </div>
+      </div>
     </div>
+
+    <q-dialog v-model="comment_logoff" persistent>
+      <q-card class="modal">
+        <q-card-section class="row items-center">
+          <div class="q-ml-sm">
+            <q-input v-model="name" label="Nom" />
+          </div>
+        </q-card-section>
+
+        <q-btn
+          flat
+          label="Valider"
+          color="primary"
+          v-close-popup
+          @Click="addcommentlogoff"
+        />
+
+        <q-btn
+            flat
+            label="Annuler"
+            color="negative"
+            v-close-popup
+            @Click="reset"
+          />
+
+        <q-card-section v-if="errored" class="items-center">
+          <div class="q-ml-sm red">
+            Veuillez renseigner tous les champs obligatoires
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="join" persistent>
+      <q-card class="modal">
+        <q-card-section class="row items-center">
+          <div class="q-ml-sm">
+            <q-input
+              v-if="this.$store.state.token === ''"
+              v-model="name"
+              label="Nom"
+              autofocus
+            />
+            <q-input v-model="message" label="Message (optionnel)" />
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="Annuler"
+            color="negative"
+            v-close-popup
+            @Click="reset"
+          />
+          <q-btn
+            flat
+            label="Ajouter"
+            color="primary"
+            v-close-popup
+            @Click="addParticipant"
+          />
+        </q-card-actions>
+
+        <q-card-section v-if="errored" class="items-center">
+          <div class="q-ml-sm red">
+            Veuillez renseigner tous les champs obligatoires
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
 
 <script>
@@ -149,7 +211,7 @@ import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import SpinnerComp from "@/components/Spinner.vue";
 export default {
   name: "EventPage",
-    components: {
+  components: {
     LMap,
     LTileLayer,
     SpinnerComp,
@@ -171,37 +233,49 @@ export default {
       eventError: false,
       button: true,
       user: "",
+      comments: "",
+      comment: "",
+      comment_logoff: false,
+      addComment: ""
     };
   },
   async mounted() {
-      //permet de récupérer les données météo de la ville de l'événement
-      let apiKey = "fb5491e240ff2f7ced5a60bd2e08e545"
-      try {
-        let response = await this.axios.get("https://api.openweathermap.org/data/2.5/weather?q=" + "Nancy" + "&APPID=" + apiKey + "&lang=fr")
-        console.log(response.data);
-        this.meteo = response.data;
-        this.meteoLoading = false;
-      } catch (error) {
-        this.meteoLoading = false;
-        console.log(error);
-        this.meteoError = true;
-      }
+    //permet de récupérer les données météo de la ville de l'événement
+    // let apiKey = "fb5491e240ff2f7ced5a60bd2e08e545";
+    // try {
+    //   let response = await this.axios.get(
+    //     "https://api.openweathermap.org/data/2.5/weather?q=" +
+    //       "Nancy" +
+    //       "&APPID=" +
+    //       apiKey +
+    //       "&lang=fr"
+    //   );
+    //   console.log(response.data);
+    //   this.meteo = response.data;
+    //   this.meteoLoading = false;
+    // } catch (error) {
+    //   this.meteoLoading = false;
+    //   console.log(error);
+    //   this.meteoError = true;
+    // }
 
-      //permet de désactiver les boutons si l'utilisateur est déjà inscrit à l'événement
-      if(this.$store.state.token !== ""){
-        try {
-          let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=all", {})
-          this.user = response.data;
-          this.user.events.forEach((e) => {
-            if(e.id === this.$route.params.event_id){
-              this.button = false;
-            }
-          })
-        } catch (error) {
-          console.log(error);
-        }
+    //permet de désactiver les boutons si l'utilisateur est déjà inscrit à l'événement
+    if (this.$store.state.token !== "") {
+      try {
+        let response = await this.axios.get(
+          this.$store.state.base_url + "/user/me?embed=all",
+          {}
+        );
+        this.user = response.data;
+        this.user.events.forEach((e) => {
+          if (e.id === this.$route.params.event_id) {
+            this.button = false;
+          }
+        });
+      } catch (error) {
+        console.log(error);
       }
-      
+    }
   },
   computed: {
     /**
@@ -225,6 +299,7 @@ export default {
         );
         this.event = response.data;
         this.participants = response.data.participants;
+        this.comments = response.data.comments;
         this.eventLoading = false;
         this.eventError = false;
       } catch (error) {
@@ -246,7 +321,10 @@ export default {
       }
       if (this.$store.state.token === "") {
         this.axios.post(
-          this.$store.state.base_url + "/event/" + this.$route.params.event_id + "/participant",
+          this.$store.state.base_url +
+            "/event/" +
+            this.$route.params.event_id +
+            "/participant",
           {
             name: this.name,
             status: this.status,
@@ -257,7 +335,10 @@ export default {
         this.axios.defaults.headers.post["Authorization"] =
           this.$store.state.token;
         this.axios.post(
-          this.$store.state.base_url + "/event/" + this.$route.params.event_id + "/participant",
+          this.$store.state.base_url +
+            "/event/" +
+            this.$route.params.event_id +
+            "/participant",
           {
             status: this.status,
             message: this.message,
@@ -268,8 +349,6 @@ export default {
       this.button = false;
     },
 
-
-
     /**
      * réinitialise les champs
      * @return inutilisable
@@ -277,8 +356,56 @@ export default {
     reset() {
       this.name = "";
       this.message = "";
+      this.comment = "";
     },
-  }
+    /**
+     * Ajoute un commentaire si l'utilisateur est connecté, ouvre le pop-up de nom sinon
+     * @return inutilisable
+     */
+    async addcomment() {
+      if (this.$store.state.token === "") {
+        this.comment_logoff = true;
+      } else {
+        try {
+          this.axios.defaults.headers.post["Authorization"] =
+            this.$store.state.token;
+          this.axios.post(
+            this.$store.state.base_url +
+              "/event/" +
+              this.$route.params.event_id +
+              "/comment",
+            {
+              message: this.comment,
+            }
+          );
+          this.reset();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    /**
+     * Ajoute un commentaire si l'utilisateur n'est pas connecté
+     * @return inutilisable
+     */
+    async addcommentlogoff() {
+      try {
+        this.axios.post(
+          this.$store.state.base_url +
+            "/event/" +
+            this.$route.params.event_id +
+            "/comment",
+          {
+            name: this.name,
+            message: this.comment,
+          }
+        );
+        this.reset();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
 };
 </script>
 
@@ -297,7 +424,7 @@ export default {
   text-overflow: ellipsis;
 }
 
-.map { 
+.map {
   padding: 0;
 }
 
@@ -324,6 +451,17 @@ h4 {
   margin-bottom: 10px;
 }
 .history > div > p {
+  margin-bottom: -4px;
+  margin-top: 5px;
+  border-bottom: solid 1px #000000;
+}
+.history_comments {
+  overflow-y: scroll;
+  height: 225px !important;
+  background-color: #e5e5e5;
+  border-radius: 10px;
+}
+.history_comments > div > p {
   margin-bottom: -4px;
   margin-top: 5px;
   border-bottom: solid 1px #000000;
