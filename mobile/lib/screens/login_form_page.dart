@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:reunionou/screens/home_page.dart';
 import '../auth_provider.dart';
 
 class LoginFormPage extends StatefulWidget {
@@ -89,6 +90,11 @@ class _LoginFormPageState extends State<LoginFormPage> {
                           if (await success) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Connexion réussie')),
+                            );
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(),
+                              ),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
