@@ -18,4 +18,17 @@ class Event {
   double lat;
   String adress;
   DateTime datetime;
+
+  static Event fromJson(data) {
+    return Event(
+      id: data['id'],
+      idCreator: data['id_creator'],
+      title: data['title'],
+      desc: data['description'],
+      long: double.parse(data['long'].toString()),
+      lat: double.parse(data['lat'].toString()),
+      adress: data['adress'],
+      datetime: DateTime.parse(data['date']),
+    );
+  }
 }
