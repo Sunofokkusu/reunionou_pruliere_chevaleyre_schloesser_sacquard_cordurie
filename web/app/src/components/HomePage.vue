@@ -130,6 +130,10 @@ export default {
     },
   },
   methods: {
+    /**
+     * Fonction qui permet de récupérer tous les évènements où l'utilisateur participe ou ceux qu'il a créer
+     * @return intutilisable
+     */
     getEvents() {
         this.axios.defaults.headers.get["Authorization"] =
         this.$store.state.token;
