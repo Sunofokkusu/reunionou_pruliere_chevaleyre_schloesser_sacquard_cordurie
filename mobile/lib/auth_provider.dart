@@ -5,16 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:reunionou/models/user.dart';
 
 class AuthProvider with ChangeNotifier {
-
   // Quand le service de connexion fonctionnera, _isLoggedIn sera initialisé à false et _user à null
   bool _isLoggedIn = false;
   String _authToken = '';
   late User? _user;
- 
+
   bool get isLoggedIn => _isLoggedIn;
   String get token => _authToken;
   User? get user => _user;
-
 
   Future<bool> login(String token) async {
     final response = await http.get(
@@ -41,13 +39,14 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> update(String? name, String? currentPassword, String? newPassword) async {
+  Future<bool> update(
+      String? name, String? currentPassword, String? newPassword) async {
     var updated = true;
     if (_isLoggedIn && _user != null && _authToken != '') {
       final response = await http.put(
         Uri.parse('http://localhost:80/user/'),
-        headers: <String, String> {
-          'Authorization' : 'Bearer $token',
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String?>{
