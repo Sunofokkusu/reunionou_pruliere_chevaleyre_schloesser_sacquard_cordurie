@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:reunionou/auth_provider.dart';
 import 'package:reunionou/models/event.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EventsProvider with ChangeNotifier {
   final AuthProvider? _authProvider;
@@ -26,7 +27,7 @@ class EventsProvider with ChangeNotifier {
       String? adress, double? lat, double? long) async {
     var post = true;
     final response = await http.post(
-      Uri.parse('http://localhost:80/event/'),
+      Uri.parse('${dotenv.env["BASE_URL"]!}/event/'),
       headers: <String, String>{
         'Authorization': 'Bearer ${_authProvider!.token}',
         'Content-Type': 'application/json; charset=UTF-8',

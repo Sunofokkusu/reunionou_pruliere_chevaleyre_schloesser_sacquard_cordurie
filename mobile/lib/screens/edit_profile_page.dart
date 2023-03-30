@@ -121,14 +121,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        bool canUpdate = await auth.verifyPassword(_password);
                         if (_name == auth.user!.name && _newPassword == '') {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Pas de changement')),
                           );
                           Navigator.of(context).pop();
-                        } 
-                        print(_newPassword);
+                        }
                         Future<bool> updated = auth.update(
                           _name,
                           _password,

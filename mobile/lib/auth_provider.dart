@@ -41,32 +41,12 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> verifyPassword(String password) async {
-    var verified = false;
-    if (_isLoggedIn && _user != null && _authToken != '') {
-      final response = await http.post(
-        Uri.parse('http://localhost:80/user/verifyPassword'),
-        headers: <String, String>{
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String?>{'password': password}),
-      );
-      if (response.statusCode == 200) {
-        verified = true;
-      } else {
-        print(response.statusCode);
-      }
-    }
-    return verified;
-  }
 
-  Future<bool> update(
-      String? name, String? password, String? newPassword) async {
+  Future<bool> update(String? name, String? password, String? newPassword) async {
     var updated = false;
     if (_isLoggedIn && _user != null && _authToken != '') {
       final response = await http.put(
-        Uri.parse('http://localhost:80/user/'),
+        Uri.parse('${dotenv.env["BASE_URL"]!}/user/'),
         headers: <String, String>{
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -81,6 +61,7 @@ class AuthProvider with ChangeNotifier {
         _user!.name = name!;
         updated = true;
       } else {
+        print("salut à tous :D");
         print(response.statusCode);
       }
     }
