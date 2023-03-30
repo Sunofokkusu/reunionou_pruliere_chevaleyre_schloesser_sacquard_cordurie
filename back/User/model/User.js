@@ -52,10 +52,48 @@ async function getUser(id) {
     return { id: user.id, name: user.name, email: user.email };
 }
 
+async function updateUser(id, name, password, newPassword) {
+    const user = await db('users').where({ id: id }).first();
+    if (!user) {
+        return { error: 'Utilisateur non trouvé' };
+    }
+    const verify = await verifyPassword(id, password);
+    if (verify.error) {
+        return { error: verify.error };
+    }
+    if (newPassword) {
+        const hash = await bcrypt.hash(newPassword, 10);
+        const updatedUser = await db('users').where({ id: id }).update({ pass: hash });
+        if (!updatedUser) {
+            return { error: 'Erreur lors de la modification de l\'utilisateur' };
+        }
+    }
+    if (name) {
+        const updatedUser = await db('users').where({ id: id }).update({ name: name });
+        if (!updatedUser) {
+            return { error: 'Erreur lors de la modification de l\'utilisateur' };
+        }
+    }
+    return { success: true };
+}
+
+async function verifyPassword(id, password) {
+    const user = await db('users').where({ id: id }).first();
+    if (!user) {
+        return { error: 'Utilisateur non trouvé' };
+    }
+    const match = await bcrypt.compare(password, user.pass);
+    if (!match) {
+        return { error: 'Mot de passe incorrect' };
+    }
+    return { success: true };
+}
 
 module.exports = {
     signup,
     login,
     validate,
-    getUser
+    getUser,
+    updateUser,
+    verifyPassword
 }
