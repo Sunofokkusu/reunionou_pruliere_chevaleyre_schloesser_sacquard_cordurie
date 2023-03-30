@@ -34,6 +34,7 @@ async function login(mail, password) {
 async function validate(token) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decoded);
         const user = await db('users').where({ id: decoded.id }).first();
         if (!user) {
             return { error: 'token invalide' };
@@ -80,6 +81,7 @@ async function updateUser(id, name, password, newPassword) {
 async function verifyPassword(id, password) {
     const user = await db('users').where({ id: id }).first();
     if (!user) {
+        console.log('Utilisateur non trouvé');
         return { error: 'Utilisateur non trouvé' };
     }
     const match = await bcrypt.compare(password, user.pass);

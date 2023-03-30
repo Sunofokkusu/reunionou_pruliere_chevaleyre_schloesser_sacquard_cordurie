@@ -4,12 +4,9 @@ const axios = require("axios");
 
 router.get("/me", async (req, res, next) => {
   try {
-    if (!req.headers.authorization)
-      return next({ error: 401, message: "Unauthorized" });
+    if (!req.headers.authorization)return next({ error: 401, message: "Unauthorized" });
     let validate = await axios.post(
-      process.env.USER_SERVICE + "validate",
-      {},
-      {
+      process.env.USER_SERVICE + "validate",{},{
         headers: {
           Authorization: req.headers.authorization,
         },
@@ -21,6 +18,20 @@ router.get("/me", async (req, res, next) => {
     let invited = await axios.get(
       process.env.EVENT_SERVICE + "user/" + validate.data.id + "/invited"
     );
+    for (let i = 0; i < events.data.length; i++) {
+      let creator = await axios.get(process.env.USER_SERVICE + events.data[i].id_creator);
+      events.data[i].creator = {
+        name: creator.data.name,
+        mail : creator.data.email
+      }
+    }
+    for (let i = 0; i < invited.data.length; i++) {
+      let creator = await axios.get(process.env.USER_SERVICE + invited.data[i].id_creator);
+      invited.data[i].creator = {
+        name: creator.data.name,
+        mail : creator.data.email
+      }
+    }
     if (req.query.embed === "events") {
       res.json({
         id : validate.data.id,
@@ -43,6 +54,7 @@ router.get("/me", async (req, res, next) => {
         events: events.data.concat(invited.data),
       });
     } else {
+      console.log("here");
       res.json({
         id : validate.data.id,
         name: validate.data.name,
