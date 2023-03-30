@@ -130,7 +130,11 @@ export default {
         this.axios.defaults.headers.get["Authorization"] = this.$store.state.token
         let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed="+select, {})
         if(response.data.events !== undefined || response.data.events !== []){
-          this.events = response.data.events;
+          if(select === "invited"){
+            this.events = response.data.invited
+          }else{
+            this.events = response.data.events;
+          }
         }
         this.eventError = false;
         this.eventLoading = false;
