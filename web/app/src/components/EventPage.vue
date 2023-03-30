@@ -2,19 +2,28 @@
   <div class="center">
     <div class="row">
       <div class="card col-3">
-        <h4>{{ getEventComputed.title }}</h4>
-        <p>Description: {{ getEventComputed.description }}</p>
-        <p>
-          Date de rendez-vous:
-          {{ new Date(getEventComputed.date).toLocaleDateString() }}
-        </p>
-        <p>
-          Heure de rendez-vous:
-          {{ new Date(getEventComputed.date).getHours() - 2 }}h{{
-            new Date(getEventComputed.date).getMinutes()
-          }}
-        </p>
-        <p>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
+        <div v-if="eventLoading">
+          <SpinnerComp>
+            Récupération de l'événement en cours...
+          </SpinnerComp>
+        </div>
+        <div v-if="eventError">
+          Erreur lors de la récupération de l'événement
+        </div>
+        <div v-else>
+          <div v-if="getEventComputed.title">    
+            <h4>{{ getEventComputed.title }}</h4>
+            <p>Description: {{ getEventComputed.description }}</p>
+            <p>
+              Date de rendez-vous: {{ new Date(getEventComputed.date).toLocaleDateString() }}
+            </p>
+            <p>
+              Heure de rendez-vous: {{ new Date(getEventComputed.date).getHours() - 2 }}h{{ new Date(getEventComputed.date).getMinutes() }}
+            </p>
+            <p>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
+          </div>
+        </div>
+        
       </div>
 
       <div class="card col-3">
@@ -156,15 +165,16 @@ export default {
       choice: false,
       status: 0,
       meteo: "",
-      meteoLoading: false,
+      meteoLoading: true,
       meteoError: false,
+      eventLoading: true,
+      eventError: false,
       button: true,
       user: "",
     };
   },
   async mounted() {
       //permet de récupérer les données météo de la ville de l'événement
-      this.meteoLoading = true;
       let apiKey = "fb5491e240ff2f7ced5a60bd2e08e545"
       try {
         let response = await this.axios.get("https://api.openweathermap.org/data/2.5/weather?q=" + "Nancy" + "&APPID=" + apiKey + "&lang=fr")
@@ -209,14 +219,18 @@ export default {
      * @return inutilisable
      */
     async getEvent() {
-        try {
+      try {
         let response = await this.axios.get(
           this.$store.state.base_url + "/event/" + this.$route.params.event_id
         );
         this.event = response.data;
         this.participants = response.data.participants;
+        this.eventLoading = false;
+        this.eventError = false;
       } catch (error) {
         console.log(error);
+        this.eventLoading = false;
+        this.eventError = true;
       }
     },
 

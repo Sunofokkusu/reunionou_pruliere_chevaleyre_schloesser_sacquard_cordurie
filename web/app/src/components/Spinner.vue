@@ -1,7 +1,7 @@
 <template>
     <div>
         <slot></slot>
-            <img src="../assets/spinner.svg" alt="spinner" />
+        <img src="../assets/spinner.svg" alt="spinner" />
     </div>
 </template>
 
