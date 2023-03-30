@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:reunionou/screens/home_page.dart';
 import '../auth_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginFormPage extends StatefulWidget {
   const LoginFormPage({super.key});
@@ -72,8 +73,10 @@ class _LoginFormPageState extends State<LoginFormPage> {
                   return ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
+                        await dotenv.load(fileName: "assets/.env");
+                        print('${dotenv.env['BASE_URL']!}/auth/signin');
                         final response = await http.post(
-                          Uri.parse('http://localhost:80/auth/signin'),
+                          Uri.parse('${dotenv.env['BASE_URL']!}/auth/signin'),
                           headers: <String, String>{
                             'Content-Type': 'application/json; charset=UTF-8',
                           },

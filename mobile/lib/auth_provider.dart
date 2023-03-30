@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:reunionou/models/user.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
@@ -14,12 +15,14 @@ class AuthProvider with ChangeNotifier {
   User? get user => _user;
 
   Future<bool> login(String token) async {
+    await dotenv.load(fileName: "assets/.env");
     final response = await http.get(
-      Uri.parse('http://localhost:80/user/me'),
+      Uri.parse('${dotenv.env["BASE_URL"]!}/user/me'),
       headers: <String, String>{
         'Authorization': 'Bearer $token',
       },
     );
+    print(response.body);
     if (response.statusCode == 200) {
       _user = User.fromJson(jsonDecode(response.body));
       _isLoggedIn = true;
