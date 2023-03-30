@@ -41,7 +41,7 @@ export default {
   mounted() {
       this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
       this.axios
-        .get("http://localhost:80/user/me?embed=events", {})
+        .get(this.$store.state.base_url + "/user/me?embed=events", {})
         .then((response) => {
           this.user = response.data;
         });
