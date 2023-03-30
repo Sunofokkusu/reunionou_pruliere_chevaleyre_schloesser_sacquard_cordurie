@@ -11,16 +11,16 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _confirmNewPasswordController = TextEditingController();
-  final _currentPasswordController = TextEditingController();
+  late String _name = '';
+  late String _newPassword = '';
+  late String _confirmNewPassword = '';
+  late String _password = '';
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, auth, child) {
-        _nameController.text = auth.user!.name;
+        String currentName = auth.user!.name;
         return Scaffold(
           appBar: AppBar(
             title: const Text('Edit profile'),
@@ -33,85 +33,125 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TextFormField(
-                    controller: _nameController,
+                    initialValue: currentName,
+                    maxLength: 30,
                     decoration: const InputDecoration(
-                      labelText: 'Name',
-                      hintText: 'Enter new name',
-                    ), 
+                      labelText: 'Nom',
+                      hintText: 'Entrer votre nom',
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _name = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Entrer votre nom';
+                      } else if (value.length < 3) {
+                        return 'Le nom doit contenir au moins 3 caractères';
+                      }
+                      return null;
+                    },
                   ),
                   TextFormField(
-                    controller: _newPasswordController,
+                    initialValue: _newPassword,
+                    maxLength: 30,
                     obscureText: true,
                     decoration: const InputDecoration(
-                      labelText: 'New Password',
-                      hintText: 'Enter your new password',
+                      labelText: 'Nouveau mot de passe',
+                      hintText: 'Entrer votre nouveau mot de passe',
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        _newPassword = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value != '' && value!.length < 6) {
+                        return 'Le mot de passe doit contenir au moins 6 caractères';
+                      }
+                      return null;
+                    },
                   ),
                   TextFormField(
-                    controller: _confirmNewPasswordController,
+                    initialValue: _confirmNewPassword,
+                    maxLength: 30,
                     obscureText: true,
                     decoration: const InputDecoration(
-                      labelText: 'Confirm Password',
-                      hintText: 'Confirm your new password',
+                      labelText: 'Confirmation',
+                      hintText: 'Confirmer votre nouveau mot de passe',
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        _confirmNewPassword = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (_newPassword != '' && value == '') {
+                        return 'Confimer votre nouveau mot de passe';
+                      } else if (_newPassword != _confirmNewPassword) {
+                        return 'Les mots de passe ne correspondent pas';
+                      }
+                      return null;
+                    },
                   ),
                   TextFormField(
-                    controller: _currentPasswordController,
+                    initialValue: _password,
                     obscureText: true,
                     decoration: const InputDecoration(
-                      labelText: 'Current Password',
-                      hintText: 'Enter your current password',
+                      labelText: 'Mot de passe actuel',
+                      hintText: 'Entrer votre mot de passe',
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        _password = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (_name == '') {
+                        _name = auth.user!.name;
+                      }
+                      if ((_newPassword != '' || _name != auth.user!.name) && value == '') {
+                        return 'Entrer votre mot de passe pour valider les changements';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
-                      var canUpdate = true;
-                      if ((_nameController.text != auth.user!.name && _nameController.text.isNotEmpty) || _newPasswordController.text.isNotEmpty) {
-                        if (_newPasswordController.text.isNotEmpty) {
-                          if (_currentPasswordController.text.isEmpty) {
-                            canUpdate = false;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Please enter your current password')),
-                            );
-                          } else {                          
-                            if (_newPasswordController.text.isNotEmpty && _confirmNewPasswordController.text.isEmpty) {
-                              canUpdate = false;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please confirm your new password')),
-                              );
-                            } else {
-                              if (_newPasswordController.text != _confirmNewPasswordController.text) {
-                                canUpdate = false;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('New passwords do not match')),
-                                );
-                              } 
-                            }
-                          } 
-                        }
-                        if (canUpdate) {
-                          Future<bool> updated = auth.update(
-                            _nameController.text,
-                            _currentPasswordController.text,
-                            _newPasswordController.text
+                      if (_formKey.currentState!.validate()) {
+                        bool canUpdate = await auth.verifyPassword(_password);
+                        if (_name == auth.user!.name && _newPassword == '') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Pas de changement')),
                           );
-                          if (await updated) {
+                          Navigator.of(context).pop();
+                        } else {
+                          if (canUpdate == false) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Profile updated')),
+                              const SnackBar(content: Text('Mauvais mot de passe')),
                             );
-                            Navigator.of(context).pop();
+                            return;
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Error updating profile')),
+                            print(_newPassword);
+                            Future<bool> updated = auth.update(
+                              _name,
+                              _password,
+                              _newPassword,
                             );
-                          }
-                        }       
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('No changes')),
-                        );
-                        Navigator.of(context).pop();
+                            if (await updated) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Informations mises à jour')),
+                              );
+                              Navigator.of(context).pop();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Erreur lors de la mise à jour')),
+                              );
+                            }    
+                          }                           
+                        }
                       }
                     },
                     child: const Text('Update'),

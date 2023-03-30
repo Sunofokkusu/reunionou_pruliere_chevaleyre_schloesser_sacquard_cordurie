@@ -6,7 +6,6 @@ import 'package:reunionou/models/user.dart';
 
 class AuthProvider with ChangeNotifier {
 
-  // Quand le service de connexion fonctionnera, _isLoggedIn sera initialisé à false et _user à null
   bool _isLoggedIn = false;
   String _authToken = '';
   late User? _user;
@@ -41,8 +40,30 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> update(String? name, String? currentPassword, String? newPassword) async {
-    var updated = true;
+  Future<bool> verifyPassword(String password) async {
+    var verified = false;
+    if (_isLoggedIn && _user != null && _authToken != '') {
+      final response = await http.post(
+        Uri.parse('http://localhost:80/user/verifyPassword'),
+        headers: <String, String> {
+          'Authorization' : 'Bearer $token',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String?>{
+          'password': password
+        }),
+      );
+      if (response.statusCode == 200) {
+        verified = true;
+      } else {
+        print(response.statusCode);
+      }
+    }
+    return verified;
+  }
+
+  Future<bool> update(String? name, String? password, String? newPassword) async {
+    var updated = false;
     if (_isLoggedIn && _user != null && _authToken != '') {
       final response = await http.put(
         Uri.parse('http://localhost:80/user/'),
@@ -52,7 +73,7 @@ class AuthProvider with ChangeNotifier {
         },
         body: jsonEncode(<String, String?>{
           'name': name,
-          'password': currentPassword,
+          'password': password,
           'newPassword': newPassword
         }),
       );
