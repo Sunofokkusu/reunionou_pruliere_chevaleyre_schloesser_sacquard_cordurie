@@ -4,15 +4,13 @@
             <h1 @click="this.$router.push({name:'HomePage'})">Reunionou</h1>
             <div class="auth" v-if="connected">
                 <div>
-                    <router-link class="white" to="profile" scope="div"> 
-                        {{ name }} <q-icon name="fas fa-user"/>
-                    </router-link>
+                        <span @click="this.$router.push({name:'ProfileUser'})">{{ name }} <q-icon name="fas fa-user"/></span>
                     /
-                    <a href="" class="white" @click="logout"> déconnexion <q-icon name="fas fa-door-open"/></a>
+                    <span @click="logout"> déconnexion <q-icon name="fas fa-door-open"/></span>
                 </div> 
             </div>
             <div v-else class="auth">
-                <router-link class="white" to="signIn" scope="div">Connexion/Inscription</router-link>
+                <span @click="this.$router.push({name:'signIn'})">Connexion/Inscription</span> 
             </div>
         </div>   
         <router-view/>

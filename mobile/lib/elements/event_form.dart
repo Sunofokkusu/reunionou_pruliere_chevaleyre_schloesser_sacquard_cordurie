@@ -19,12 +19,12 @@ class _EventFormState extends State<EventForm> {
   late String title = widget.event?.title ?? "";
   late String desc = widget.event?.desc ?? "";
   late DateTime datetime = widget.event?.datetime ?? DateTime.now();
-  late String place = widget.event?.place ?? "";
+  late String adress = widget.event?.adress ?? "";
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<EventsProvider>(builder: (context, builder, child) {
+    return Consumer<EventsProvider>(builder: (context, eventsProvider, child) {
       return SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.all(25.0),
@@ -74,14 +74,14 @@ class _EventFormState extends State<EventForm> {
                       ),
                     ),
                     TextFormField(
-                        initialValue: place,
+                        initialValue: adress,
                         maxLength: 100,
                         decoration: const InputDecoration(
                           labelText: "Adresse*",
                         ),
                         onChanged: (value) {
                           setState(() {
-                            place = value;
+                            adress = value;
                           });
                         },
                         validator: (value) {
@@ -145,13 +145,14 @@ class _EventFormState extends State<EventForm> {
                           );
                         }
 
-                        // if (widget.event == null) {
-                        //   builder.addTask(Event(title, desc));
-                        // } else {
-                        //   widget.event!.title = title;
-                        //   widget.event!.desc = desc;
-                        //   builder.updateTask(widget.event!);
-                        // }
+                        if (widget.event == null) {
+                          eventsProvider.createEvent(
+                              title, desc, datetime.toString(), adress, 0, 0);
+                        } else {
+                          // widget.event!.title = title;
+                          // widget.event!.desc = desc;
+                          // eventsProvider.updateTask(widget.event!);
+                        }
 
                         // ignore: use_build_context_synchronously
                         Navigator.of(context).pushAndRemoveUntil(

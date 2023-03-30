@@ -7,7 +7,7 @@ const Comment = require('../model/comment');
 
 const { info, error } = require('../helper/logger');
 
-const { eventInsertValidator, participantInsertValidator } = require('../validator/eventValidator');
+const { eventInsertValidator, participantInsertValidator, commentInsertValidator } = require('../validator/eventValidator');
 
 router.post('/', eventInsertValidator, async (req, res, next) => {
     try{
@@ -25,10 +25,10 @@ router.post('/', eventInsertValidator, async (req, res, next) => {
     }
 });
 
-router.get('/:token', async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
     try{
-        const {token} = req.params;
-        let event = await Event.getEvent(token);
+        const {id} = req.params;
+        let event = await Event.getEvent(id);
         if (event.error) {
             return next(500)
         }
@@ -39,6 +39,11 @@ router.get('/:token', async (req, res, next) => {
         participant.forEach(element => {
             if(element.message == null) delete element.message;
         });
+        let comment = await Comment.getComments(event.id);
+        if (comment.error) {
+            return next(500)
+        }
+        event.comments = comment;
         event.participants = participant;
         res.json(event);
     }
@@ -71,7 +76,28 @@ router.post('/:id/participant', participantInsertValidator, async (req, res, nex
     }
 });
 
-
+router.post('/:id/comment', commentInsertValidator, async (req, res, next) => {
+    try{
+        const idEvent = req.params.id;
+        const {message} = req.body;
+        let event = await Event.getEvent(idEvent);
+        if (event.error) {
+            return next(event);
+        }
+        const {id, name} = req.body;
+        let comment = await Comment.addComment(event.id, id, name, message);
+        if (comment.error) {
+            return next(500)
+        }
+        res.json({
+            "type" : "info",
+            "message" : "Commentaire ajouté"
+        })
+    }catch(err){
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
 
 router.get('/user/:id', async (req, res, next) => {
     try{
@@ -88,8 +114,28 @@ router.get('/user/:id', async (req, res, next) => {
     }
 });
 
-
-
+router.get('/user/:id/invited', async (req, res, next) => {
+    try{
+        const {id} = req.params;
+        let result = await Participant.getInvitedEvents(id);
+        if (result.error) {
+            return next(500)
+        }
+        let events = [];
+        for (let i = 0; i < result.length; i++) {
+            let event = await Event.getEvent(result[i].id_event);
+            if (event.error) {
+                return next(500)
+            }
+            events.push(event);
+        }
+        res.json(events);
+    }
+    catch(err){
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
 
 
 module.exports = router;

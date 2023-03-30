@@ -6,8 +6,7 @@ class Event {
     required this.desc,
     required this.long,
     required this.lat,
-    required this.place,
-    required this.url,
+    required this.adress,
     required this.datetime,
   });
 
@@ -17,7 +16,6 @@ class Event {
   String desc;
   double long;
   double lat;
-  String place;
+  String adress;
   DateTime datetime;
-  String url;
 }
