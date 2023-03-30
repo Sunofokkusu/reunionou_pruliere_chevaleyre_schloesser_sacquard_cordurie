@@ -23,24 +23,28 @@ router.get("/me", async (req, res, next) => {
     );
     if (req.query.embed === "events") {
       res.json({
+        id : validate.data.id,
         name: validate.data.name,
         mail: validate.data.email,
         events: events.data,
       });
     } else if (req.query.embed === "invited") {
       res.json({
+        id : validate.data.id,
         name: validate.data.name,
         mail: validate.data.email,
         invited: invited.data,
       });
     } else if (req.query.embed === "all") {
       res.json({
+        id : validate.data.id,
         name: validate.data.name,
         mail: validate.data.email,
         events: events.data.concat(invited.data),
       });
     } else {
       res.json({
+        id : validate.data.id,
         name: validate.data.name,
         mail: validate.data.email,
       });
