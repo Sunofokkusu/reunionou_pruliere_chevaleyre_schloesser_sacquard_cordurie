@@ -32,7 +32,7 @@ async function getEvent(id) {
   try{
     const result = await db("events").where({ id : id }).first();
     if (!result) {
-      return { error: "Error getting event" };
+      return { error: 404, message: "Evenement non trouvé" };
     }
     return result;
   }catch(err){

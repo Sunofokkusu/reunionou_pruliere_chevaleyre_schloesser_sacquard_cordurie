@@ -35,7 +35,7 @@
           </div>
         </div>
         <div class="center">
-          <div class="row">
+          <div class="row" v-if="button">
             <q-btn
               color="primary"
               class="col-5"
@@ -158,6 +158,8 @@ export default {
       meteo: "",
       meteoLoading: false,
       meteoError: false,
+      button: true,
+      user: "",
     };
   },
   async mounted() {
@@ -190,7 +192,7 @@ export default {
      * @return inutilisable
      */
     async getEvent() {
-      try {
+        try {
         let response = await this.axios.get(
           "http://localhost:80/event/" + this.$route.params.event_id
         );
@@ -232,6 +234,7 @@ export default {
         );
       }
       this.reset();
+      this.button = false;
     },
 
 
@@ -245,6 +248,25 @@ export default {
       this.message = "";
     },
   },
+  mounted(){
+    if(this.$store.state.token !== ""){
+      this.axios
+        .get("http://localhost:80/user/me?embed=all", {})
+        .then((response) => {
+          this.user = response.data;
+          this.user.events.forEach((e) => {
+          if(e.id === this.$route.params.event_id){
+            this.button = false;
+          }
+        })
+        this.user.invited.forEach((e) => {
+          if(e.id === this.$route.params.event_id){
+            this.button = false;
+          }
+        })
+        });
+    }
+  }
 };
 </script>
 

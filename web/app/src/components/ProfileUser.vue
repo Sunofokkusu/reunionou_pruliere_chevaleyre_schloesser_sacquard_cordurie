@@ -9,12 +9,14 @@
       <div class="card">
         <p>Évènements créés</p>
         <div class="row  col-8">
-          <div v-for="event in user.events" :key="event.id" class="card eventCard col-2">
+          <div v-for="event in user.events" :key="event.id" class="card eventCard col-2" @click="
+          this.$router.push({ name: 'Event', params: { event_id: event.id } })
+        ">
             <button class="delete" @click.stop="">❌</button>
             <p>{{ event.title }}</p>
             <p>{{ event.description }}</p>
             <p>{{ new Date(event.date).toLocaleDateString() }}</p>
-            <p>{{ new Date(event.date).getHours() }}h{{ new Date(event.date).getMinutes() }}</p>
+            <p>{{ new Date(event.date).getHours()-2 }}h{{ new Date(event.date).getMinutes() }}</p>
             <p>{{ event.adress }}</p>
           </div>
         </div>

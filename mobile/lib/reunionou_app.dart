@@ -16,6 +16,9 @@ class _ReunionouAppState extends State<ReunionouApp> {
       home: const AuthenticationWrapper(),
       theme: ThemeData(
         fontFamily: 'SairaCondensed',
+        colorScheme: const ColorScheme.light(
+          primary: Color.fromARGB(255, 221, 96, 255),
+        ),
         appBarTheme: const AppBarTheme(
             backgroundColor: Color.fromARGB(255, 140, 24, 172),
             centerTitle: true,
@@ -30,6 +33,7 @@ class _ReunionouAppState extends State<ReunionouApp> {
         ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Color.fromARGB(255, 221, 96, 255),
+          foregroundColor: Colors.white,
         ),
       ),
     );

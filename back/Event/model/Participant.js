@@ -28,7 +28,22 @@ async function addParticipant(eventId, user, name, status, message){
     }
 }
 
+async function getInvitedEvents(id){
+    try{
+        const result = await db('participant').where({ id_user : id});
+        if(!result){
+            return {error : "Error getting events" };
+        }
+        return result;
+    }catch(err){
+        return {error : "Error getting events" };
+    }
+}
+
+
+
 module.exports = {
     getEventParticipants,
-    addParticipant
+    addParticipant,
+    getInvitedEvents
 }

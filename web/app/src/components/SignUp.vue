@@ -70,6 +70,7 @@ export default {
           this.axios.get("http://localhost:80/user/me")
             .then((response) => {
               this.$store.commit("setName", response.data.name)
+              this.$router.push({ name: "HomePage" })
             }
             ).catch((error) => {
               console.log(error)
@@ -78,10 +79,7 @@ export default {
         .catch((error) => {
           this.errorMsg = error.response.data.message;
           this.errorSignUp = true;
-        })
-        .finally(
-          this.$router.push({ name: "HomePage" })
-        );
+        });
       } else {
         this.errored = true;
       }

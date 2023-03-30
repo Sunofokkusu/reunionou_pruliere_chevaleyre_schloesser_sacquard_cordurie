@@ -22,6 +22,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const AutoSizeText(
           'Login',
           minFontSize: 15.0,
@@ -40,11 +41,11 @@ class _LoginFormPageState extends State<LoginFormPage> {
                 controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'Email',
-                  hintText: 'Enter your email',
+                  hintText: 'Entrez votre email',
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter your email';
+                    return 'Entrez votre email';
                   }
                   return null;
                 },
@@ -54,12 +55,12 @@ class _LoginFormPageState extends State<LoginFormPage> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration: const InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter your password',
+                  labelText: 'Mot de passe',
+                  hintText: 'Entrez votre mot de passe',
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter your password';
+                    return 'Entrez votre mot de passe';
                   }
                   return null;
                 },
@@ -87,18 +88,25 @@ class _LoginFormPageState extends State<LoginFormPage> {
                                   .substring(7));
                           if (await success) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Login successful')),
+                              const SnackBar(content: Text('Connexion réussie')),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Login failed')),
+                              const SnackBar(content: Text('Echec de la connexion')),
                             );
                           }
+                        } else if (response.statusCode == 502) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Connexion au serveur impossible')),
+                          );
+                        } else if (response.statusCode == 400) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Email ou mot de passe incorrect')),
+                          );
                         } else {
                           print(response.statusCode);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Wrong email or password')),
+                            const SnackBar(content: Text('Erreur inconnue')),
                           );
                         }
                       }
