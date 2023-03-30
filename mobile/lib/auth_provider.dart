@@ -46,7 +46,7 @@ class AuthProvider with ChangeNotifier {
     var updated = false;
     if (_isLoggedIn && _user != null && _authToken != '') {
       final response = await http.put(
-        Uri.parse('http://localhost:80/user/'),
+        Uri.parse('${dotenv.env["BASE_URL"]!}/user/'),
         headers: <String, String>{
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json; charset=UTF-8',
