@@ -16,6 +16,7 @@ const store = createStore({
       connected: false,
       token: "",
       name: "",
+      base_url: "http://localhost:80"
     };
   },
   mutations: {

@@ -180,7 +180,7 @@ export default {
       //permet de désactiver les boutons si l'utilisateur est déjà inscrit à l'événement
       if(this.$store.state.token !== ""){
         try {
-          let response = await this.axios.get("http://localhost:80/user/me?embed=all", {})
+          let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=all", {})
           this.user = response.data;
           this.user.events.forEach((e) => {
             if(e.id === this.$route.params.event_id){
@@ -211,7 +211,7 @@ export default {
     async getEvent() {
         try {
         let response = await this.axios.get(
-          "http://localhost:80/event/" + this.$route.params.event_id
+          this.$store.state.base_url + "/event/" + this.$route.params.event_id
         );
         this.event = response.data;
         this.participants = response.data.participants;
@@ -232,7 +232,7 @@ export default {
       }
       if (this.$store.state.token === "") {
         this.axios.post(
-          "http://localhost:80/event/" + this.$route.params.event_id + "/participant",
+          this.$store.state.base_url + "/event/" + this.$route.params.event_id + "/participant",
           {
             name: this.name,
             status: this.status,
@@ -243,7 +243,7 @@ export default {
         this.axios.defaults.headers.post["Authorization"] =
           this.$store.state.token;
         this.axios.post(
-          "http://localhost:80/event/" + this.$route.params.event_id + "/participant",
+          this.$store.state.base_url + "/event/" + this.$route.params.event_id + "/participant",
           {
             status: this.status,
             message: this.message,
