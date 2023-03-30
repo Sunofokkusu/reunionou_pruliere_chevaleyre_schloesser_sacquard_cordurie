@@ -141,12 +141,20 @@ export default {
     };
   },
   computed: {
+    /**
+     * récupère l'événement
+     * @returns {Object} l'événement
+     */
     getEventComputed() {
       this.getEvent();
       return this.event;
     },
   },
   methods: {
+    /**
+     * récupère l'événement
+     * @return inutilisable
+     */
     async getEvent() {
       try {
         let response = await this.axios.get(
@@ -158,6 +166,11 @@ export default {
         console.log(error);
       }
     },
+
+    /**
+     * ajoute un participant à l'évènement
+     * @return inutilisable
+     */
     addParticipant() {
       if (this.choice === false) {
         this.status = 2;
@@ -184,9 +197,13 @@ export default {
           }
         );
       }
-      this.name = "";
-      this.message = "";
+      reset();
     },
+
+    /**
+     * réinitialise les champs
+     * @return inutilisable
+     */
     reset() {
       this.name = "";
       this.message = "";
