@@ -47,7 +47,7 @@ export default {
         this.errored = false;
         this.errorSignIn = false;
         this.errorMsg = ""
-        this.axios.post("http://localhost:80/auth/signin", {
+        this.axios.post(this.$store.state.base_url + "/auth/signin", {
           email: this.email,
           password: this.password,
         })
@@ -55,9 +55,10 @@ export default {
           this.$store.commit("setToken", response.data.token)
           this.$store.commit("setConnected", true)
           this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
-          this.axios.get("http://localhost:80/user/me")
+          this.axios.get(this.$store.state.base_url + "/user/me")
             .then((response) => {
               this.$store.commit("setName", response.data.name)
+              this.$router.push({ name: "HomePage" })
               }
             ).catch((error) => {
               console.log(error)
@@ -66,9 +67,7 @@ export default {
         .catch((error) => {
           this.errorMsg = error.response.data.message;
           this.errorSignIn = true;
-        }).finally(
-          this.$router.push({ name: "HomePage" })
-        );
+        });
       } else {
         this.errored = true;
       }

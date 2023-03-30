@@ -6,14 +6,17 @@ import quasarUserOptions from "./quasar-user-options";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import { createStore } from "vuex";
+import createPersistedState from "vuex-persistedstate";
 
 // Create a new store instance.
 const store = createStore({
+  plugins: [createPersistedState()],
   state() {
     return {
       connected: false,
       token: "",
       name: "",
+      base_url: "http://localhost:80"
     };
   },
   mutations: {
