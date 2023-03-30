@@ -1,17 +1,33 @@
 <template>
   <div>
       <div class="container">
-        <div class="card profileCard">
-          <p><strong>{{ user.name }}</strong></p>
-          <p>Adresse mail: {{ user.mail }}</p>
+        <div v-if="profileLoading" class="card profileCard">
+          <Spinner-comp class="spinner">
+            <p>Chargement du profil...</p>
+          </Spinner-comp>
+        </div>
+        <div v-else-if="profileError" class="card profileCard">
+          <p>Erreur lors du chargement du profil</p>
+        </div>
+        <div v-else class="card profileCard">
+          <div v-if="user">
+            <h4>{{ user.name }}</h4>
+            <p>Adresse mail: {{ user.mail }}</p>
+          </div>
         </div>
       </div>
+
       <div class="card">
         <p>Évènements créés</p>
         <div class="row  col-8">
-          <div v-for="event in user.events" :key="event.id" class="card eventCard col-2" @click="
-          this.$router.push({ name: 'Event', params: { event_id: event.id } })
-        ">
+          <div v-if="profileLoading" class="card eventCard col-2">
+            <Spinner-comp>
+            </Spinner-comp>
+          </div>
+          <div v-if="profileError" class="card eventCard col-2">
+            <p>Erreur lors du chargement des évènements</p>
+          </div>
+          <div v-else v-for="event in user.events" :key="event.id" class="card eventCard col-2" @click="this.$router.push({ name: 'Event', params: { event_id: event.id } })">
             <button class="delete" @click.stop="">❌</button>
             <p>{{ event.title }}</p>
             <p>{{ event.description }}</p>
@@ -26,11 +42,17 @@
 </template>
 
 <script>
+import SpinnerComp from "./Spinner.vue";
 export default {
   name: "ProfileUser",
+  components: {
+    SpinnerComp,
+  },
   data() {
     return {
       user: "",
+      profileLoading: true,
+      profileError: false,
     };
   },
   /**
@@ -38,14 +60,19 @@ export default {
    * en les passant dans la data du component
    * @return, inutilisable
    */
-  mounted() {
+  async mounted() {
+    try {
       this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
-      this.axios
-        .get(this.$store.state.base_url + "/user/me?embed=events", {})
-        .then((response) => {
-          this.user = response.data;
-        });
-      return null;
+      let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=events", {})
+      this.user = response.data;
+      this.profileLoading = false;
+      this.profileError = false; 
+    } catch (error) {
+      console.log(error);
+      this.profileError = true;
+      this.profileLoading = false;
+    }
+      
   },
 };
 </script>
@@ -70,6 +97,7 @@ export default {
 }
 .profileCard {
   max-width: 400px !important;
+  height: 200px;
   padding: 20px;
 }
 .eventCard {
@@ -111,5 +139,16 @@ export default {
 }
 .delete:hover {
     filter: hue-rotate(1deg);
+}
+
+.spinner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.spinner>p {
+    margin-bottom: -20px;
 }
 </style>

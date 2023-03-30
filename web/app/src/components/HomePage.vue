@@ -6,23 +6,21 @@
         <p class="add unselectable">+</p>
       </div>
 
-      <div
-        class="eventCard col-2"
-        v-for="event in getEvent"
-        :key="event.id"
-        @click="
-          this.$router.push({ name: 'Event', params: { event_id: event.id } })
-        "
-      >
+      <div v-if="this.eventLoading" class="eventCard col-2">
+        <SpinnerComp>
+        </SpinnerComp>
+      </div>
+      <div v-if="this.eventError" class="eventCard col-2">
+        <p class="unselectable">Erreur lors de la récupération des évènements</p>
+      </div>
+      <div v-else class="eventCard col-2" v-for="event in getEvent" :key="event.id" @click="this.$router.push({ name: 'Event', params: { event_id: event.id } })">
         <p class="unselectable">{{ event.title }}</p>
         <p class="unselectable">{{ event.description }}</p>
         <p class="unselectable">
           {{ new Date(event.date).toLocaleDateString() }}
         </p>
         <p class="unselectable">
-          {{ new Date(event.date).getHours() - 2 }}h{{
-            new Date(event.date).getMinutes()
-          }}
+          {{ new Date(event.date).getHours() - 2 }}h{{ new Date(event.date).getMinutes()}}
         </p>
         <p class="unselectable">{{ event.adress }}</p>
       </div>
@@ -56,21 +54,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn
-            flat
-            label="Annuler"
-            color="negative"
-            v-close-popup
-            @Click="reset"
-          />
-          <q-btn
-            flat
-            label="Ajouter"
-            color="primary"
-            v-close-popup
-            @Click="addevent"
-            :disable="verifEmpty"
-          />
+          <q-btn flat label="Annuler" color="negative" v-close-popup @Click="reset"/>
+          <q-btn flat label="Ajouter" color="primary" v-close-popup @Click="addevent" :disable="verifEmpty"/>
         </q-card-actions>
 
         <q-card-section v-if="errored" class="items-center">
@@ -84,8 +69,12 @@
 </template>
 
 <script>
+import SpinnerComp from "./Spinner.vue";
 export default {
   name: "HomePage",
+  components: {
+    SpinnerComp,
+  },
   data() {
     return {
       confirm: false,
@@ -98,6 +87,8 @@ export default {
       lng: 0,
       events: [],
       errored: false,
+      eventLoading: true,
+      eventError: false,
     };
   },
   mounted() {
@@ -134,16 +125,20 @@ export default {
      * Fonction qui permet de récupérer tous les évènements où l'utilisateur participe ou ceux qu'il a créer
      * @return intutilisable
      */
-    getEvents() {
-        this.axios.defaults.headers.get["Authorization"] =
-        this.$store.state.token;
-      this.axios
-        .get(this.$store.state.base_url + "/user/me?embed=all", {})
-        .then((response) => {
-          if(response.data.events !== undefined || response.data.events !== []){
-            this.events = response.data.events;
-          }
-        });
+    async getEvents() {
+      try {
+        this.axios.defaults.headers.get["Authorization"] = this.$store.state.token
+        let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=all", {})
+        if(response.data.events !== undefined || response.data.events !== []){
+          this.events = response.data.events;
+        }
+        this.eventError = false;
+        this.eventLoading = false;
+      } catch (error) {
+        console.log(error);
+        this.eventError = true;
+        this.eventLoading = false;
+      }
     },
 
     /**
