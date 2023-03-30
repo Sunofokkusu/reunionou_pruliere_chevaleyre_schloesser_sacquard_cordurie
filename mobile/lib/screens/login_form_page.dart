@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:reunionou/screens/home_page.dart';
 import '../auth_provider.dart';
 
 class LoginFormPage extends StatefulWidget {
@@ -41,11 +42,11 @@ class _LoginFormPageState extends State<LoginFormPage> {
                 controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'Email',
-                  hintText: 'Enter your email',
+                  hintText: 'Entrez votre email',
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter your email';
+                    return 'Entrez votre email';
                   }
                   return null;
                 },
@@ -55,12 +56,12 @@ class _LoginFormPageState extends State<LoginFormPage> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration: const InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter your password',
+                  labelText: 'Mot de passe',
+                  hintText: 'Entrez votre mot de passe',
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter your password';
+                    return 'Entrez votre mot de passe';
                   }
                   return null;
                 },
@@ -81,7 +82,6 @@ class _LoginFormPageState extends State<LoginFormPage> {
                             'password': _passwordController.text,
                           }),
                         );
-                        // TODO: handle errors
                         if (response.statusCode == 200) {
                           Future<bool> success = auth.login(
                               (jsonDecode(response.body)['token'])
@@ -89,21 +89,30 @@ class _LoginFormPageState extends State<LoginFormPage> {
                                   .substring(7));
                           if (await success) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Login successful')),
+                              const SnackBar(content: Text('Connexion réussie')),
+                            );
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(),
+                              ),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Wrong email or password')),
+                              const SnackBar(content: Text('Echec de la connexion')),
                             );
                           }
                         } else if (response.statusCode == 502) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Service unavailable')),
+                            const SnackBar(content: Text('Connexion au serveur impossible')),
+                          );
+                        } else if (response.statusCode == 400) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Email ou mot de passe incorrect')),
                           );
                         } else {
                           print(response.statusCode);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Login failed')),
+                            const SnackBar(content: Text('Erreur inconnue')),
                           );
                         }
                       }
