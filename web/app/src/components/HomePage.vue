@@ -138,7 +138,7 @@ export default {
         this.axios.defaults.headers.get["Authorization"] =
         this.$store.state.token;
       this.axios
-        .get("http://localhost:80/user/me?embed=all", {})
+        .get(this.$store.state.base_url + "/user/me?embed=all", {})
         .then((response) => {
           if(response.data.events !== undefined || response.data.events !== []){
             this.events = response.data.events;
@@ -166,7 +166,7 @@ export default {
           console.log(this.lat);
           this.axios.defaults.headers.post["Authorization"] =
             this.$store.state.token;
-          let response = await this.axios.post("http://localhost:80/event", {
+          let response = await this.axios.post(this.$store.state.base_url + "/event", {
             title: this.title,
             description: this.description,
             date: this.meetingDate,
