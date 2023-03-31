@@ -129,11 +129,13 @@ export default {
             password: this.passwd,
             newPassword: this.newpasswd
           })
+          this.$store.commit("setName", this.newname)
         } else if (this.newname !== "" && this.newpasswd === "") {
           await this.axios.put(this.$store.state.base_url + "/user", {
             name: this.newname,
             password: this.passwd
           })
+          this.$store.commit("setName", this.newname)
         } else if (this.newpasswd !== "" && this.newname === "") {
           await this.axios.put(this.$store.state.base_url + "/user", {
             password: this.passwd,
