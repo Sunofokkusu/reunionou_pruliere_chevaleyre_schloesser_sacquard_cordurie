@@ -236,7 +236,7 @@ class _EventFormState extends State<EventForm> {
 
                         if (widget.event == null) {
                           newCreatedId = await eventsProvider.createEvent(
-                              title, desc, datetime.toString(), adress, 0, 0);
+                              title, desc, datetime.toString(), adress, lat, long);
                           newCreatedEvent =
                               await eventsProvider.getEventById(newCreatedId!);
                         } else {
