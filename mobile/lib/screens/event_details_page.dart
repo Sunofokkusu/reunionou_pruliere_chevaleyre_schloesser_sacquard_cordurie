@@ -39,7 +39,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(
                     text:
-                        "${dotenv.env["BASE_URL"]!}/event/${widget.event.id}"));
+                        "http://localhost:8080/event/${widget.event.id}"));
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Lien copié dans le presse-papier'),
