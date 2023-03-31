@@ -15,6 +15,46 @@
             <p>Adresse mail: {{ user.mail }}</p>
           </div>
         </div>
+        <div class="card profileCard">
+          <div class="editCard">
+            <p>Edition profil</p>
+            <div v-if="editname">
+              <q-input v-model=newname filled dense label="nouveau nom d'utilisateur">
+                <template v-slot:after>
+                  <q-btn flat @click="editname = false; newname=''"><i class="fas fa-trash"></i></q-btn>
+                </template>
+              </q-input>
+            </div>
+            <div v-else>
+              <q-input filled dense disable :placeholder=user.name>
+                <template v-slot:after>
+                  <q-btn flat @click="editname = true"><i class="fas fa-pen" ></i></q-btn>
+                </template>
+              </q-input>
+            </div>
+            <div v-if="editpasswd">
+              <q-input v-model=newpasswd type="password" filled dense label="nouveau mot de passe">
+                <template v-slot:after>
+                  <q-btn flat @click="editpasswd = false; newpasswd=''"><i class="fas fa-trash"></i></q-btn>
+                </template>
+              </q-input>
+            </div>
+            <div v-else>
+              <q-input filled dense disable placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
+                <template v-slot:after>
+                  <q-btn flat @click="editpasswd = true"><i class="fas fa-pen" ></i></q-btn>
+                </template>
+              </q-input>
+            </div>
+            <div>
+              <q-input filled dense label="mot de passe" v-model=passwd type="password">
+                <template v-slot:after>
+                  <q-btn label="confirmer" dense color="primary" @click="editProfile"/>
+                </template>
+              </q-input>
+            </div>  
+          </div>
+        </div>
       </div>
 
       <div class="card">
@@ -53,6 +93,11 @@ export default {
       user: "",
       profileLoading: true,
       profileError: false,
+      editname: false,
+      editpasswd: false,
+      newname: "",
+      newpasswd: "",
+      passwd: "",
     };
   },
   /**
@@ -74,6 +119,34 @@ export default {
     }
       
   },
+  methods: {
+    async editProfile() {
+      try {
+        this.axios.defaults.headers.put['Authorization'] = this.$store.state.token;
+        if (this.newname !== "" && this.newpasswd !== "") {
+          await this.axios.put(this.$store.state.base_url + "/user", {
+            name: this.newname,
+            password: this.passwd,
+            newPassword: this.newpasswd
+          })
+        } else if (this.newname !== "" && this.newpasswd === "") {
+          await this.axios.put(this.$store.state.base_url + "/user", {
+            name: this.newname,
+            password: this.passwd
+          })
+        } else if (this.newpasswd !== "" && this.newname === "") {
+          await this.axios.put(this.$store.state.base_url + "/user", {
+            password: this.passwd,
+            newPassword: this.newpasswd
+          })
+        }
+        window.alert("Modification du profil réussie")
+      } catch (error) {
+        console.log(error)
+        window.alert("Erreur lors de la modification du profil, mot de passe incorrect")
+      }
+    }
+  }
 };
 </script>
 
@@ -100,6 +173,24 @@ export default {
   height: 200px;
   padding: 20px;
 }
+.profileCard>div {
+  margin-top: 7px;
+}
+
+.editCard>div{
+  margin-top: 7px;
+}
+.editCard>p{
+  margin-bottom: 7px;
+  margin-top: -10px;
+  font-size: 1.5em;
+}
+.editCard>div>i {
+  cursor: pointer;
+  margin-left: 5px;
+  color: #585858;
+}
+
 .eventCard {
     cursor: pointer;
     padding:0;
