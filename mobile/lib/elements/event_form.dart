@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:reunionou/events_provider.dart';
+import 'package:reunionou/providers/map_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reunionou/screens/event_details_page.dart';
 import 'package:reunionou/screens/home_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:reunionou/elements/map_modal.dart';
 
 class EventForm extends StatefulWidget {
   const EventForm({super.key, this.event});
@@ -26,6 +29,8 @@ class _EventFormState extends State<EventForm> {
   late double lat = widget.event?.lat ?? 0.0;
   late double long = widget.event?.long ?? 0.0;
   final _formKey = GlobalKey<FormState>();
+  late String? newCreatedId;
+  late Event? newCreatedEvent;
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +123,7 @@ class _EventFormState extends State<EventForm> {
                       ),
                     ),
                     TextFormField(
+                        key: Key(Provider.of<MapProvider>(context).adress!),
                         initialValue: adress,
                         maxLength: 100,
                         decoration: const InputDecoration(
@@ -146,12 +152,13 @@ class _EventFormState extends State<EventForm> {
                                 var response = await http.get(Uri.parse(
                                     "https://api-adresse.data.gouv.fr/search/?q=$adress"));
                                 if (response.statusCode == 200) {
-                                  Map<String , dynamic> data = jsonDecode(response.body);
+                                  Map<String, dynamic> data =
+                                      jsonDecode(response.body);
                                   setState(() {
-                                    lat = data["features"][0]["geometry"]["coordinates"][1];
-                                    long = data["features"][0]["geometry"]["coordinates"][0];
-                                    print(lat);
-                                    print(long);
+                                    lat = data["features"][0]["geometry"]
+                                        ["coordinates"][1];
+                                    long = data["features"][0]["geometry"]
+                                        ["coordinates"][0];
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -166,13 +173,48 @@ class _EventFormState extends State<EventForm> {
                                 }
                               }
                             },
-                            child: const Text("Localiser sur la carte"),
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: adress == ""
                                     ? Colors.grey
-                                    : const Color.fromARGB(255, 221, 96, 255))),
+                                    : const Color.fromARGB(255, 221, 96, 255)),
+                            child: const Text("Localiser sur la carte")),
                         ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      actions: [
+                                        MapModal(
+                                          latitude: lat,
+                                          longitude: long,
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                Navigator.pop(context);
+                                                lat = Provider.of<MapProvider>(context, listen: false).lat!;
+                                                long = Provider.of<MapProvider>(context, listen: false).long!;
+                                                adress = Provider.of<MapProvider>(context, listen: false).adress!;
+                                              });
+
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              // define the width of the button in the dialog at the width of the dialog
+                                              minimumSize: Size(
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width,
+                                                  40),
+                                            ),
+                                            child: const Text("Valider"))
+                                      ],
+                                    );
+                                  });
+                            },
                             child: const Text("Ajouter depuis la carte")),
                       ],
                     ),
@@ -193,8 +235,10 @@ class _EventFormState extends State<EventForm> {
                         }
 
                         if (widget.event == null) {
-                          eventsProvider.createEvent(
+                          newCreatedId = await eventsProvider.createEvent(
                               title, desc, datetime.toString(), adress, 0, 0);
+                          newCreatedEvent =
+                              await eventsProvider.getEventById(newCreatedId!);
                         } else {
                           // widget.event!.title = title;
                           // widget.event!.desc = desc;
@@ -202,14 +246,20 @@ class _EventFormState extends State<EventForm> {
                         }
 
                         // ignore: use_build_context_synchronously
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()),
-                            (route) => false);
+                        Navigator.of(context).pop();
+
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EventDetailsPage(
+                              event: newCreatedEvent!,
+                            ),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: (lat == 0.0 || long == 0.0)
+                        backgroundColor: (lat == 0.0 || long == 0.0 || title == "")
                             ? Colors.grey
                             : Color.fromARGB(255, 140, 24, 172),
                       ),

@@ -186,6 +186,7 @@ export default {
           localStorage.setItem("events", JSON.stringify(this.events));
 
           this.reset();
+          this.$router.push({name:'Event', params: { event_id: response.data.id }})
         } catch (error) {
           console.log(error);
         }
