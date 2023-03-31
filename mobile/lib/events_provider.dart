@@ -23,9 +23,8 @@ class EventsProvider with ChangeNotifier {
   List<Event> get eventsCreator => _eventsCreator;
   List<Event> get eventsInvited => _eventsInvited;
 
-  Future<bool> createEvent(String? title, String? description, String? date,
+  Future<String> createEvent(String? title, String? description, String? date,
       String? adress, double? lat, double? long) async {
-    var post = true;
     final response = await http.post(
       Uri.parse('${dotenv.env["BASE_URL"]!}/event/'),
       headers: <String, String>{
@@ -45,6 +44,8 @@ class EventsProvider with ChangeNotifier {
       _eventsCreator.add(Event(
         id: jsonDecode(response.body)['id'],
         idCreator: _authProvider!.user!.id,
+        nameCreator: _authProvider!.user!.name,
+        emailCreator: _authProvider!.user!.email,
         title: title!,
         desc: description!,
         adress: adress!,
@@ -54,10 +55,9 @@ class EventsProvider with ChangeNotifier {
       ));
     } else {
       print(response.statusCode);
-      post = false;
     }
     notifyListeners();
-    return post;
+    return jsonDecode(response.body)['id'];
   }
 
   Future<List<Event>> getEvents(int index) async {
@@ -99,7 +99,7 @@ class EventsProvider with ChangeNotifier {
     // }
 
     final response = await http.get(
-        Uri.parse("http://localhost:80/user/me?embed=$urlEnd"),
+        Uri.parse("${dotenv.env["BASE_URL"]!}/user/me?embed=$urlEnd"),
         headers: <String, String>{
           'Authorization': 'Bearer ${_authProvider!.token}',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -122,5 +122,21 @@ class EventsProvider with ChangeNotifier {
     }
     notifyListeners();
     return _eventsCreator;
+  }
+
+  Future<Event?> getEventById(String id) async {
+    final response = await http.get(
+        Uri.parse("${dotenv.env["BASE_URL"]!}/event/$id"),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${_authProvider!.token}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return Event.fromJson(data);
+    } else {
+      print(response.statusCode);
+    }
+    return null;
   }
 }

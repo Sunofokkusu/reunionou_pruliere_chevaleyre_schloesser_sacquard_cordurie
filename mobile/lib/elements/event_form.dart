@@ -4,6 +4,7 @@ import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reunionou/screens/event_details_page.dart';
 import 'package:reunionou/screens/home_page.dart';
 
 class EventForm extends StatefulWidget {
@@ -21,6 +22,8 @@ class _EventFormState extends State<EventForm> {
   late DateTime datetime = widget.event?.datetime ?? DateTime.now();
   late String adress = widget.event?.adress ?? "";
   final _formKey = GlobalKey<FormState>();
+  late String? newCreatedId;
+  late Event? newCreatedEvent;
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +149,10 @@ class _EventFormState extends State<EventForm> {
                         }
 
                         if (widget.event == null) {
-                          eventsProvider.createEvent(
+                          newCreatedId = await eventsProvider.createEvent(
                               title, desc, datetime.toString(), adress, 0, 0);
+                          newCreatedEvent =
+                              await eventsProvider.getEventById(newCreatedId!);
                         } else {
                           // widget.event!.title = title;
                           // widget.event!.desc = desc;
@@ -155,10 +160,16 @@ class _EventFormState extends State<EventForm> {
                         }
 
                         // ignore: use_build_context_synchronously
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()),
-                            (route) => false);
+                        Navigator.of(context).pop();
+
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EventDetailsPage(
+                              event: newCreatedEvent!,
+                            ),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),

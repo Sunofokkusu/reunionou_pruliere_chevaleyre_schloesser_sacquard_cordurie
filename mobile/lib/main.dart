@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
-  // await dotenv.load(fileName: "assets/.env");
+  await dotenv.load(fileName: "assets/.env");
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,

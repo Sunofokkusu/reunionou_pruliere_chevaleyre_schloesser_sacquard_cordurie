@@ -2,6 +2,8 @@ class Event {
   Event({
     required this.id,
     required this.idCreator,
+    required this.nameCreator,
+    required this.emailCreator,
     required this.title,
     required this.desc,
     required this.long,
@@ -12,6 +14,8 @@ class Event {
 
   final String id;
   final String idCreator;
+  final String nameCreator;
+  final String emailCreator;
   String title;
   String desc;
   double long;
@@ -23,6 +27,8 @@ class Event {
     return Event(
       id: data['id'],
       idCreator: data['id_creator'],
+      nameCreator: data['creator']['name'],
+      emailCreator: data['creator']['email'],
       title: data['title'],
       desc: data['description'],
       long: double.parse(data['long'].toString()),
