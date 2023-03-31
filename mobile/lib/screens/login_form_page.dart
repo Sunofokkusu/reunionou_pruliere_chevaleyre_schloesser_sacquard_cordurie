@@ -74,7 +74,6 @@ class _LoginFormPageState extends State<LoginFormPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         await dotenv.load(fileName: "assets/.env");
-                        print('${dotenv.env['BASE_URL']!}/auth/signin');
                         final response = await http.post(
                           Uri.parse('${dotenv.env['BASE_URL']!}/auth/signin'),
                           headers: <String, String>{

@@ -11,6 +11,7 @@
         <div v-else>
           <div v-if="getEventComputed.title">
             <h4>{{ getEventComputed.title }}</h4>
+            <p>Créé par: {{ getEventComputed.creator.name }}</p>
             <p>Description: {{ getEventComputed.description }}</p>
             <p>
               Date de rendez-vous:
@@ -78,14 +79,14 @@
         </div>
         <div v-else>
           <div v-if="meteo">
-            <p>ville: {{ getMeteoComputed.name }}</p>
-            <p>tendance: {{ getMeteoComputed.weather[0].description }}</p>
+            <p>ville: {{ meteo.city.name }}</p>
+            <p>tendance: {{ meteo.list[0].weather[0].description }}</p>
             <p>
               température:
-              {{ (getMeteoComputed.main.temp - 273.15).toFixed(2) }}°C
+              {{ (meteo.list[0].main.temp - 273.15).toFixed(2) }}°C
             </p>
-            <p>pression: {{ getMeteoComputed.main.pressure }} hPa</p>
-            <p>humidité: {{ getMeteoComputed.main.humidity }} %</p>
+            <p>pression: {{ meteo.list[0].main.pressure }} hPa</p>
+            <p>humidité: {{ meteo.list[0].main.humidity }} %</p>
           </div>
         </div>
       </div>
@@ -93,12 +94,13 @@
 
     <div class="row">
       <div style="height: 300px; max-width: 616px" class="card map col-6">
-        <l-map ref="map" :zoom="zoom" :center="[48.69, 6.18]">
+        <l-map ref="map" :zoom="zoom" :center="[lat, long]">
           <l-tile-layer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             layer-type="base"
             name="OpenStreetMap"
           ></l-tile-layer>
+          <l-marker :lat-lng="markerLatLng" ></l-marker>
         </l-map>
       </div>
 
@@ -106,27 +108,26 @@
         <div class="history_comments">
           <div v-for="com in comments" :key="com.id">
             <p>
-              <strong>{{ com.name }}</strong>: {{ com.comment }}
+              <strong>{{ com.name }}</strong
+              >: {{ com.comment }}
             </p>
           </div>
         </div>
-        <div class="row">
-          <div class="col-9">
+        <div class="inputBox">
+          <div>
             <q-input
-              standout="bg-grey-3 text-black"
+              filled
               v-model="comment"
+              dense
               label="Commentaire"
               autofocus
-            />
-          </div>
-          <div class="col-3">
-            <q-btn
-          flat
-          label="Valider"
-          color="primary"
-          v-close-popup
-          @Click="addcomment"
-        />
+            >
+              <template v-slot:after>
+                <q-btn flat @Click="addcomment">
+                  <i class="fas fa-paper-plane"></i>
+                </q-btn>
+              </template>
+            </q-input>
           </div>
         </div>
       </div>
@@ -149,12 +150,12 @@
         />
 
         <q-btn
-            flat
-            label="Annuler"
-            color="negative"
-            v-close-popup
-            @Click="reset"
-          />
+          flat
+          label="Annuler"
+          color="negative"
+          v-close-popup
+          @Click="reset"
+        />
 
         <q-card-section v-if="errored" class="items-center">
           <div class="q-ml-sm red">
@@ -207,13 +208,14 @@
 
 <script>
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 import SpinnerComp from "@/components/Spinner.vue";
 export default {
   name: "EventPage",
   components: {
     LMap,
     LTileLayer,
+    LMarker,
     SpinnerComp,
   },
   data() {
@@ -236,28 +238,35 @@ export default {
       comments: "",
       comment: "",
       comment_logoff: false,
-      addComment: ""
+      addComment: "",
+      markerLatLng:[],
+      lat: "",
+      long: ""
     };
   },
   async mounted() {
+    await this.getEvent();
     //permet de récupérer les données météo de la ville de l'événement
-    // let apiKey = "fb5491e240ff2f7ced5a60bd2e08e545";
-    // try {
-    //   let response = await this.axios.get(
-    //     "https://api.openweathermap.org/data/2.5/weather?q=" +
-    //       "Nancy" +
-    //       "&APPID=" +
-    //       apiKey +
-    //       "&lang=fr"
-    //   );
-    //   console.log(response.data);
-    //   this.meteo = response.data;
-    //   this.meteoLoading = false;
-    // } catch (error) {
-    //   this.meteoLoading = false;
-    //   console.log(error);
-    //   this.meteoError = true;
-    // }
+    try {
+      let response = await fetch(
+        "http://api.openweathermap.org/data/2.5/forecast?appid=fb5491e240ff2f7ced5a60bd2e08e545&lat=" +
+          this.event.lat + "&lon=" + this.event.long +
+          "&lang=fr"
+      );
+      let json = await response.json();
+      this.meteo = json;
+      this.meteoLoading = false;
+    } catch (error) {
+      this.meteoLoading = false;
+      console.log(error);
+      this.meteoError = true;
+    }
+
+    //permet d'afficher un point sur la carte en fonction de l'adresse 
+    this.markerLatLng.push(this.event.lat)
+    this.markerLatLng.push(this.event.long)
+    this.lat = this.event.lat
+    this.long = this.event.long
 
     //permet de désactiver les boutons si l'utilisateur est déjà inscrit à l'événement
     if (this.$store.state.token !== "") {
@@ -457,7 +466,7 @@ h4 {
 }
 .history_comments {
   overflow-y: scroll;
-  height: 225px !important;
+  height: 234px !important;
   background-color: #e5e5e5;
   border-radius: 10px;
 }
@@ -468,5 +477,9 @@ h4 {
 }
 .history-title {
   margin-bottom: 5px;
+}
+.inputBox {
+  width: 100%;
+  margin-top: 5px;
 }
 </style>
