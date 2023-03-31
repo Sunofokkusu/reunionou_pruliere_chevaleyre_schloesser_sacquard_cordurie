@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -79,7 +81,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return MembersModal();
+                            return MembersModal(event: widget.event);
                           },
                         );
                       },
