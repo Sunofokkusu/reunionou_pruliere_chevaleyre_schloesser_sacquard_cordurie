@@ -5,6 +5,7 @@ class Comment {
     required this.idUser,
     required this.name,
     required this.comment,
+    required this.createdAt,
   });
 
   String id;
@@ -12,7 +13,7 @@ class Comment {
   String idUser;
   String name;
   String comment = "";
-  DateTime createdAt = DateTime.now();
+  DateTime createdAt;
 
   static Comment fromJson(data) {
     return Comment(
@@ -21,6 +22,7 @@ class Comment {
       idUser: data['id_user'],
       name: data['name'],
       comment: data['comment'],
+      createdAt: DateTime.parse(data['created_at']),
     );
   }
 }
