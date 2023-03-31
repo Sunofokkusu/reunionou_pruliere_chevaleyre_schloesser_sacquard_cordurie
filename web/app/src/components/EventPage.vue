@@ -11,6 +11,7 @@
         <div v-else>
           <div v-if="getEventComputed.title">
             <h4>{{ getEventComputed.title }}</h4>
+            <p>Créé par: {{ getEventComputed.creator.name }}</p>
             <p>Description: {{ getEventComputed.description }}</p>
             <p>
               Date de rendez-vous:
