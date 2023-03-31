@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:reunionou/auth_provider.dart';
+import 'package:reunionou/provider/auth_provider.dart';
 import 'package:reunionou/models/event.dart';
 
 class EventsProvider with ChangeNotifier {
@@ -54,7 +54,6 @@ class EventsProvider with ChangeNotifier {
         datetime: DateTime.parse(date!),
       ));
     } else {
-      print("VATEFAIREENCULER.COM");
       print(response.statusCode);
       post = false;
     }

@@ -2,7 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reunionou/elements/event_preview.dart';
-import 'package:reunionou/events_provider.dart';
+import 'package:reunionou/provider/events_provider.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:reunionou/screens/event_form_page.dart';
 import 'package:uuid/uuid.dart';

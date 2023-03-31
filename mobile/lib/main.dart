@@ -1,6 +1,7 @@
 import 'package:reunionou/reunionou_app.dart';
-import 'package:reunionou/events_provider.dart';
-import 'package:reunionou/auth_provider.dart';
+import 'package:reunionou/provider/events_provider.dart';
+import 'package:reunionou/provider/auth_provider.dart';
+import 'package:reunionou/provider/map_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -22,9 +23,11 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => MapProvider()),
         ChangeNotifierProxyProvider<AuthProvider, EventsProvider>(
             create: (_) => EventsProvider(null),
             update: (context, auth, prev) => EventsProvider(auth)),
+        
       ],
       child: const ReunionouApp(),
     ),

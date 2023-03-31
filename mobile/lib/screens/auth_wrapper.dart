@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reunionou/auth_provider.dart';
+import 'package:reunionou/provider/auth_provider.dart';
 import 'package:reunionou/screens/login_form_page.dart';
 
 import 'package:reunionou/screens/home_page.dart';

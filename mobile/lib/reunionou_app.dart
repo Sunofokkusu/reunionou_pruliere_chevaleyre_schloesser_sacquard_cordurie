@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reunionou/screens/auth_wrapper.dart';
+import 'package:reunionou/screens/home_page.dart';
 
 class ReunionouApp extends StatefulWidget {
   const ReunionouApp({super.key});
@@ -13,7 +13,7 @@ class _ReunionouAppState extends State<ReunionouApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const AuthenticationWrapper(),
+      home: const HomePage(),
       theme: ThemeData(
         fontFamily: 'SairaCondensed',
         colorScheme: const ColorScheme.light(

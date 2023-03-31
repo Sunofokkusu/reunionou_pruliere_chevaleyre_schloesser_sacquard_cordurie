@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reunionou/events_provider.dart';
+import 'package:reunionou/provider/events_provider.dart';
 import 'package:reunionou/models/comment.dart';
 
 class MemberResponseTile extends StatefulWidget {

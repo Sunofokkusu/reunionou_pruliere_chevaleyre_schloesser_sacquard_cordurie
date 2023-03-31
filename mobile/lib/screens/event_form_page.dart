@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reunionou/elements/event_form.dart';
-import 'package:reunionou/events_provider.dart';
+import 'package:reunionou/provider/events_provider.dart';
 import 'package:reunionou/models/event.dart';
 
 // ignore: must_be_immutable

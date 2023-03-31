@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reunionou/events_provider.dart';
+import 'package:reunionou/provider/events_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:reunionou/screens/event_details_page.dart';
