@@ -93,6 +93,11 @@ class _LoginFormPageState extends State<LoginFormPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Connexion réussie')),
                             );
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(),
+                              ),
+                            );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Echec de la connexion')),

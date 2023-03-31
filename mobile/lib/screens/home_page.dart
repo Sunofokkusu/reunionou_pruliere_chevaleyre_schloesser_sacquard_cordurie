@@ -60,13 +60,9 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Consumer<EventsProvider>(builder: (context, builder, child) {
+      body: Consumer<EventsProvider>(builder: (context, events, child) {
         return FutureBuilder<List<Event>>(
-            future: _selectedIndex == 0
-                ? _fetchEventsMember()
-                : _selectedIndex == 1
-                    ? _fetchEventsCreator()
-                    : _fetchEventsInvited(),
+            future: events.getEvents(_selectedIndex),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -110,50 +106,5 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
       ),
     );
-  }
-
-  Future<List<Event>> _fetchEventsMember() async {
-    return List.generate(15, (index) {
-      return Event(
-        id: const Uuid().v4(),
-        idCreator: const Uuid().v4(),
-        title: faker.lorem.words(2).join(" "),
-        desc: faker.lorem.sentences(5).join(" "),
-        long: faker.randomGenerator.decimal(),
-        lat: faker.randomGenerator.decimal(),
-        adress: faker.address.streetAddress(),
-        datetime: faker.date.dateTime(),
-      );
-    });
-  }
-
-  Future<List<Event>> _fetchEventsCreator() async {
-    return List.generate(2, (index) {
-      return Event(
-        id: const Uuid().v4(),
-        idCreator: const Uuid().v4(),
-        title: faker.lorem.words(2).join(" "),
-        desc: faker.lorem.sentences(5).join(" "),
-        long: faker.randomGenerator.decimal(),
-        lat: faker.randomGenerator.decimal(),
-        adress: faker.address.streetAddress(),
-        datetime: faker.date.dateTime(),
-      );
-    });
-  }
-
-  Future<List<Event>> _fetchEventsInvited() async {
-    return List.generate(4, (index) {
-      return Event(
-        id: const Uuid().v4(),
-        idCreator: const Uuid().v4(),
-        title: faker.lorem.words(2).join(" "),
-        desc: faker.lorem.sentences(5).join(" "),
-        long: faker.randomGenerator.decimal(),
-        lat: faker.randomGenerator.decimal(),
-        adress: faker.address.streetAddress(),
-        datetime: faker.date.dateTime(),
-      );
-    });
   }
 }

@@ -6,15 +6,13 @@ import 'package:reunionou/models/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthProvider with ChangeNotifier {
-
   bool _isLoggedIn = false;
   String _authToken = '';
   late User? _user;
- 
+
   bool get isLoggedIn => _isLoggedIn;
   String get token => _authToken;
   User? get user => _user;
-
 
   Future<bool> login(String token) async {
     await dotenv.load(fileName: "assets/.env");
@@ -48,13 +46,11 @@ class AuthProvider with ChangeNotifier {
     if (_isLoggedIn && _user != null && _authToken != '') {
       final response = await http.post(
         Uri.parse('http://localhost:80/user/verifyPassword'),
-        headers: <String, String> {
-          'Authorization' : 'Bearer $token',
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String?>{
-          'password': password
-        }),
+        body: jsonEncode(<String, String?>{'password': password}),
       );
       if (response.statusCode == 200) {
         verified = true;
@@ -65,13 +61,14 @@ class AuthProvider with ChangeNotifier {
     return verified;
   }
 
-  Future<bool> update(String? name, String? password, String? newPassword) async {
+  Future<bool> update(
+      String? name, String? password, String? newPassword) async {
     var updated = false;
     if (_isLoggedIn && _user != null && _authToken != '') {
       final response = await http.put(
         Uri.parse('http://localhost:80/user/'),
-        headers: <String, String> {
-          'Authorization' : 'Bearer $token',
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String?>{

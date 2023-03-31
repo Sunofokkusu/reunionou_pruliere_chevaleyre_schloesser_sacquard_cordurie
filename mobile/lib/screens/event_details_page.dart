@@ -6,7 +6,6 @@ import 'package:reunionou/provider/events_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:reunionou/models/user.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends StatefulWidget {
@@ -48,14 +47,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                           fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16.0),
-                    const Text(
-                      "Organisé par: BOB SINCLAIR",
-                      style: TextStyle(
+                    Text(
+                      "Organisé par : ça arrive",
+                      style: const TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
-                    const Text(
-                      "Contact: buzzleclair@oupspardon.bobSinclair",
-                      style: TextStyle(fontSize: 16.0),
+                    Text(
+                      "Contact : ça arrive fort",
+                      style: const TextStyle(fontSize: 16.0),
                     ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(

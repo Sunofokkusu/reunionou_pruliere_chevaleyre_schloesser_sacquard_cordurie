@@ -29,7 +29,7 @@ class _EventPreviewState extends State<EventPreview> {
           ),
           subtitle: Text(
             widget.event.desc,
-            maxLines: widget.event.desc.isEmpty ? 0 : 3,
+            maxLines: widget.event.desc.isEmpty ? 1 : 3,
             overflow: TextOverflow.ellipsis,
           ),
           onTap: () => {
