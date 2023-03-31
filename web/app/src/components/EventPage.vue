@@ -110,23 +110,15 @@
             </p>
           </div>
         </div>
-        <div class="row">
-          <div class="col-9">
-            <q-input
-              standout="bg-grey-3 text-black"
-              v-model="comment"
-              label="Commentaire"
-              autofocus
-            />
-          </div>
-          <div class="col-3">
-            <q-btn
-          flat
-          label="Valider"
-          color="primary"
-          v-close-popup
-          @Click="addcomment"
-        />
+        <div class="inputBox">
+          <div>
+            <q-input filled v-model="comment" dense label="Commentaire" autofocus>
+              <template v-slot:after>
+                <q-btn flat @Click="addcomment">
+                  <i class="fas fa-paper-plane"></i>
+                </q-btn>
+              </template>
+            </q-input>
           </div>
         </div>
       </div>
@@ -147,7 +139,7 @@
           v-close-popup
           @Click="addcommentlogoff"
         />
-
+   
         <q-btn
             flat
             label="Annuler"
@@ -457,7 +449,7 @@ h4 {
 }
 .history_comments {
   overflow-y: scroll;
-  height: 225px !important;
+  height: 234px !important;
   background-color: #e5e5e5;
   border-radius: 10px;
 }
@@ -468,5 +460,9 @@ h4 {
 }
 .history-title {
   margin-bottom: 5px;
+}
+.inputBox {
+  width: 100%;
+  margin-top: 5px;
 }
 </style>
