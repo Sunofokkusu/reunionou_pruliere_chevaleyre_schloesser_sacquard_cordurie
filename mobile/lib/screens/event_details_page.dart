@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +41,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(
                     text:
-                        "${dotenv.env["BASE_URL"]!}/event/${widget.event.id}"));
+                        "http://localhost:8080/event/${widget.event.id}"));
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Lien copié dans le presse-papier'),
@@ -79,7 +81,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return MembersModal();
+                            return MembersModal(event: widget.event);
                           },
                         );
                       },

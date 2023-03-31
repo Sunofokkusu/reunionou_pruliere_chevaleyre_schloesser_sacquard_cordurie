@@ -135,4 +135,20 @@ router.post("/:id/comment", async (req, res, next) => {
   }
 });
 
+
+router.get('/:id/participant', async (req, res, next) => {
+  try {
+    let event = await axios.get(process.env.EVENT_SERVICE + req.params.id );
+    let participants = event.data.participants;
+    res.json(participants);
+  } catch (err) {
+    try {
+      return next(err.response.data);
+    } catch (error) {
+      return next(500);
+    }
+  }
+});
+
+
 module.exports = router;
