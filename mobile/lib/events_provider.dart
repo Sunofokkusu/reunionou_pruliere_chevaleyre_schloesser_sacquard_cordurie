@@ -97,9 +97,9 @@ class EventsProvider with ChangeNotifier {
     // else if (index == 2) {
     //   urlEnd += "pending";
     // }
-
+    await dotenv.load(fileName: "assets/.env");
     final response = await http.get(
-        Uri.parse("http://localhost:80/user/me?embed=$urlEnd"),
+        Uri.parse("${dotenv.env["BASE_URL"]!}/user/me?embed=$urlEnd"),
         headers: <String, String>{
           'Authorization': 'Bearer ${_authProvider!.token}',
           'Content-Type': 'application/json; charset=UTF-8',
