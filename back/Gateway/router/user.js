@@ -36,7 +36,7 @@ router.get("/me", async (req, res, next) => {
       );
       invited.data[i].creator = {
         name: creator.data.name,
-        mail: creator.data.email,
+        email: creator.data.email,
       };
     }
     if (req.query.embed === "events") {

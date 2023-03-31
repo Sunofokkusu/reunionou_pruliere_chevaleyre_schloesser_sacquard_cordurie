@@ -47,12 +47,14 @@ class _MemberResponseTileState extends State<MemberResponseTile> {
       return Card(
         child: ListTile(
             title: Text(widget.message.name),
-            subtitle: Text(
-              widget.message.message,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(height: 1.0),
-            ),
+            subtitle: widget.message.message == null
+                ? const Text('')
+                : Text(
+                    widget.message.message!,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(height: 1.0),
+                  ),
             leading: Icon(
               icon,
               color: iconColor,
