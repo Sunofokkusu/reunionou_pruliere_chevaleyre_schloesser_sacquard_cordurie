@@ -248,7 +248,7 @@ class _EventFormState extends State<EventForm> {
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: (lat == 0.0 || long == 0.0)
+                        backgroundColor: (lat == 0.0 || long == 0.0 || title == "")
                             ? Colors.grey
                             : Color.fromARGB(255, 140, 24, 172),
                       ),
