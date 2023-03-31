@@ -23,7 +23,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         String currentName = auth.user!.name;
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Edit profile'),
+            title: const Text('Éditer le profil'),
           ),
           body: Padding(
             padding: const EdgeInsets.all(20),
@@ -144,7 +144,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         }    
                       }
                     },
-                    child: const Text('Update'),
+                    child: const Text('Mettre à jour'),
                   ),
                 ],
               ),

@@ -21,13 +21,13 @@ class _ProfilePageState extends State<ProfilePage> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Profile'),
+            title: const Text('Profil'),
           ),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Name : ${auth.user?.name}'),
+                Text('Nom : ${auth.user?.name}'),
                 Text('Email : ${auth.user?.email}'),
                 ElevatedButton(
                   onPressed: () {
@@ -37,34 +37,34 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     );
                   },
-                  child: const Text('Edit profile'),
+                  child: const Text('Éditer le profil'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Logout'),
-                        content: const Text('Are you sure you want to logout?'),
+                        title: const Text('Se déconnecter'),
+                        content: const Text('Êtes-vous sûr de vouloir vous déconnecter ?'),
                         actions: [
                           ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text('Cancel'),
+                            child: const Text('Annuler'),
                           ),
                           ElevatedButton(
                             onPressed: () {
                               auth.logout();
                               Navigator.of(context).pop();
                             },
-                            child: const Text('Logout'),
+                            child: const Text('Se déconnecter'),
                           ),
                         ],
                       )
                     );
                   },
-                  child: const Text('Logout')
+                  child: const Text('Se déconnecter')
                 )
               ],
             ),
