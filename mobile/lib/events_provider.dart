@@ -99,7 +99,7 @@ class EventsProvider with ChangeNotifier {
     // }
 
     final response = await http.get(
-        Uri.parse("http://localhost:80/user/me?embed=$urlEnd"),
+        Uri.parse("${dotenv.env["BASE_URL"]!}/user/me?embed=$urlEnd"),
         headers: <String, String>{
           'Authorization': 'Bearer ${_authProvider!.token}',
           'Content-Type': 'application/json; charset=UTF-8',
