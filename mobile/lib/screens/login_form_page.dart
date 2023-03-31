@@ -26,7 +26,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const AutoSizeText(
-          'Login',
+          'Connexion',
           minFontSize: 15.0,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
