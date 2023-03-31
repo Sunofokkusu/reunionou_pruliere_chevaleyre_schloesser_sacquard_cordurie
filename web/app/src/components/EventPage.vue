@@ -93,7 +93,7 @@
     </div>
 
     <div class="row">
-      <div style="height: 300px; max-width: 616px" class="card map col-6">
+        <div v-if="loaded" style="height: 300px; max-width: 616px" class="card map col-6">
         <l-map ref="map" :zoom="zoom" :center="[lat, long]">
           <l-tile-layer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -102,6 +102,9 @@
           ></l-tile-layer>
           <l-marker :lat-lng="markerLatLng" ></l-marker>
         </l-map>
+      </div>
+      <div v-else>
+        <SpinnerComp></SpinnerComp>
       </div>
 
       <div class="col-4 card">
@@ -241,7 +244,8 @@ export default {
       addComment: "",
       markerLatLng:[],
       lat: "",
-      long: ""
+      long: "",
+      loaded: false
     };
   },
   async mounted() {
@@ -267,6 +271,7 @@ export default {
     this.markerLatLng.push(this.event.long)
     this.lat = this.event.lat
     this.long = this.event.long
+    this.loaded = true
 
     //permet de désactiver les boutons si l'utilisateur est déjà inscrit à l'événement
     if (this.$store.state.token !== "") {
