@@ -95,8 +95,7 @@
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:reunionou/elements/member_response_tile.dart';
-import 'package:reunionou/models/comment.dart';
-import 'package:reunionou/models/user.dart';
+import 'package:reunionou/models/message.dart';
 
 class MembersModal extends StatefulWidget {
   @override
@@ -133,15 +132,15 @@ class _MembersModalState extends State<MembersModal> {
             ),
             SizedBox(
               height: screenHeight * 0.55,
-              child: FutureBuilder<List<Comment>>(
-                  future: _fetchComments(),
+              child: FutureBuilder<List<Message>>(
+                  future: _fetchMessage(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           return MemberResponseTile(
-                            comment: snapshot.data![index],
+                            message: snapshot.data![index],
                           );
                         },
                       );
@@ -175,13 +174,13 @@ class _MembersModalState extends State<MembersModal> {
     });
   }
 
-  Future<List<Comment>> _fetchComments() async {
+  Future<List<Message>> _fetchMessage() async {
     return List.generate(10, (index) {
-      return Comment(
+      return Message(
         name: faker.person.name(),
         email: faker.internet.email(),
-        text: faker.lorem.words(faker.randomGenerator.integer(15)).join(' '),
-        response: faker.randomGenerator.integer(3),
+        message: faker.lorem.words(faker.randomGenerator.integer(15)).join(' '),
+        status: faker.randomGenerator.integer(3),
       );
     });
   }

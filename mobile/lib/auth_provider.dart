@@ -22,7 +22,6 @@ class AuthProvider with ChangeNotifier {
         'Authorization': 'Bearer $token',
       },
     );
-    print(response.body);
     if (response.statusCode == 200) {
       _user = User.fromJson(jsonDecode(response.body));
       _isLoggedIn = true;
@@ -61,7 +60,6 @@ class AuthProvider with ChangeNotifier {
         _user!.name = name!;
         updated = true;
       } else {
-        print("salut à tous :D");
         print(response.statusCode);
       }
     }
