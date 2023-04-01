@@ -14,6 +14,7 @@ class EventsProvider with ChangeNotifier {
   List<Event> _eventsInvited = [];
   List<Event> _eventsCreator = [];
   List<Event> _searchHistory = [];
+  List<Comment> _comments = [];
 
   bool _initInvited = false;
   bool _initCreator = false;
@@ -140,7 +141,6 @@ class EventsProvider with ChangeNotifier {
         });
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-
       final events = data[urlEnd] as List;
       if (index == 0) {
         _eventsInvited = events.map((e) => Event.fromJson(e)).toList();
@@ -170,8 +170,7 @@ class EventsProvider with ChangeNotifier {
     return null;
   }
 
-  Future<List<Comment>> getComments(int id) async {
-    List<Comment> comments = [];
+  Future<List<Comment>> getComments(String id) async {
     final response = await http.get(
         Uri.parse("${dotenv.env["BASE_URL"]!}/event/$id"),
         headers: <String, String>{
@@ -180,11 +179,12 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final list = data['comments'] as List;
-      comments = list.map((e) => Comment.fromJson(e)).toList();
+      _comments = list.map((e) => Comment.fromJson(e)).toList();
+      _comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     } else {
       print(response.statusCode);
     }
-    return comments;
+    return _comments;
   }
 
   Future<bool> postComment(String idEvent, String comment) async {
@@ -196,7 +196,7 @@ class EventsProvider with ChangeNotifier {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'comment': comment,
+        'message': comment,
       }),
     );
     if (response.statusCode == 200) {
@@ -204,6 +204,7 @@ class EventsProvider with ChangeNotifier {
     } else {
       print(response.statusCode);
     }
+    notifyListeners();
     return posted;
   }
 }

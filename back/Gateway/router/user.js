@@ -36,7 +36,7 @@ router.get("/me", async (req, res, next) => {
       );
       invited.data[i].creator = {
         name: creator.data.name,
-        mail: creator.data.email,
+        email: creator.data.email,
       };
     }
     if (req.query.embed === "events") {
@@ -61,7 +61,6 @@ router.get("/me", async (req, res, next) => {
         events: events.data.concat(invited.data),
       });
     } else {
-      console.log("here");
       res.json({
         id: validate.data.id,
         name: validate.data.name,

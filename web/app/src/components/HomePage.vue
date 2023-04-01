@@ -162,7 +162,6 @@ export default {
 
         try {
           await this.getadress(this.adress);
-          console.log(this.lat);
           this.axios.defaults.headers.post["Authorization"] =
             this.$store.state.token;
           let response = await this.axios.post(this.$store.state.base_url + "/event", {
@@ -201,11 +200,12 @@ export default {
      */
     async getadress(adress) {
       try {
-        let response = await this.axios.get(
+        let response = await fetch(
           "https://api-adresse.data.gouv.fr/search/?q=" + encodeURI(adress)
         );
-        this.lat = response.data.features[0].geometry.coordinates[1];
-        this.lng = response.data.features[0].geometry.coordinates[0];
+        let json = await response.json()
+        this.lat = json.features[0].geometry.coordinates[1]
+        this.lng = json.features[0].geometry.coordinates[0]
       } catch (error) {
         console.log(error);
       }
