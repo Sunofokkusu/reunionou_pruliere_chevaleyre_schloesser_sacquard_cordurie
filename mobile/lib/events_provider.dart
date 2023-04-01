@@ -6,23 +6,67 @@ import 'package:reunionou/auth_provider.dart';
 import 'package:reunionou/models/comment.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EventsProvider with ChangeNotifier {
   final AuthProvider? _authProvider;
 
   List<Event> _eventsInvited = [];
   List<Event> _eventsCreator = [];
-  List<Event> _eventsPending = [];
+  List<Event> _searchHistory = [];
 
   bool _initInvited = false;
   bool _initCreator = false;
-  bool _initPending = false;
 
   EventsProvider(this._authProvider);
 
-  List<Event> get eventsMember => _eventsPending;
-  List<Event> get eventsCreator => _eventsCreator;
   List<Event> get eventsInvited => _eventsInvited;
+  List<Event> get eventsCreator => _eventsCreator;
+
+  Future<List<Event>> getHistory() async {
+    if (_searchHistory.isEmpty) {
+      final prefs = await SharedPreferences.getInstance();
+      final String? eventsString = prefs.getString('searchHistory');
+      if (eventsString != null) {
+        _searchHistory = Event.decode(eventsString);
+      } else {
+        _searchHistory = [];
+      }
+    }
+    _searchHistory
+        .sort((a, b) => b.searchTimeStamp!.compareTo(a.searchTimeStamp!));
+    return _searchHistory;
+  }
+
+  bool removeHistory(Event event) {
+    if (_searchHistory.remove(event)) {
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  Future<Event?> submitSearch(String search) async {
+    if (search.contains("event")) {
+      search = search.split("/").last;
+    }
+    final event = await getEventById(search);
+    if (event != null) {
+      if (_searchHistory.any((element) => element.id == event.id)) {
+        _searchHistory.removeWhere((element) => element.id == event.id);
+      } else if (_searchHistory.length >= 5) {
+        _searchHistory.removeLast();
+      }
+      event.searchTimeStamp = DateTime.now().millisecondsSinceEpoch;
+      _searchHistory.add(event);
+      final prefs = await SharedPreferences.getInstance();
+      final String encodedData = Event.encode(_searchHistory);
+      await prefs.setString('searchHistory', encodedData);
+      notifyListeners();
+      return event;
+    }
+    return null;
+  }
 
   Future<String> createEvent(String? title, String? description, String? date,
       String? adress, double? lat, double? long) async {
@@ -76,14 +120,6 @@ class EventsProvider with ChangeNotifier {
       } else {
         return _eventsCreator;
       }
-    } else if (index == 2) {
-      if (_initPending == false) {
-        return _eventsPending;
-        // await fetchEvents(index);
-        // _initPending = true;
-      } else {
-        return _eventsPending;
-      }
     }
     return [];
   }
@@ -95,9 +131,6 @@ class EventsProvider with ChangeNotifier {
     } else if (index == 1) {
       urlEnd += "events";
     }
-    // else if (index == 2) {
-    //   urlEnd += "pending";
-    // }
     await dotenv.load(fileName: "assets/.env");
     final response = await http.get(
         Uri.parse("${dotenv.env["BASE_URL"]!}/user/me?embed=$urlEnd"),
@@ -114,10 +147,6 @@ class EventsProvider with ChangeNotifier {
       } else if (index == 1) {
         _eventsCreator = events.map((e) => Event.fromJson(e)).toList();
       }
-      // else if (index == 2) {
-      //   _eventsPending = events.map((e) => Event.fromJson(e)).toList();
-      // }
-
     } else {
       print(response.statusCode);
     }
