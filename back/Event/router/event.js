@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const Event = require('../model/event');
-const Participant = require('../model/participant');
-const Comment = require('../model/comment');
+const Event = require('../model/Event');
+const Participant = require('../model/Participant');
+const Comment = require('../model/Comment');
 
 const { info, error } = require('../helper/logger');
 
@@ -130,6 +130,21 @@ router.get('/user/:id/invited', async (req, res, next) => {
             events.push(event);
         }
         res.json(events);
+    }
+    catch(err){
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
+
+router.put('/', async (req, res, next) => {
+    try{
+        const {id , id_user , title , adress , description , date , lat , long} = req.body;
+        let result = await Event.updateEvent(id, id_user, title, adress, description, date, lat, long);
+        if (result.error) {
+            return next({ error: 400, message: result.error });
+        }
+        res.json(result);
     }
     catch(err){
         error(err.message);

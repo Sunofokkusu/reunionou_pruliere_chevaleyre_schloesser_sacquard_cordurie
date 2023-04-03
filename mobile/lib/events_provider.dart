@@ -207,4 +207,31 @@ class EventsProvider with ChangeNotifier {
     notifyListeners();
     return posted;
   }
+
+  Future<bool> updateEvent(Event event) async {
+    bool updated = false;
+    final response = await http.put(
+        Uri.parse('${dotenv.env["BASE_URL"]!}/event/'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${_authProvider!.token}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String?>{
+          'idEvent': event.id,
+          'title': event.title,
+          'adress': event.adress,
+          'description': event.desc,
+          'date': event.datetime.toString(),
+          'long': event.long.toString(),
+          'lat': event.lat.toString(),
+        }),
+      );
+      if (response.statusCode == 200) {
+        updated = true;
+      } else {
+        print(response.statusCode);
+      }
+    notifyListeners();
+    return updated;
+  }
 }

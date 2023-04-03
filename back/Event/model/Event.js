@@ -40,8 +40,31 @@ async function getEvent(id) {
   }
 }
 
+async function updateEvent(id, idUser, title, adress, description, date, lat, long) {
+  const event = await db("events").where({ id: id }).first();
+  if (!event) {
+    return { error: "Event not found" };
+  }
+  if (event.id_creator !== idUser) {
+    return { error: "You are not the creator of this event" };
+  }
+  const result = await db("events").where({ id: id }).update({
+    title: title,
+    adress: adress,
+    description: description,
+    date: new Date(date),
+    lat: lat,
+    long: long,
+  });
+  if (!result) {
+    return { error: "Error updating event" };
+  }
+  return { id: id }
+}
+
 module.exports = {
   getEventUser,
   createEvent,
-  getEvent
+  getEvent,
+  updateEvent,
 };
