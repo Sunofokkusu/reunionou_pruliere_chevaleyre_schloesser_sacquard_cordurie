@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EventsProvider with ChangeNotifier {
   final AuthProvider? _authProvider;
+  SharedPreferences? _storage;
 
   List<Event> _eventsInvited = [];
   List<Event> _eventsCreator = [];
@@ -18,16 +19,31 @@ class EventsProvider with ChangeNotifier {
 
   bool _initInvited = false;
   bool _initCreator = false;
+  bool _initStorage = false;
 
   EventsProvider(this._authProvider);
 
   List<Event> get eventsInvited => _eventsInvited;
   List<Event> get eventsCreator => _eventsCreator;
 
+  Future<bool> init() async {
+    _storage ??= await SharedPreferences.getInstance();
+    if (_storage!.getKeys().isEmpty) {
+      _storage!.getString('searchHistory');
+    }
+    if (_storage!.getString('searchHistory') == null) {
+      _storage!.getString(
+        'searchHistory',
+      );
+    }
+    return true;
+  }
+
   Future<List<Event>> getHistory() async {
-    if (_searchHistory.isEmpty) {
-      final prefs = await SharedPreferences.getInstance();
-      final String? eventsString = prefs.getString('searchHistory');
+    if (!_initStorage) {
+      await init();
+      _initStorage = true;
+      final String? eventsString = _storage!.getString('searchHistory');
       if (eventsString != null) {
         _searchHistory = Event.decode(eventsString);
       } else {
@@ -39,8 +55,9 @@ class EventsProvider with ChangeNotifier {
     return _searchHistory;
   }
 
-  bool removeHistory(Event event) {
+  Future<bool> removeHistory(Event event) async {
     if (_searchHistory.remove(event)) {
+      _storage!.setString('searchHistory', Event.encode(_searchHistory));
       notifyListeners();
       return true;
     }
