@@ -312,8 +312,12 @@ export default {
           this.$store.state.base_url + "/event/" + this.$route.params.event_id
         );
         this.event = response.data;
-        this.participants = response.data.participants;
-        this.comments = response.data.comments;
+        this.participants = response.data.participants.sort((a,b) => {
+          return new Date(a.created_at) - new Date(b.created_at);
+        });
+        this.comments = response.data.comments.sort((a,b) => {
+          return new Date(a.created_at) - new Date(b.created_at);
+        });
         this.eventLoading = false;
         this.eventError = false;
       } catch (error) {
