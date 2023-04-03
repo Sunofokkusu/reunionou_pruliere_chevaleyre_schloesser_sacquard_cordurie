@@ -150,7 +150,6 @@ router.get('/:id/participant', async (req, res, next) => {
   }
 });
 
-
 router.delete("/:id", async (req, res, next) => {
   try{
     if (!req.headers.authorization)
@@ -176,6 +175,7 @@ router.delete("/:id", async (req, res, next) => {
     }catch{
       return next(500);
     }
+  }
 });
 
 router.put("/", async (req, res, next) => {
