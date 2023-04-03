@@ -150,5 +150,43 @@ router.get('/:id/participant', async (req, res, next) => {
   }
 });
 
+router.put("/", async (req, res, next) => {
+  try {
+    if (!req.headers.authorization)
+      return next({ error: 401, message: "Unauthorized" });
+    let validate = await axios.post(
+      process.env.USER_SERVICE + "validate",
+      {},
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+    let event = await axios.put(
+      process.env.EVENT_SERVICE,
+      {
+        id_user: validate.data.id,
+        id: req.body.idEvent,
+        title: req.body.title,
+        adress: req.body.adress,
+        description: req.body.description,
+        date: req.body.date,
+        lat: req.body.lat,
+        long: req.body.long,
+      },
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+    res.json(event.data);
+  } catch (err) {
+    console.log(err);
+    return next(err.response.data);
+  }
+});
+
 
 module.exports = router;

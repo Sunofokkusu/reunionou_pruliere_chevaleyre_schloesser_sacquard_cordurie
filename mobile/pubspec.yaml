@@ -23,6 +23,7 @@ dependencies:
   auto_size_text: ^3.0.0
   flutter_map: ^0.13.0
   geocoding: ^2.0.0
+  shared_preferences: ^2.0.20
 
 dev_dependencies:
   flutter_test:
