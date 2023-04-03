@@ -5,12 +5,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:reunionou/auth_provider.dart';
 import 'package:reunionou/elements/comments_space.dart';
+import 'package:reunionou/elements/event_form.dart';
 import 'package:reunionou/elements/members_modal.dart';
 import 'package:reunionou/events_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
+
+import 'event_form_page.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends StatefulWidget {
@@ -76,17 +79,41 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       "Contact : ${widget.event.emailCreator}",
                       style: const TextStyle(fontSize: 16.0),
                     ),
-                    const SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return MembersModal(event: widget.event);
+                    Row(
+                      children: [
+                        const SizedBox(height: 16.0),
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return MembersModal(event: widget.event);
+                              },
+                            );
                           },
-                        );
-                      },
-                      child: const Text('Voir les participants'),
+                          child: const Text('Voir les participants'),
+                        ),
+                        Consumer<AuthProvider>(
+                          builder: (context, auth, child) {
+                            if (auth.isLoggedIn && auth.user!.id == widget.event.idCreator) {
+                              return ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => EventFormPage(
+                                        event: widget.event,
+                                      )
+                                    ),
+                                  );
+                                },
+                              child: const Text('Modifier événement'),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16.0),
                     Text(

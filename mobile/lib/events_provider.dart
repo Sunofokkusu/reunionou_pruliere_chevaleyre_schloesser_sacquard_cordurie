@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EventsProvider with ChangeNotifier {
   final AuthProvider? _authProvider;
+  SharedPreferences? _storage;
 
   List<Event> _eventsInvited = [];
   List<Event> _eventsCreator = [];
@@ -18,16 +19,31 @@ class EventsProvider with ChangeNotifier {
 
   bool _initInvited = false;
   bool _initCreator = false;
+  bool _initStorage = false;
 
   EventsProvider(this._authProvider);
 
   List<Event> get eventsInvited => _eventsInvited;
   List<Event> get eventsCreator => _eventsCreator;
 
+  Future<bool> init() async {
+    _storage ??= await SharedPreferences.getInstance();
+    if (_storage!.getKeys().isEmpty) {
+      _storage!.getString('searchHistory');
+    }
+    if (_storage!.getString('searchHistory') == null) {
+      _storage!.getString(
+        'searchHistory',
+      );
+    }
+    return true;
+  }
+
   Future<List<Event>> getHistory() async {
-    if (_searchHistory.isEmpty) {
-      final prefs = await SharedPreferences.getInstance();
-      final String? eventsString = prefs.getString('searchHistory');
+    if (!_initStorage) {
+      await init();
+      _initStorage = true;
+      final String? eventsString = _storage!.getString('searchHistory');
       if (eventsString != null) {
         _searchHistory = Event.decode(eventsString);
       } else {
@@ -39,8 +55,9 @@ class EventsProvider with ChangeNotifier {
     return _searchHistory;
   }
 
-  bool removeHistory(Event event) {
+  Future<bool> removeHistory(Event event) async {
     if (_searchHistory.remove(event)) {
+      _storage!.setString('searchHistory', Event.encode(_searchHistory));
       notifyListeners();
       return true;
     }
@@ -206,5 +223,32 @@ class EventsProvider with ChangeNotifier {
     }
     notifyListeners();
     return posted;
+  }
+
+  Future<bool> updateEvent(Event event) async {
+    bool updated = false;
+    final response = await http.put(
+        Uri.parse('${dotenv.env["BASE_URL"]!}/event/'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${_authProvider!.token}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String?>{
+          'idEvent': event.id,
+          'title': event.title,
+          'adress': event.adress,
+          'description': event.desc,
+          'date': event.datetime.toString(),
+          'long': event.long.toString(),
+          'lat': event.lat.toString(),
+        }),
+      );
+      if (response.statusCode == 200) {
+        updated = true;
+      } else {
+        print(response.statusCode);
+      }
+    notifyListeners();
+    return updated;
   }
 }
