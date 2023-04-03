@@ -13,6 +13,7 @@ import 'package:reunionou/models/event.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:reunionou/screens/home_page.dart';
+import 'package:reunionou/elements/map_view_event.dart';
 
 import 'event_form_page.dart';
 
@@ -81,6 +82,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       style: const TextStyle(fontSize: 16.0),
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         const SizedBox(height: 16.0),
                         ElevatedButton(
@@ -241,6 +243,12 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         return Container();
                       }
                     }),
+                    const SizedBox(height: 16.0),
+                    MapView(
+                      latitude: widget.event.lat,
+                      longitude: widget.event.long,
+                    ),
+                    const SizedBox(height: 16.0),
                     CommentsSpace(
                       event: widget.event,
                     ),
