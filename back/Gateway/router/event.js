@@ -42,8 +42,6 @@ router.get("/:id", async (req, res, next) => {
     );
 
     event.data.creator = creator.data;
-    console.log("salut");
-    console.log(event.data);
     res.json(event.data);
   } catch (err) {
     try {
@@ -169,7 +167,6 @@ router.delete("/:id", async (req, res, next) => {
     let eventSuppr = await axios.delete(process.env.EVENT_SERVICE + req.params.id);
     res.json({type: "info", message: "Event deleted"});
   }catch (err) {
-    console.log(err);
     try{
       return next(err.response.data);
     }catch{
@@ -211,7 +208,6 @@ router.put("/", async (req, res, next) => {
     );
     res.json(event.data);
   } catch (err) {
-    console.log(err);
     return next(err.response.data);
   }
 });

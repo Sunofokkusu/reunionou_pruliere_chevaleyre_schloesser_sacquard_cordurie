@@ -60,7 +60,7 @@ router.post('/:id/participant', participantInsertValidator, async (req, res, nex
         const {message} = req.body;
         let event = await Event.getEvent(idEvent);
         if (event.error) {
-            return next(500);
+            return next({ error: event.error, message: event.message });
         }
         const {id, name, status} = req.body;
         let participant = await Participant.addParticipant(event.id, id, name, status, message);
