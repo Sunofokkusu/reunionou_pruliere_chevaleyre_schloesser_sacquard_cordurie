@@ -5,6 +5,7 @@ const Event = require('../model/Event');
 const Participant = require('../model/Participant');
 const Comment = require('../model/Comment');
 
+
 const { info, error } = require('../helper/logger');
 
 const { eventInsertValidator, participantInsertValidator, commentInsertValidator } = require('../validator/eventValidator');
@@ -30,7 +31,7 @@ router.get('/:id', async (req, res, next) => {
         const {id} = req.params;
         let event = await Event.getEvent(id);
         if (event.error) {
-            return next(500)
+            return next({ error: event.error, message: event.message });
         }
         let participant = await Participant.getEventParticipants(event.id);
         if (participant.error) {
@@ -152,5 +153,22 @@ router.put('/', async (req, res, next) => {
     }
 });
 
+
+router.delete('/:id', async (req, res, next) => {
+    try{
+        const {id} = req.params;
+        let result = await Event.deleteEvent(id);
+        if (result.error) {
+            console.log(result);
+            return next(500)
+        }
+        res.json(result);
+    }
+    catch(err){
+        console.log(err);
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
 
 module.exports = router;
