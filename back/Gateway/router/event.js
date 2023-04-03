@@ -150,5 +150,32 @@ router.get('/:id/participant', async (req, res, next) => {
   }
 });
 
+router.delete("/:id", async (req, res, next) => {
+  try{
+    if (!req.headers.authorization)
+      return next({ error: 401, message: "Unauthorized" });
+    let validate = await axios.post(
+      process.env.USER_SERVICE + "validate",
+      {},
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+    let event = await axios.get(process.env.EVENT_SERVICE + req.params.id);
+    if(event.data.id_creator != validate.data.id) return next({ error: 401, message: "Unauthorized" });
+    let eventSuppr = await axios.delete(process.env.EVENT_SERVICE + req.params.id);
+    res.json({type: "info", message: "Event deleted"});
+  }catch (err) {
+    console.log(err);
+    try{
+      return next(err.response.data);
+    }catch{
+      return next(500);
+    }
+  }
+});
+
 
 module.exports = router;

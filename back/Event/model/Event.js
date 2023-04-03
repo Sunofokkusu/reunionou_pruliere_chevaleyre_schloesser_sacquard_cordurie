@@ -36,12 +36,29 @@ async function getEvent(id) {
     }
     return result;
   }catch(err){
+    console.log(err);
     return { error: "Error getting event" };
+  }
+}
+
+async function deleteEvent(id) {
+  try{
+    const result = await db("events").where({ id: id }).del();
+    const suppressionParticipant = await db("participant").where({ id_event: id }).del();
+    const suppressionComment = await db("comment").where({ id_event: id }).del();
+    if (!result) {
+      return { error: "Error deleting event" };
+    }
+    return result;
+  }catch(err){
+    console.log(err);
+    return { error: "Error deleting event" };
   }
 }
 
 module.exports = {
   getEventUser,
   createEvent,
-  getEvent
+  getEvent,
+  deleteEvent,
 };
