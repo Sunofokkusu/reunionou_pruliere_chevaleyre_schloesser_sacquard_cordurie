@@ -32,13 +32,15 @@ class _EventPreviewState extends State<EventPreview> {
             maxLines: widget.event.desc.isEmpty ? null : 3,
             overflow: TextOverflow.ellipsis,
           ),
-          onTap: () => {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => EventDetailsPage(event: widget.event),
-                  ),
-                )
-              });
+          onTap: () async {
+            var messages = await builder.getMessages(widget.event.id);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    EventDetailsPage(event: widget.event, messages: messages),
+              ),
+            );
+          });
     });
   }
 }

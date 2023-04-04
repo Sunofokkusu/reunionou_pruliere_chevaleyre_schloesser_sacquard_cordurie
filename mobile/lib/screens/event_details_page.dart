@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:reunionou/auth_provider.dart';
 import 'package:reunionou/elements/comments_space.dart';
@@ -12,6 +11,7 @@ import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
+import 'package:reunionou/models/message.dart';
 import 'package:reunionou/screens/home_page.dart';
 import 'package:reunionou/elements/map_view_event.dart';
 
@@ -19,9 +19,10 @@ import 'event_form_page.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends StatefulWidget {
-  EventDetailsPage({super.key, required this.event});
+  EventDetailsPage({super.key, required this.event, this.messages = const []});
 
   late Event event;
+  late List<Message> messages;
 
   @override
   State<EventDetailsPage> createState() => _EventDetailsPageState();
@@ -29,6 +30,12 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
   late String message = "";
+  static const messageStatus = {
+    "Pending": 0,
+    "Accepted": 1,
+    "Refused": 2,
+  };
+  bool hasSentParticipation = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +53,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               icon: const Icon(Icons.copy),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(
-                    text:
-                        "http://localhost:8080/event/${widget.event.id}"));
+                    text: "http://localhost:8080/event/${widget.event.id}"));
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Lien copié dans le presse-papier'),
@@ -90,7 +96,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return MembersModal(event: widget.event);
+                                return MembersModal(event: widget.messages);
                               },
                             );
                           },
@@ -99,7 +105,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         Consumer<AuthProvider>(
                           builder: (context, auth, child) {
                             if (auth.isLoggedIn && auth.user!.id == widget.event.idCreator) {
-                              
                               return Row(
                                 children: [
                                   IconButton(
@@ -181,7 +186,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     ),
                     const SizedBox(height: 16.0),
                     Consumer<AuthProvider>(builder: (context, auth, child) {
-                      if (auth.user!.id != widget.event.idCreator) {
+                      final participantButtonSize =
+                          Size(MediaQuery.of(context).size.width * 0.3, 40);
+                      if (isntCreatorOrParticipant(auth.user!.id)) {
                         return Container(
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
@@ -215,26 +222,26 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.grey,
-                                            fixedSize: Size(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.3,
-                                                40)),
-                                        onPressed: () {},
+                                            fixedSize: participantButtonSize),
+                                        onPressed: () async {
+                                          sendFormParticipant(
+                                              auth.user!.id,
+                                              events,
+                                              messageStatus["Refused"]!);
+                                        },
                                         child: const Text('Désolé',
                                             style: TextStyle(fontSize: 18))),
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            fixedSize: Size(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.3,
-                                                40)),
+                                            fixedSize: participantButtonSize),
                                         child: const Text('J\'y serai !',
                                             style: TextStyle(fontSize: 18)),
-                                        onPressed: () {}),
+                                        onPressed: () async {
+                                          sendFormParticipant(
+                                              auth.user!.id,
+                                              events,
+                                              messageStatus["Accepted"]!);
+                                        }),
                                   ])
                             ])),
                           ),
@@ -258,5 +265,25 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             },
           ),
         ));
+  }
+
+  bool isntCreatorOrParticipant(String idUserLogged) {
+    return (idUserLogged != widget.event.idCreator &&
+        !widget.messages.any((element) => element.idAuthor == idUserLogged));
+  }
+
+  void sendFormParticipant(
+      String idUserLogged, EventsProvider events, int status) async {
+    if (!hasSentParticipation) {
+      hasSentParticipation = true;
+      if (isntCreatorOrParticipant(idUserLogged)) {
+        await events.postMessage(widget.event, message, status);
+        var newMessages = await events.getMessages(widget.event.id);
+        setState(() {
+          widget.messages = newMessages;
+          message = "";
+        });
+      }
+    }
   }
 }

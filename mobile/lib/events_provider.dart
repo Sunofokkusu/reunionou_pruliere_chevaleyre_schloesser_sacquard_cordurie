@@ -6,6 +6,7 @@ import 'package:reunionou/auth_provider.dart';
 import 'package:reunionou/models/comment.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:reunionou/models/message.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EventsProvider with ChangeNotifier {
@@ -237,6 +238,44 @@ class EventsProvider with ChangeNotifier {
     notifyListeners();
     return posted;
   }
+
+  Future<List<Message>> getMessages(String id) async {
+    var response = await http
+        .get(Uri.parse("${dotenv.env['BASE_URL']}/event/$id/participant"));
+    if (response != null) {
+      var data = jsonDecode((await response).body);
+      List<Message> messages = [];
+      for (var message in data) {
+        messages.add(Message.fromJson(message));
+      }
+      notifyListeners();
+      return messages;
+    } else {
+      return [];
+    }
+  }
+
+  Future<bool> postMessage(Event event, String message, int status) async {
+    bool posted = false;
+    final response = await http.post(
+      Uri.parse("${dotenv.env["BASE_URL"]!}/event/${event.id}/participant/"),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_authProvider!.token}',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'status': status,
+        'message': message,
+      }),
+    );
+    if (response.statusCode == 200) {
+      posted = true;
+      _eventsInvited.add(event);
+    } else {
+      print(response.statusCode);
+    }
+    return posted;
+}
 
   Future<bool> updateEvent(Event event) async {
     bool updated = false;
