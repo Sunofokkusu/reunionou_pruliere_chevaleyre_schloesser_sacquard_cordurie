@@ -15,20 +15,36 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
-      builder: (context, auth, child) {
-        if (!auth.isLoggedIn) {
-          return const LoginFormPage();
-        }
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Profil'),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Nom : ${auth.user?.name}'),
-                Text('Email : ${auth.user?.email}'),
+  builder: (context, auth, child) {
+    if (!auth.isLoggedIn) {
+      return const LoginFormPage();
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profil'),
+        elevation: 0,
+      ),
+      body: Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Nom : ${auth.user?.name}',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Email : ${auth.user?.email}',
+                    style: TextStyle(
+                      fontSize: 18,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -39,6 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   child: const Text('Éditer le profil'),
                 ),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     showDialog(
@@ -46,27 +63,31 @@ class _ProfilePageState extends State<ProfilePage> {
                       builder: (context) => AlertDialog(
                         title: const Text('Se déconnecter'),
                         content: const Text('Êtes-vous sûr de vouloir vous déconnecter ?'),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Annuler'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              auth.logout();
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Se déconnecter'),
-                          ),
-                        ],
-                      )
-                    );
-                  },
-                  child: const Text('Se déconnecter')
-                )
-              ],
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Annuler'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                auth.logout();
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Se déconnecter'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    child: const Text('Se déconnecter'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );
