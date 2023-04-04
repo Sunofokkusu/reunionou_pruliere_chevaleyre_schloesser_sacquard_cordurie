@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:reunionou/models/comment.dart';
 import 'package:intl/intl.dart';
 
+/// TODO : Julien explique
+
 class CommentTile extends StatefulWidget {
   const CommentTile({super.key, required this.comment});
 
@@ -12,7 +14,6 @@ class CommentTile extends StatefulWidget {
 }
 
 class _CommentTileState extends State<CommentTile> {
-
   @override
   Widget build(BuildContext context) {
     String dateFormatted;

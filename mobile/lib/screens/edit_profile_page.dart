@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reunionou/auth_provider.dart';
+import 'package:reunionou/providers/auth_provider.dart';
 
+/// TODO : Julien explique
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
 
@@ -19,8 +20,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
-      builder: (context, auth, child) {
-        String currentName = auth.user!.name;
+      builder: (context, authProvider, child) {
+        String currentName = authProvider.user!.name;
         return Scaffold(
           appBar: AppBar(
             title: const Text('Éditer le profil'),
@@ -110,9 +111,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       },
                       validator: (value) {
                         if (_name == '') {
-                          _name = auth.user!.name;
+                          _name = authProvider.user!.name;
                         }
-                        if ((_newPassword != '' || _name != auth.user!.name) && value == '') {
+                        if ((_newPassword != '' ||
+                                _name != authProvider.user!.name) &&
+                            value == '') {
                           return 'Entrer votre mot de passe pour valider les changements';
                         }
                         return null;
@@ -122,27 +125,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          if (_name == auth.user!.name && _newPassword == '') {
+                          if (_name == authProvider.user!.name &&
+                              _newPassword == '') {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Pas de changement')),
+                              const SnackBar(
+                                  content: Text('Pas de changement')),
                             );
                             Navigator.of(context).pop();
                           }
-                          Future<bool> updated = auth.update(
+                          Future<bool> updated = authProvider.update(
                             _name,
                             _password,
                             _newPassword,
                           );
                           if (await updated) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Informations mises à jour')),
+                              const SnackBar(
+                                  content: Text('Informations mises à jour')),
                             );
                             Navigator.of(context).pop();
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Erreur lors de la mise à jour')),
+                              const SnackBar(
+                                  content:
+                                      Text('Erreur lors de la mise à jour')),
                             );
-                          }    
+                          }
                         }
                       },
                       child: const Text('Mettre à jour'),
