@@ -64,7 +64,7 @@ body {
     margin: -50px -10px -30px -10px;
     padding: 15px 10px 5px 20px;
     border-radius: 0 0 15px 15px;
-    background-color: #3988ff;
+    background-color: #34495e;
     display: flex;
     align-items: center;
 }
@@ -88,7 +88,7 @@ body {
     cursor: pointer;
     display: block;
     background-size: 200% 100%;
-    background-image: linear-gradient(to right, #ffffff 50%, #8be4ff 50%);
+    background-image: linear-gradient(to right, #ffffff 50%, #4CAF50 50%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     transition: background-position 0.5s;

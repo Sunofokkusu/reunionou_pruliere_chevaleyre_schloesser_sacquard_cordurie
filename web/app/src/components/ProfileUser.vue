@@ -19,37 +19,37 @@
           <div class="editCard">
             <p>Edition profil</p>
             <div v-if="editname">
-              <q-input v-model=newname filled dense label="nouveau nom d'utilisateur">
+              <q-input color="green" v-model=newname filled dense label="nouveau nom d'utilisateur">
                 <template v-slot:after>
                   <q-btn flat @click="editname = false; newname=''"><i class="fas fa-trash"></i></q-btn>
                 </template>
               </q-input>
             </div>
             <div v-else>
-              <q-input filled dense disable :placeholder=user.name>
+              <q-input color="green" filled dense disable :placeholder=user.name>
                 <template v-slot:after>
                   <q-btn flat @click="editname = true"><i class="fas fa-pen" ></i></q-btn>
                 </template>
               </q-input>
             </div>
             <div v-if="editpasswd">
-              <q-input v-model=newpasswd type="password" filled dense label="nouveau mot de passe">
+              <q-input color="green" v-model=newpasswd type="password" filled dense label="nouveau mot de passe">
                 <template v-slot:after>
                   <q-btn flat @click="editpasswd = false; newpasswd=''"><i class="fas fa-trash"></i></q-btn>
                 </template>
               </q-input>
             </div>
             <div v-else>
-              <q-input filled dense disable placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
+              <q-input color="green" filled dense disable placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
                 <template v-slot:after>
                   <q-btn flat @click="editpasswd = true"><i class="fas fa-pen" ></i></q-btn>
                 </template>
               </q-input>
             </div>
             <div>
-              <q-input filled dense label="mot de passe" v-model=passwd type="password">
+              <q-input color="green" filled dense label="mot de passe" v-model=passwd type="password">
                 <template v-slot:after>
-                  <q-btn label="confirmer" dense color="primary" @click="editProfile"/>
+                  <q-btn label="confirmer" dense color="green" @click="editProfile"/>
                 </template>
               </q-input>
             </div>  
@@ -68,7 +68,7 @@
             <p>Erreur lors du chargement des évènements</p>
           </div>
           <div v-else v-for="event in user.events" :key="event.id" class="card eventCard col-2" @click="this.$router.push({ name: 'Event', params: { event_id: event.id } })">
-            <button class="delete" @click.stop="">❌</button>
+            <button class="delete" @click.stop="deleteEvent(event.id)">❌</button>
             <p>{{ event.title }}</p>
             <p>{{ event.description }}</p>
             <p>{{ new Date(event.date).toLocaleDateString() }}</p>
@@ -146,6 +146,15 @@ export default {
       } catch (error) {
         console.log(error)
         window.alert("Erreur lors de la modification du profil, mot de passe incorrect")
+      }
+    },
+    async deleteEvent(id_event){
+      try{
+        this.axios.defaults.headers.delete['Authorization'] = this.$store.state.token;
+        await this.axios.delete(this.$store.state.base_url + "/event/" + id_event, {});
+        this.user.events = this.user.events.filter(event => event.id !== id_event);
+      }catch (error){
+        window.alert("Error lors de la suppression de l'évènement.")
       }
     }
   }
@@ -225,7 +234,7 @@ export default {
     background-color: transparent;
     border: none;
     cursor: pointer;
-    filter: hue-rotate(226deg) brightness(120%);
+    filter: hue-rotate(50deg) brightness(120%);
     margin-left: -70px;
     margin-top: 10px;
     float: right;

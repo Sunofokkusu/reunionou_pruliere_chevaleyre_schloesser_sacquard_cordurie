@@ -3,9 +3,10 @@
     <div class="container">
       <div class="signinCard">
         <h4>Inscription</h4>
-        <q-input v-model="name" label="Nom*" name="name" required />
-        <q-input v-model="email" label="Adresse mail*" name="email" required />
+        <q-input color="green" v-model="name" label="Nom*" name="name" required />
+        <q-input color="green" v-model="email" label="Adresse mail*" name="email" required />
         <q-input
+          color="green"
           type="password"
           v-model="password"
           label="Mot de passe*"
@@ -13,6 +14,7 @@
           required
         />
         <q-input
+          color="green"
           type="password"
           v-model="password_confirmed"
           label="Confirmer le mot de passe*"
@@ -21,7 +23,7 @@
         />
         <q-btn
           class="confirm"
-          color="primary"
+          color="green"
           label="Inscription"
           :disable="password !== password_confirmed"
           @click="signup"
@@ -64,7 +66,7 @@ export default {
           "password": this.password,
         })
         .then((response) => {
-          this.$store.commit("setToken", response.data.token)
+          this.$store.commit("setToken", "Bearer " + response.data.token)
           this.$store.commit("setConnected", true)
           this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
           this.axios.get(this.$store.state.base_url + "/user/me")

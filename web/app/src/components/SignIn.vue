@@ -3,8 +3,9 @@
     <div class="container">
       <div class="signinCard">
         <h4>Connexion</h4>
-        <q-input v-model="email" label="Adresse mail*" name="email" required />
+        <q-input color="green" v-model="email" label="Adresse mail*" name="email" required />
         <q-input
+          color="green"
           type="password"
           v-model="password"
           label="Mot de passe*"
@@ -12,8 +13,8 @@
           required
         />
         <q-btn
+          color="green"
           class="confirm"
-          color="primary"
           label="Connexion"
           @click="signin"
         />
@@ -52,7 +53,7 @@ export default {
           password: this.password,
         })
         .then((response) => {
-          this.$store.commit("setToken", response.data.token)
+          this.$store.commit("setToken", "Bearer " + response.data.token)
           this.$store.commit("setConnected", true)
           this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
           this.axios.get(this.$store.state.base_url + "/user/me")

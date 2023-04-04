@@ -196,18 +196,27 @@ class _EventFormState extends State<EventForm> {
                                             onPressed: () {
                                               setState(() {
                                                 Navigator.pop(context);
-                                                lat = Provider.of<MapProvider>(context, listen: false).lat!;
-                                                long = Provider.of<MapProvider>(context, listen: false).long!;
-                                                adress = Provider.of<MapProvider>(context, listen: false).adress!;
+                                                lat = Provider.of<MapProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .lat!;
+                                                long = Provider.of<MapProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .long!;
+                                                adress =
+                                                    Provider.of<MapProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .adress!;
                                               });
-
                                             },
                                             style: ElevatedButton.styleFrom(
                                               // define the width of the button in the dialog at the width of the dialog
                                               minimumSize: Size(
                                                   MediaQuery.of(context)
-                                                          .size
-                                                          .width,
+                                                      .size
+                                                      .width,
                                                   40),
                                             ),
                                             child: const Text("Valider"))
@@ -227,16 +236,16 @@ class _EventFormState extends State<EventForm> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: (widget.event == null
-                                  ? const Text("Événement ajoutée")
-                                  : const Text("Événement modifiée")),
+                                  ? const Text("Événement ajouté")
+                                  : const Text("Événement modifié")),
                               duration: const Duration(seconds: 2),
                             ),
                           );
                         }
 
                         if (widget.event == null) {
-                          newCreatedId = await eventsProvider.createEvent(
-                              title, desc, datetime.toString(), adress, lat, long);
+                          newCreatedId = await eventsProvider.createEvent(title,
+                              desc, datetime.toString(), adress, lat, long);
                           newCreatedEvent =
                               await eventsProvider.getEventById(newCreatedId!);
                           if (newCreatedEvent != null) {
@@ -287,9 +296,10 @@ class _EventFormState extends State<EventForm> {
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: (lat == 0.0 || long == 0.0 || title == "")
-                            ? Colors.grey
-                            : Color.fromARGB(255, 140, 24, 172),
+                        backgroundColor:
+                            (lat == 0.0 || long == 0.0 || title == "")
+                                ? Colors.grey
+                                : Color.fromARGB(255, 140, 24, 172),
                       ),
                       child: const Text("Enregistrer"))
                 ]),

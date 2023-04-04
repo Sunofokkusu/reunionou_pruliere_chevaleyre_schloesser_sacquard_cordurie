@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:reunionou/auth_provider.dart';
 import 'package:reunionou/elements/comments_space.dart';
@@ -12,15 +11,18 @@ import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
+import 'package:reunionou/models/message.dart';
+import 'package:reunionou/screens/home_page.dart';
 import 'package:reunionou/elements/map_view_event.dart';
 
 import 'event_form_page.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends StatefulWidget {
-  EventDetailsPage({super.key, required this.event});
+  EventDetailsPage({super.key, required this.event, this.messages = const []});
 
   late Event event;
+  late List<Message> messages;
 
   @override
   State<EventDetailsPage> createState() => _EventDetailsPageState();
@@ -28,6 +30,12 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
   late String message = "";
+  static const messageStatus = {
+    "Pending": 0,
+    "Accepted": 1,
+    "Refused": 2,
+  };
+  bool hasSentParticipation = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +53,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               icon: const Icon(Icons.copy),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(
-                    text:
-                        "http://localhost:8080/event/${widget.event.id}"));
+                    text: "http://localhost:8080/event/${widget.event.id}"));
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Lien copié dans le presse-papier'),
@@ -80,6 +87,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       "Contact : ${widget.event.emailCreator}",
                       style: const TextStyle(fontSize: 16.0),
                     ),
+                    const SizedBox(height: 16.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -89,7 +97,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return MembersModal(event: widget.event);
+                                return MembersModal(messages: widget.messages);
                               },
                             );
                           },
@@ -97,19 +105,80 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         ),
                         Consumer<AuthProvider>(
                           builder: (context, auth, child) {
-                            if (auth.isLoggedIn && auth.user!.id == widget.event.idCreator) {
-                              return ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => EventFormPage(
-                                        event: widget.event,
-                                      )
-                                    ),
-                                  );
-                                },
-                              child: const Text('Modifier événement'),
-                              );
+                            if (auth.isLoggedIn &&
+                                auth.user!.id == widget.event.idCreator) {
+                              return Row(children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) => EventFormPage(
+                                                event: widget.event,
+                                              )),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text(
+                                              "Supprimer l'événement"),
+                                          content: const Text(
+                                              "Êtes-vous sûr de vouloir supprimer cet événement ?"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Annuler"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                bool deleted =
+                                                    await events.deleteEvent(
+                                                        widget.event.id);
+                                                if (deleted) {
+                                                  Navigator.of(context).pop();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'Événement supprimé'),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const HomePage(),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).pop();
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'Erreur lors de la suppression de l\'événement'),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                }
+                                              },
+                                              child: const Text("Supprimer"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                )
+                              ]);
                             } else {
                               return Container();
                             }
@@ -125,7 +194,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     ),
                     const SizedBox(height: 16.0),
                     Consumer<AuthProvider>(builder: (context, auth, child) {
-                      if (auth.user!.id != widget.event.idCreator) {
+                      final participantButtonSize =
+                          Size(MediaQuery.of(context).size.width * 0.3, 40);
+                      if (isntCreatorOrParticipant(auth.user!.id)) {
                         return Container(
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
@@ -159,26 +230,26 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.grey,
-                                            fixedSize: Size(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.3,
-                                                40)),
-                                        onPressed: () {},
+                                            fixedSize: participantButtonSize),
+                                        onPressed: () async {
+                                          sendFormParticipant(
+                                              auth.user!.id,
+                                              events,
+                                              messageStatus["Refused"]!);
+                                        },
                                         child: const Text('Désolé',
                                             style: TextStyle(fontSize: 18))),
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            fixedSize: Size(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.3,
-                                                40)),
+                                            fixedSize: participantButtonSize),
                                         child: const Text('J\'y serai !',
                                             style: TextStyle(fontSize: 18)),
-                                        onPressed: () {}),
+                                        onPressed: () async {
+                                          sendFormParticipant(
+                                              auth.user!.id,
+                                              events,
+                                              messageStatus["Accepted"]!);
+                                        }),
                                   ])
                             ])),
                           ),

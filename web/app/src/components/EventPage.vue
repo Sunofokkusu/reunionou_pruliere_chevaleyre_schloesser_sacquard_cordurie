@@ -10,20 +10,31 @@
         </div>
         <div v-else>
           <div v-if="getEventComputed.title">
-            <h4>{{ getEventComputed.title }}</h4>
-            <p>Créé par: {{ getEventComputed.creator.name }}</p>
-            <p>Description: {{ getEventComputed.description }}</p>
-            <p>
+            <div class="edit">
+              <i v-if="edit" class="fas fa-trash" @click="edit = false"></i>
+              <i v-else class="fas fa-pen" @click="edit = true"></i>
+            </div>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editTitle" filled dense placeholder="nouveau titre"></q-input>
+            <h4 v-else>{{ getEventComputed.title }}</h4>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editDescr" filled dense placeholder="nouvelle description"></q-input>
+            <div v-else>
+              <p >Créé par: {{ getEventComputed.creator.name }}</p>
+              <p >Description: {{ getEventComputed.description }}</p>
+            </div>          
+            <q-input color="green" class="editInput" v-if="edit" v-model="editDate" filled dense type="date"></q-input>
+            <p v-else>
               Date de rendez-vous:
-              {{ new Date(getEventComputed.date).toLocaleDateString() }}
+              {{ new Date(getEventComputed.date.substr(0, 10)).toLocaleDateString() }}
             </p>
-            <p>
-              Heure de rendez-vous:
-              {{ new Date(getEventComputed.date).getHours() - 2 }}h{{
-                new Date(getEventComputed.date).getMinutes()
-              }}
+            <q-input color="green" class="editInput" v-if="edit" v-model="editTime" filled dense type="time"></q-input>
+            <p v-else>
+              Heure de rendez-vous: {{ getEventComputed.date.substr(11, 5) }}
             </p>
-            <p>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editAdress" filled dense></q-input>
+            <q-btn v-if="edit" color="green" @Click="editEvent">
+              Modifier&emsp;<i class="fas fa-check"></i>
+            </q-btn>
+            <p v-else>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
           </div>
         </div>
       </div>
@@ -48,7 +59,7 @@
         <div class="center">
           <div class="row" v-if="button">
             <q-btn
-              color="primary"
+              color="green"
               class="col-5"
               @click="
                 join = true;
@@ -118,13 +129,7 @@
         </div>
         <div class="inputBox">
           <div>
-            <q-input
-              filled
-              v-model="comment"
-              dense
-              label="Commentaire"
-              autofocus
-            >
+            <q-input color="green" filled v-model="comment" dense label="Commentaire" autofocus>
               <template v-slot:after>
                 <q-btn flat @Click="addcomment">
                   <i class="fas fa-paper-plane"></i>
@@ -140,7 +145,7 @@
       <q-card class="modal">
         <q-card-section class="row items-center">
           <div class="q-ml-sm">
-            <q-input v-model="name" label="Nom" />
+            <q-input color="green" v-model="name" label="Nom" />
           </div>
         </q-card-section>
 
@@ -172,13 +177,8 @@
       <q-card class="modal">
         <q-card-section class="row items-center">
           <div class="q-ml-sm">
-            <q-input
-              v-if="this.$store.state.token === ''"
-              v-model="name"
-              label="Nom"
-              autofocus
-            />
-            <q-input v-model="message" label="Message (optionnel)" />
+            <q-input color="green" v-if="this.$store.state.token === ''" v-model="name" label="Nom" autofocus/>
+            <q-input color="green" v-model="message" label="Message (optionnel)" />
           </div>
         </q-card-section>
 
@@ -245,11 +245,26 @@ export default {
       markerLatLng:[],
       lat: "",
       long: "",
-      loaded: false
+      loaded: false,
+      edit: false,
+      editTitle: "",
+      editDescr: "",
+      editDate: "",
+      editTime: "",
+      editAdress: "",
+      editlat: 0,
+      editlng: 0,
     };
   },
   async mounted() {
     await this.getEvent();
+
+    this.editTitle = this.event.title;
+    this.editDescr = this.event.description;
+    this.editDate = this.event.date.substring(0, 10);
+    this.editTime = this.event.date.substring(11, 19);
+    this.editAdress = this.event.adress;
+
     //permet de récupérer les données météo de la ville de l'événement
     try {
       let response = await fetch(
@@ -367,6 +382,30 @@ export default {
       this.button = false;
     },
 
+    async editEvent() {
+      try {
+        let newDate = this.editDate + "T" + this.editTime;
+        await this.getadress(this.editAdress)
+        this.axios.defaults.headers.put["Authorization"] = this.$store.state.token;
+        await this.axios.put(this.$store.state.base_url+"/event", {
+          idEvent: this.$route.params.event_id,
+          title: this.editTitle,
+          adress: this.editAdress,
+          description: this.editDescr,
+          date: newDate,
+          long: this.editlng,
+          lat: this.editlat,
+        })
+        this.getEvent()
+        window.alert("Modification de l'événement réussie");
+        this.edit = false
+      } catch (error) {
+        console.log(error);
+        window.alert("Erreur lors de la modification de l'événement");
+        this.edit = false
+      }
+    },
+
     /**
      * réinitialise les champs
      * @return inutilisable
@@ -376,6 +415,24 @@ export default {
       this.message = "";
       this.comment = "";
     },
+
+    /**
+     * récupère la longitude et la latitude d'une adresse via l'api adresse.data.gouv.fr
+     * @param {String} adress
+     */
+    async getadress(adress) {
+      try {
+        let response = await fetch(
+          "https://api-adresse.data.gouv.fr/search/?q=" + encodeURI(adress)
+        );
+        let json = await response.json()
+        this.editlat = json.features[0].geometry.coordinates[1]
+        this.editlng = json.features[0].geometry.coordinates[0]
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     /**
      * Ajoute un commentaire si l'utilisateur est connecté, ouvre le pop-up de nom sinon
      * @return inutilisable
@@ -442,6 +499,14 @@ export default {
   text-overflow: ellipsis;
 }
 
+.editInput {
+  margin: 3px;
+}
+.editInput:first-of-type {
+  padding-top: 19px;
+  margin-top: 10px;
+}
+
 .map {
   padding: 0;
 }
@@ -458,7 +523,7 @@ export default {
 }
 h4 {
   margin-bottom: 20px;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .history {
@@ -490,5 +555,16 @@ h4 {
 .inputBox {
   width: 100%;
   margin-top: 5px;
+}
+
+.edit {   
+  cursor: pointer;
+  margin-top: -10px;
+  margin-left: -100px;
+  float: right;
+  color: #232323;
+}
+.edit:hover {
+  color: #4CAF50
 }
 </style>

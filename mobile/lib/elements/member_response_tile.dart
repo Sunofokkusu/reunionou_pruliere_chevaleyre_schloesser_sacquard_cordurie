@@ -16,9 +16,8 @@ class _MemberResponseTileState extends State<MemberResponseTile> {
   @override
   Widget build(BuildContext context) {
     return Consumer<EventsProvider>(builder: (context, builder, child) {
-      int status = widget.message.status; // le nombre entre 0 et 2
+      int status = widget.message.status;
 
-      // Définir l'icône/couleur en fonction de la réponse
       IconData icon;
       Color bgColor;
       Color iconColor;
