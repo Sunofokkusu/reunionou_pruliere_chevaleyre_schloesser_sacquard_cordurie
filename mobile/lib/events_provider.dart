@@ -125,25 +125,27 @@ class EventsProvider with ChangeNotifier {
   }
 
   Future<List<Event>> getEvents(int index) async {
-    if (index == 0) {
-      if (_initInvited == false) {
-        await fetchEvents(index);
-        _initInvited = true;
-      } else {
-        return _eventsInvited;
-      }
-    } else if (index == 1) {
-      if (_initCreator == false) {
-        await fetchEvents(index);
-        _initCreator = true;
-      } else {
-        return _eventsCreator;
+    if (_authProvider!.isLoggedIn) {
+      if (index == 0) {
+        if (_initInvited == false) {
+          await fetchEvents(index);
+          _initInvited = true;
+        } else {
+          return _eventsInvited;
+        }
+      } else if (index == 1) {
+        if (_initCreator == false) {
+          await fetchEvents(index);
+          _initCreator = true;
+        } else {
+          return _eventsCreator;
+        }
       }
     }
     return [];
   }
 
-  Future<List<Event>> fetchEvents(int index) async {
+  Future<void> fetchEvents(int index) async {
     var urlEnd = "";
     if (index == 0) {
       urlEnd += "invited";
@@ -152,11 +154,11 @@ class EventsProvider with ChangeNotifier {
     }
     await dotenv.load(fileName: "assets/.env");
     final response = await http.get(
-        Uri.parse("${dotenv.env["BASE_URL"]!}/user/me?embed=$urlEnd"),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${_authProvider!.token}',
-          'Content-Type': 'application/json; charset=UTF-8',
-        });
+      Uri.parse("${dotenv.env["BASE_URL"]!}/user/me?embed=$urlEnd"),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_authProvider!.token}',
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final events = data[urlEnd] as List;
@@ -166,10 +168,10 @@ class EventsProvider with ChangeNotifier {
         _eventsCreator = events.map((e) => Event.fromJson(e)).toList();
       }
     } else {
+      print("et non c'est moi enfait ahaha");
       print(response.statusCode);
     }
     notifyListeners();
-    return _eventsCreator;
   }
 
   Future<Event?> getEventById(String id) async {
@@ -183,24 +185,34 @@ class EventsProvider with ChangeNotifier {
       final data = jsonDecode(response.body);
       return Event.fromJson(data);
     } else {
+      print("hihi ct moi depuis le début");
       print(response.statusCode);
     }
     return null;
   }
 
   Future<List<Comment>> getComments(String id) async {
+    bool exist = false;
+    if (_eventsCreator.any((element) => element.id == id)) {
+      exist = true;
+    } else if (_eventsInvited.any((element) => element.id == id)) {
+      exist = true;
+    }
+    if (exist) {
     final response = await http.get(
-        Uri.parse("${dotenv.env["BASE_URL"]!}/event/$id"),
-        headers: <String, String>{
-          'Authorization': 'Bearer ${_authProvider!.token}',
-        });
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final list = data['comments'] as List;
-      _comments = list.map((e) => Comment.fromJson(e)).toList();
-      _comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    } else {
-      print(response.statusCode);
+      Uri.parse("${dotenv.env["BASE_URL"]!}/event/$id"),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_authProvider!.token}',
+      });
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final list = data['comments'] as List;
+        _comments = list.map((e) => Comment.fromJson(e)).toList();
+        _comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      } else {
+        print("je compredn pas pk ca marche pas");
+        print(response.statusCode);
+      }
     }
     return _comments;
   }
@@ -220,6 +232,7 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       posted = true;
     } else {
+      print("fdp");
       print(response.statusCode);
     }
     notifyListeners();
@@ -262,5 +275,52 @@ class EventsProvider with ChangeNotifier {
       print(response.statusCode);
     }
     return posted;
+}
+
+  Future<bool> updateEvent(Event event) async {
+    bool updated = false;
+    final response = await http.put(
+        Uri.parse('${dotenv.env["BASE_URL"]!}/event/'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${_authProvider!.token}',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String?>{
+          'idEvent': event.id,
+          'title': event.title,
+          'adress': event.adress,
+          'description': event.desc,
+          'date': event.datetime.toString(),
+          'long': event.long.toString(),
+          'lat': event.lat.toString(),
+        }),
+      );
+      if (response.statusCode == 200) {
+        updated = true;
+      } else {
+        print("aled");
+        print(response.statusCode);
+      }
+    notifyListeners();
+    return updated;
+  }
+
+  Future<bool> deleteEvent(String id) async {
+    bool deleted = false;
+    final response = await http.delete(
+      Uri.parse('${dotenv.env["BASE_URL"]!}/event/$id'),
+      headers: <String, String>{
+        'Authorization' : 'Bearer ${_authProvider!.token}'
+      }
+    );
+    if (response.statusCode == 200) {
+      _eventsCreator.removeWhere((element) => element.id == id);
+      deleted = true;
+    } else {
+      print("c'est moi :D");
+      print(response.statusCode);
+    }
+    notifyListeners();
+    return deleted;
   }
 }

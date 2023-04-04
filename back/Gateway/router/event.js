@@ -42,8 +42,6 @@ router.get("/:id", async (req, res, next) => {
     );
 
     event.data.creator = creator.data;
-    console.log("salut");
-    console.log(event.data);
     res.json(event.data);
   } catch (err) {
     try {
@@ -147,6 +145,70 @@ router.get('/:id/participant', async (req, res, next) => {
     } catch (error) {
       return next(500);
     }
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try{
+    if (!req.headers.authorization)
+      return next({ error: 401, message: "Unauthorized" });
+    let validate = await axios.post(
+      process.env.USER_SERVICE + "validate",
+      {},
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+
+    let event = await axios.get(process.env.EVENT_SERVICE + req.params.id);
+    if(event.data.id_creator != validate.data.id) return next({ error: 401, message: "Unauthorized" });
+    let eventSuppr = await axios.delete(process.env.EVENT_SERVICE + req.params.id);
+    res.json({type: "info", message: "Event deleted"});
+  }catch (err) {
+    try{
+      return next(err.response.data);
+    }catch{
+      return next(500);
+    }
+  }
+});
+
+router.put("/", async (req, res, next) => {
+  try {
+      if (!req.headers.authorization)
+      return next({ error: 401, message: "Unauthorized" });
+      let validate = await axios.post(
+      process.env.USER_SERVICE + "validate",
+      {},
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+    let event = await axios.put(
+      process.env.EVENT_SERVICE,
+      {
+        id_user: validate.data.id,
+        id: req.body.idEvent,
+        title: req.body.title,
+        adress: req.body.adress,
+        description: req.body.description,
+        date: req.body.date,
+        lat: req.body.lat,
+        long: req.body.long,
+      },
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+    res.json(event.data);
+  } catch (err) {
+    return next(err.response.data);
   }
 });
 

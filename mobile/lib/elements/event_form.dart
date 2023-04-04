@@ -248,23 +248,51 @@ class _EventFormState extends State<EventForm> {
                               desc, datetime.toString(), adress, lat, long);
                           newCreatedEvent =
                               await eventsProvider.getEventById(newCreatedId!);
+                          if (newCreatedEvent != null) {
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pop();
+
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => EventDetailsPage(
+                                  event: newCreatedEvent!,
+                                ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text("Erreur lors de la création"),
+                              ),
+                            );
+                          }
                         } else {
-                          // widget.event!.title = title;
-                          // widget.event!.desc = desc;
-                          // eventsProvider.updateTask(widget.event!);
+                          widget.event!.title = title;
+                          widget.event!.desc = desc;
+                          widget.event!.datetime = datetime;
+                          widget.event!.adress = adress;
+                          widget.event!.lat = lat;
+                          widget.event!.long = long;
+                          bool updated = await eventsProvider.updateEvent(widget.event!);
+                          if (updated) {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => EventDetailsPage(
+                                  event: widget.event!
+                                ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text("Erreur lors de la modification"),
+                              ),
+                            );
+                          }
                         }
-
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).pop();
-
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EventDetailsPage(
-                              event: newCreatedEvent!,
-                            ),
-                          ),
-                        );
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),

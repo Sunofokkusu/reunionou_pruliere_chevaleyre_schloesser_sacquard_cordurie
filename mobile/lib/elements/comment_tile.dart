@@ -16,7 +16,7 @@ class _CommentTileState extends State<CommentTile> {
   @override
   Widget build(BuildContext context) {
     String dateFormatted;
-    DateTime date = widget.comment.createdAt;
+    DateTime date = widget.comment.createdAt.toLocal();
     if (date.day == DateTime.now().day) {
       dateFormatted = DateFormat('HH:mm').format(date);
     } else {

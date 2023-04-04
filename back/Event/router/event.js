@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const Event = require('../model/event');
-const Participant = require('../model/participant');
-const Comment = require('../model/comment');
+const Event = require('../model/Event');
+const Participant = require('../model/Participant');
+const Comment = require('../model/Comment');
+
 
 const { info, error } = require('../helper/logger');
 
@@ -30,7 +31,7 @@ router.get('/:id', async (req, res, next) => {
         const {id} = req.params;
         let event = await Event.getEvent(id);
         if (event.error) {
-            return next(500)
+            return next({ error: event.error, message: event.message });
         }
         let participant = await Participant.getEventParticipants(event.id);
         if (participant.error) {
@@ -59,7 +60,7 @@ router.post('/:id/participant', participantInsertValidator, async (req, res, nex
         const {message} = req.body;
         let event = await Event.getEvent(idEvent);
         if (event.error) {
-            return next(500);
+            return next({ error: event.error, message: event.message });
         }
         const {id, name, status} = req.body;
         let participant = await Participant.addParticipant(event.id, id, name, status, message);
@@ -137,5 +138,37 @@ router.get('/user/:id/invited', async (req, res, next) => {
     }
 });
 
+router.put('/', async (req, res, next) => {
+    try{
+        const {id , id_user , title , adress , description , date , lat , long} = req.body;
+        let result = await Event.updateEvent(id, id_user, title, adress, description, date, lat, long);
+        if (result.error) {
+            return next({ error: 400, message: result.error });
+        }
+        res.json(result);
+    }
+    catch(err){
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
+
+
+router.delete('/:id', async (req, res, next) => {
+    try{
+        const {id} = req.params;
+        let result = await Event.deleteEvent(id);
+        if (result.error) {
+            console.log(result);
+            return next(500)
+        }
+        res.json(result);
+    }
+    catch(err){
+        console.log(err);
+        error(err.message);
+        next({ error: 500, message: "Erreur serveur" });
+    }
+});
 
 module.exports = router;

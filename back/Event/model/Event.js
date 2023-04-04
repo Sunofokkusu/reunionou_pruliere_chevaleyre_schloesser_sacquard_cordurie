@@ -36,12 +36,53 @@ async function getEvent(id) {
     }
     return result;
   }catch(err){
+    console.log(err);
     return { error: "Error getting event" };
   }
+}
+
+
+async function deleteEvent(id) {
+  try{
+    const result = await db("events").where({ id: id }).del();
+    const suppressionParticipant = await db("participant").where({ id_event: id }).del();
+    const suppressionComment = await db("comment").where({ id_event: id }).del();
+    if (!result) {
+      return { error: "Error deleting event" };
+    }
+    return result;
+  }catch(err){
+    console.log(err);
+    return { error: "Error deleting event" };
+  }
+}
+
+async function updateEvent(id, idUser, title, adress, description, date, lat, long) {
+  const event = await db("events").where({ id: id }).first();
+  if (!event) {
+    return { error: "Event not found" };
+  }
+  if (event.id_creator !== idUser) {
+    return { error: "You are not the creator of this event" };
+  }
+  const result = await db("events").where({ id: id }).update({
+    title: title,
+    adress: adress,
+    description: description,
+    date: new Date(date),
+    lat: lat,
+    long: long,
+  });
+  if (!result) {
+    return { error: "Error updating event" };
+  }
+  return { id: id }
 }
 
 module.exports = {
   getEventUser,
   createEvent,
-  getEvent
+  getEvent,
+  deleteEvent,
+  updateEvent,
 };
