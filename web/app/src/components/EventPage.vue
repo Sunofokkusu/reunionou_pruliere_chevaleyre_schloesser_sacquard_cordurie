@@ -394,8 +394,8 @@ export default {
     },
 
     async editEvent() {
-      let newDate = this.editDate + "T" + this.editTime + ":00.000Z";
       try {
+        let newDate = this.editDate + "T" + this.editTime;
         await this.getadress(this.editAdress)
         this.axios.defaults.headers.put["Authorization"] = this.$store.state.token;
         await this.axios.put(this.$store.state.base_url+"/event", {
