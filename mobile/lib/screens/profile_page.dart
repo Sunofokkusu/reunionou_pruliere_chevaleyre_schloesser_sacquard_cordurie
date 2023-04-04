@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reunionou/auth_provider.dart';
+import 'package:reunionou/providers/auth_provider.dart';
 import 'package:reunionou/screens/login_form_page.dart';
 import 'package:reunionou/screens/edit_profile_page.dart';
 
+/// TODO : Julien explique
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -15,8 +16,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
-      builder: (context, auth, child) {
-        if (!auth.isLoggedIn) {
+      builder: (context, authProvider, child) {
+        if (!authProvider.isLoggedIn) {
           return const LoginFormPage();
         }
         return Scaffold(
@@ -29,7 +30,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     context: context,
                     builder: (context) => AlertDialog(
                       title: const Text('Se déconnecter'),
-                      content: const Text('Êtes-vous sûr de vouloir vous déconnecter ?'),
+                      content: const Text(
+                          'Êtes-vous sûr de vouloir vous déconnecter ?'),
                       actions: [
                         ElevatedButton(
                           onPressed: () {
@@ -39,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            auth.logout();
+                            authProvider.logout();
                             Navigator.of(context).pop();
                           },
                           child: const Text('Se déconnecter'),
@@ -61,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Nom : ${auth.user?.name}',
+                      'Nom : ${authProvider.user?.name}',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -82,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Email : ${auth.user?.email}',
+                  'Email : ${authProvider.user?.email}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.normal,

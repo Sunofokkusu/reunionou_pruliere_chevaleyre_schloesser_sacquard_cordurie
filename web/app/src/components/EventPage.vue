@@ -28,7 +28,14 @@
             <q-btn v-if="edit" color="green" @Click="editEvent">
               Modifier&emsp;<i class="fas fa-check"></i>
             </q-btn>
-            <p v-else>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
+            <div v-else>
+              <p>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
+              <q-btn color="primary" @click="changeTooltip">Partager&nbsp;&ensp;<i class="fas fa-link"></i>
+                <q-tooltip anchor="center right" self="center left" :offset="[5, 5]">
+                  {{tooltip}}
+                </q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </div>
       </div>
@@ -254,6 +261,7 @@ export default {
       editAdress: "",
       editlat: 0,
       editlng: 0,
+      tooltip: "copier le lien",
     };
   },
   async mounted() {
@@ -480,6 +488,17 @@ export default {
         console.log(error);
       }
     },
+
+    /**
+     * change le tooltip du bouton de copie du lien
+     */
+    changeTooltip() {
+      this.tooltip = "Lien copié !";
+      navigator.clipboard.writeText(window.location.href);
+      onmouseout = () => {
+        this.tooltip = "Copier le lien";
+      };
+    }
   },
 };
 </script>

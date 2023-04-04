@@ -1,21 +1,19 @@
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:reunionou/elements/member_response_tile.dart';
 import 'package:reunionou/models/message.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:reunionou/models/event.dart';
 
+/// Widget Modale affichant la liste des participants à un événement
 class MembersModal extends StatefulWidget {
   MembersModal({Key? key, required this.messages}) : super(key: key);
 
+  /// Liste des participants à l'événement
   List<Message> messages;
 
   @override
   _MembersModalState createState() => _MembersModalState();
 }
 
+/// Classe d'état du widget Modale
 class _MembersModalState extends State<MembersModal> {
   bool _modalOpen = true;
 
