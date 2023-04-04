@@ -8,9 +8,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:reunionou/models/event.dart';
 
 class MembersModal extends StatefulWidget {
-  final Event event;
+  MembersModal({Key? key, required this.messages}) : super(key: key);
 
-  const MembersModal({Key? key, required this.event}) : super(key: key);
+  List<Message> messages;
 
   @override
   _MembersModalState createState() => _MembersModalState();
@@ -46,24 +46,14 @@ class _MembersModalState extends State<MembersModal> {
             ),
             SizedBox(
               height: screenHeight * 0.55,
-              child: FutureBuilder<List<Message>>(
-                  future: _fetchMessage(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          return MemberResponseTile(
-                            message: snapshot.data![index],
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return const Text(
-                          "Les données n'ont pas pu être récupérées.");
-                    }
-                    return const Center(child: CircularProgressIndicator());
-                  }),
+              child: ListView.builder(
+                itemCount: widget.messages.length,
+                itemBuilder: (context, index) {
+                  return MemberResponseTile(
+                    message: widget.messages.elementAt(index),
+                  );
+                },
+              ),
             ),
             ElevatedButton(
               onPressed: close,
@@ -86,20 +76,5 @@ class _MembersModalState extends State<MembersModal> {
     setState(() {
       _modalOpen = true;
     });
-  }
-
-  Future<List<Message>> _fetchMessage() async {
-    await dotenv.load(fileName: "assets/.env");
-    var response = http.get(Uri.parse("${dotenv.env['BASE_URL']}/event/${widget.event.id}/participant"));
-    if(response != null) {
-      var data = jsonDecode((await response).body);
-      List<Message> messages = [];
-      for (var message in data) {
-        messages.add(Message.fromJson(message));
-      }
-      return messages;
-    }else{
-      return [];
-    }
   }
 }

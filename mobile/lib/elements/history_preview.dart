@@ -28,13 +28,13 @@ class _HistoryPreviewState extends State<HistoryPreview> {
               builder.removeHistory(widget.event);
             },
           ),
-          onTap: () => {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => EventDetailsPage(event: widget.event),
-                  ),
-                )
-              });
+          onTap: () async {
+            var messages = await builder.getMessages(widget.event.id);
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) =>
+                  EventDetailsPage(event: widget.event, messages: messages),
+            ));
+          });
     });
   }
 }
