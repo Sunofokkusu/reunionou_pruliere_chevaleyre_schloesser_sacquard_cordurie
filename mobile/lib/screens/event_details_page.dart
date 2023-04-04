@@ -96,7 +96,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return MembersModal(event: widget.messages);
+                                return MembersModal(messages: widget.messages);
                               },
                             );
                           },
