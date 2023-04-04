@@ -31,7 +31,7 @@
               Heure de rendez-vous: {{ getEventComputed.date.substr(11, 5) }}
             </p>
             <q-input class="editInput" v-if="edit" v-model="editAdress" filled dense></q-input>
-            <q-btn v-if="edit" color="green" @Click="edit = false">
+            <q-btn v-if="edit" color="green" @Click="editEvent">
               Modifier&emsp;<i class="fas fa-check"></i>
             </q-btn>
             <p v-else>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
@@ -263,6 +263,8 @@ export default {
       editDate: "",
       editTime: "",
       editAdress: "",
+      editlat: 0,
+      editlng: 0,
     };
   },
   async mounted() {
@@ -326,9 +328,6 @@ export default {
     },
   },
   methods: {
-    convertTZ(date, tzString) {
-    return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
-},
     /**
      * récupère l'événement et le stocke dans la variable event
      * @return inutilisable
@@ -394,6 +393,30 @@ export default {
       this.button = false;
     },
 
+    async editEvent() {
+      let newDate = this.editDate + "T" + this.editTime + ":00.000Z";
+      try {
+        await this.getadress(this.editAdress)
+        this.axios.defaults.headers.put["Authorization"] = this.$store.state.token;
+        await this.axios.put(this.$store.state.base_url+"/event", {
+          idEvent: this.$route.params.event_id,
+          title: this.editTitle,
+          adress: this.editAdress,
+          description: this.editDescr,
+          date: newDate,
+          long: this.editlng,
+          lat: this.editlat,
+        })
+        this.getEvent()
+        window.alert("Modification de l'événement réussie");
+        this.edit = false
+      } catch (error) {
+        console.log(error);
+        window.alert("Erreur lors de la modification de l'événement");
+        this.edit = false
+      }
+    },
+
     /**
      * réinitialise les champs
      * @return inutilisable
@@ -403,6 +426,24 @@ export default {
       this.message = "";
       this.comment = "";
     },
+
+    /**
+     * récupère la longitude et la latitude d'une adresse via l'api adresse.data.gouv.fr
+     * @param {String} adress
+     */
+    async getadress(adress) {
+      try {
+        let response = await fetch(
+          "https://api-adresse.data.gouv.fr/search/?q=" + encodeURI(adress)
+        );
+        let json = await response.json()
+        this.editlat = json.features[0].geometry.coordinates[1]
+        this.editlng = json.features[0].geometry.coordinates[0]
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     /**
      * Ajoute un commentaire si l'utilisateur est connecté, ouvre le pop-up de nom sinon
      * @return inutilisable

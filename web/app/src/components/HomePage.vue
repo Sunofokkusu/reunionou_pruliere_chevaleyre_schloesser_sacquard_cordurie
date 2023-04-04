@@ -223,10 +223,6 @@ export default {
       this.meetingHour = "";
       this.adress = "";
     },
-
-    convertTZ(date, tzString) {
-        return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString({timeZone: tzString}));   
-    },
   },
 };
 </script>
