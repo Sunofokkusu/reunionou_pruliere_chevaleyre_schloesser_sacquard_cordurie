@@ -1,27 +1,30 @@
 import 'dart:convert';
 
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:reunionou/events_provider.dart';
+import 'package:reunionou/providers/events_provider.dart';
 import 'package:reunionou/providers/map_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reunionou/screens/event_details_page.dart';
-import 'package:reunionou/screens/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:reunionou/elements/map_modal.dart';
 
+/// Widget Tuile d'un événement
 class EventForm extends StatefulWidget {
   const EventForm({super.key, this.event});
 
+  /// Evénement à afficher
   final Event? event;
 
   @override
   State<EventForm> createState() => _EventFormState();
 }
 
+/// State du widget
 class _EventFormState extends State<EventForm> {
+  // Champs du formulaire
   late String title = widget.event?.title ?? "";
   late String desc = widget.event?.desc ?? "";
   late DateTime datetime = widget.event?.datetime ?? DateTime.now();
@@ -29,12 +32,15 @@ class _EventFormState extends State<EventForm> {
   late double lat = widget.event?.lat ?? 0.0;
   late double long = widget.event?.long ?? 0.0;
   final _formKey = GlobalKey<FormState>();
+  // Résultat de la requête
   late String? newCreatedId;
   late Event? newCreatedEvent;
 
+  /// Construit le widget
   @override
   Widget build(BuildContext context) {
     return Consumer<EventsProvider>(builder: (context, eventsProvider, child) {
+      // Retourne un formulaire permettant de créer ou modifier un événement
       return SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.all(25.0),
@@ -46,6 +52,7 @@ class _EventFormState extends State<EventForm> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Column(children: [
+                    // Titre
                     TextFormField(
                         initialValue: title,
                         maxLength: 30,
@@ -66,6 +73,7 @@ class _EventFormState extends State<EventForm> {
                             return null;
                           }
                         }),
+                    // Date et heure
                     Container(
                       margin: const EdgeInsets.only(top: 25.0),
                       child: Row(
@@ -93,6 +101,7 @@ class _EventFormState extends State<EventForm> {
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
+                          // Valeur de la date
                           Text(
                             DateHelper.formatDateTime(datetime),
                             style: const TextStyle(
@@ -105,6 +114,7 @@ class _EventFormState extends State<EventForm> {
                     const SizedBox(
                       height: 30,
                     ),
+                    // Description
                     ConstrainedBox(
                       constraints: const BoxConstraints(
                           minHeight: 60.0, maxHeight: 180.0),
@@ -122,6 +132,7 @@ class _EventFormState extends State<EventForm> {
                         },
                       ),
                     ),
+                    // Adresse
                     TextFormField(
                         key: Key(Provider.of<MapProvider>(context).adress!),
                         initialValue: adress,
@@ -143,6 +154,7 @@ class _EventFormState extends State<EventForm> {
                             return null;
                           }
                         }),
+                    // Boutons de localisation
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -178,6 +190,7 @@ class _EventFormState extends State<EventForm> {
                                     ? Colors.grey
                                     : const Color.fromARGB(255, 221, 96, 255)),
                             child: const Text("Localiser sur la carte")),
+                        // Bouton de localisation sur la carte
                         ElevatedButton(
                             onPressed: () {
                               showDialog(
@@ -228,11 +241,16 @@ class _EventFormState extends State<EventForm> {
                       ],
                     ),
                   ]),
+                  // Bouton de validation
                   ElevatedButton(
                       onPressed: () async {
+                        // Si le formulaire est invalide, les valiateurs renvoient des messages d'erreur
                         if (!_formKey.currentState!.validate()) {
                           return;
-                        } else {
+                        }
+                        // Si le formulaire est valide
+                        else {
+                          // On affiche un message
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: (widget.event == null
@@ -243,6 +261,7 @@ class _EventFormState extends State<EventForm> {
                           );
                         }
 
+                        // On l'ajoute ou on le modifie
                         if (widget.event == null) {
                           newCreatedId = await eventsProvider.createEvent(title,
                               desc, datetime.toString(), adress, lat, long);
@@ -263,7 +282,8 @@ class _EventFormState extends State<EventForm> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text("Erreur lors de la création"),
+                                content:
+                                    const Text("Erreur lors de la création"),
                               ),
                             );
                           }
@@ -274,21 +294,22 @@ class _EventFormState extends State<EventForm> {
                           widget.event!.adress = adress;
                           widget.event!.lat = lat;
                           widget.event!.long = long;
-                          bool updated = await eventsProvider.updateEvent(widget.event!);
+                          bool updated =
+                              await eventsProvider.updateEvent(widget.event!);
                           if (updated) {
                             Navigator.of(context).pop();
                             Navigator.of(context).pop();
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => EventDetailsPage(
-                                  event: widget.event!
-                                ),
+                                builder: (context) =>
+                                    EventDetailsPage(event: widget.event!),
                               ),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text("Erreur lors de la modification"),
+                                content: const Text(
+                                    "Erreur lors de la modification"),
                               ),
                             );
                           }

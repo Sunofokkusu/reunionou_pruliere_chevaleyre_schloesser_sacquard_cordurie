@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:reunionou/events_provider.dart';
+import 'package:reunionou/providers/events_provider.dart';
 import 'package:reunionou/helpers/date_helper.dart';
 import 'package:reunionou/models/event.dart';
 import 'package:reunionou/screens/event_details_page.dart';
 
+/// Widget Tuile d'un événement
 class EventPreview extends StatefulWidget {
   const EventPreview({super.key, required this.event});
 
+  /// Evénement à afficher
   final Event event;
 
   @override
   State<EventPreview> createState() => _EventPreviewState();
 }
 
+/// State du widget
 class _EventPreviewState extends State<EventPreview> {
+  /// Construit le widget
   @override
   Widget build(BuildContext context) {
-    return Consumer<EventsProvider>(builder: (context, builder, child) {
+    return Consumer<EventsProvider>(builder: (context, eventsProvider, child) {
+      // Retourne une tuile avec le titre de l'événement, la description et la date de l'événement
       return ListTile(
           title: Row(
             children: [
@@ -33,7 +38,7 @@ class _EventPreviewState extends State<EventPreview> {
             overflow: TextOverflow.ellipsis,
           ),
           onTap: () async {
-            var messages = await builder.getMessages(widget.event.id);
+            var messages = await eventsProvider.getMessages(widget.event.id);
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
