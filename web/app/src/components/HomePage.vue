@@ -29,10 +29,10 @@
         <p class="unselectable">{{ event.title }}</p>
         <p class="unselectable">{{ event.description }}</p>
         <p class="unselectable">
-          {{ new Date(event.date).toLocaleDateString() }}
+          {{ new Date(event.date.substr(0, 10)).toLocaleDateString() }}
         </p>
         <p class="unselectable">
-          {{ new Date(event.date).getHours() - 2 }}h{{ new Date(event.date).getMinutes()}}
+          {{ event.date.substr(11, 5) }}<br/>
         </p>
         <p class="unselectable">{{ event.adress }}</p>
       </div>
@@ -159,6 +159,7 @@ export default {
         this.errored = false;
 
         this.meetingDate = this.meetingDate + "T" + this.meetingHour + ":00";
+        console.log(this.meetingDate);
 
         try {
           await this.getadress(this.adress);
@@ -221,6 +222,10 @@ export default {
       this.meetingDate = "";
       this.meetingHour = "";
       this.adress = "";
+    },
+
+    convertTZ(date, tzString) {
+        return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString({timeZone: tzString}));   
     },
   },
 };

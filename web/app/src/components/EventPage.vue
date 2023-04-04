@@ -10,20 +10,31 @@
         </div>
         <div v-else>
           <div v-if="getEventComputed.title">
-            <h4>{{ getEventComputed.title }}</h4>
-            <p>Créé par: {{ getEventComputed.creator.name }}</p>
-            <p>Description: {{ getEventComputed.description }}</p>
-            <p>
+            <div class="edit">
+              <i v-if="edit" class="fas fa-trash" @click="edit = false"></i>
+              <i v-else class="fas fa-pen" @click="edit = true"></i>
+            </div>
+            <q-input class="editInput" v-if="edit" v-model="editTitle" filled dense placeholder="nouveau titre"></q-input>
+            <h4 v-else>{{ getEventComputed.title }}</h4>
+            <q-input class="editInput" v-if="edit" v-model="editDescr" filled dense placeholder="nouvelle description"></q-input>
+            <div v-else>
+              <p >Créé par: {{ getEventComputed.creator.name }}</p>
+              <p >Description: {{ getEventComputed.description }}</p>
+            </div>          
+            <q-input class="editInput" v-if="edit" v-model="editDate" filled dense type="date"></q-input>
+            <p v-else>
               Date de rendez-vous:
-              {{ new Date(getEventComputed.date).toLocaleDateString() }}
+              {{ new Date(getEventComputed.date.substr(0, 10)).toLocaleDateString() }}
             </p>
-            <p>
-              Heure de rendez-vous:
-              {{ new Date(getEventComputed.date).getHours() - 2 }}h{{
-                new Date(getEventComputed.date).getMinutes()
-              }}
+            <q-input class="editInput" v-if="edit" v-model="editTime" filled dense type="time"></q-input>
+            <p v-else>
+              Heure de rendez-vous: {{ getEventComputed.date.substr(11, 5) }}
             </p>
-            <p>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
+            <q-input class="editInput" v-if="edit" v-model="editAdress" filled dense></q-input>
+            <q-btn v-if="edit" color="green" @Click="edit = false">
+              Modifier&emsp;<i class="fas fa-check"></i>
+            </q-btn>
+            <p v-else>Lieu de rendez vous: {{ getEventComputed.adress }}</p>
           </div>
         </div>
       </div>
@@ -245,11 +256,24 @@ export default {
       markerLatLng:[],
       lat: "",
       long: "",
-      loaded: false
+      loaded: false,
+      edit: false,
+      editTitle: "",
+      editDescr: "",
+      editDate: "",
+      editTime: "",
+      editAdress: "",
     };
   },
   async mounted() {
     await this.getEvent();
+
+    this.editTitle = this.event.title;
+    this.editDescr = this.event.description;
+    this.editDate = this.event.date.substring(0, 10);
+    this.editTime = this.event.date.substring(11, 19);
+    this.editAdress = this.event.adress;
+
     //permet de récupérer les données météo de la ville de l'événement
     try {
       let response = await fetch(
@@ -302,6 +326,9 @@ export default {
     },
   },
   methods: {
+    convertTZ(date, tzString) {
+    return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
+},
     /**
      * récupère l'événement et le stocke dans la variable event
      * @return inutilisable
@@ -442,6 +469,14 @@ export default {
   text-overflow: ellipsis;
 }
 
+.editInput {
+  margin: 3px;
+}
+.editInput:first-of-type {
+  padding-top: 19px;
+  margin-top: 10px;
+}
+
 .map {
   padding: 0;
 }
@@ -458,7 +493,7 @@ export default {
 }
 h4 {
   margin-bottom: 20px;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .history {
@@ -490,5 +525,13 @@ h4 {
 .inputBox {
   width: 100%;
   margin-top: 5px;
+}
+
+.edit {   
+  cursor: pointer;
+  margin-top: -10px;
+  margin-left: -100px;
+  float: right;
+  color: #232323;
 }
 </style>
