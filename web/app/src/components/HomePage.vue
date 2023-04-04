@@ -96,7 +96,9 @@ export default {
     };
   },
   mounted() {
-    this.getEvents('all');
+    if(this.$store.state.token){
+      this.getEvents('all');
+    }
   },
   computed: {
     connected() {
