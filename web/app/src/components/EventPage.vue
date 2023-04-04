@@ -136,7 +136,7 @@
         </div>
         <div class="inputBox">
           <div>
-            <q-input color="green" filled v-model="comment" dense label="Commentaire" autofocus>
+            <q-input color="green" filled v-model="comment" dense label="Commentaire" v-on:keyup.enter="addcomment">
               <template v-slot:after>
                 <q-btn flat @Click="addcomment">
                   <i class="fas fa-paper-plane"></i>
