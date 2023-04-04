@@ -16,8 +16,8 @@ const store = createStore({
       connected: false,
       token: "",
       name: "",
-      //base_url: "http://localhost:80",
-      base_url: "http://docketu.iutnc.univ-lorraine.fr:64577"
+      base_url: "http://localhost:80",
+      //base_url: "http://docketu.iutnc.univ-lorraine.fr:64587"
     };
   },
   mutations: {
