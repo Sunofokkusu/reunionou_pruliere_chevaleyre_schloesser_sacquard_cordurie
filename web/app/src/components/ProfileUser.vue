@@ -19,37 +19,37 @@
           <div class="editCard">
             <p>Edition profil</p>
             <div v-if="editname">
-              <q-input v-model=newname filled dense label="nouveau nom d'utilisateur">
+              <q-input color="green" v-model=newname filled dense label="nouveau nom d'utilisateur">
                 <template v-slot:after>
                   <q-btn flat @click="editname = false; newname=''"><i class="fas fa-trash"></i></q-btn>
                 </template>
               </q-input>
             </div>
             <div v-else>
-              <q-input filled dense disable :placeholder=user.name>
+              <q-input color="green" filled dense disable :placeholder=user.name>
                 <template v-slot:after>
                   <q-btn flat @click="editname = true"><i class="fas fa-pen" ></i></q-btn>
                 </template>
               </q-input>
             </div>
             <div v-if="editpasswd">
-              <q-input v-model=newpasswd type="password" filled dense label="nouveau mot de passe">
+              <q-input color="green" v-model=newpasswd type="password" filled dense label="nouveau mot de passe">
                 <template v-slot:after>
                   <q-btn flat @click="editpasswd = false; newpasswd=''"><i class="fas fa-trash"></i></q-btn>
                 </template>
               </q-input>
             </div>
             <div v-else>
-              <q-input filled dense disable placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
+              <q-input color="green" filled dense disable placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
                 <template v-slot:after>
                   <q-btn flat @click="editpasswd = true"><i class="fas fa-pen" ></i></q-btn>
                 </template>
               </q-input>
             </div>
             <div>
-              <q-input filled dense label="mot de passe" v-model=passwd type="password">
+              <q-input color="green" filled dense label="mot de passe" v-model=passwd type="password">
                 <template v-slot:after>
-                  <q-btn label="confirmer" dense color="primary" @click="editProfile"/>
+                  <q-btn label="confirmer" dense color="green" @click="editProfile"/>
                 </template>
               </q-input>
             </div>  
@@ -225,7 +225,7 @@ export default {
     background-color: transparent;
     border: none;
     cursor: pointer;
-    filter: hue-rotate(226deg) brightness(120%);
+    filter: hue-rotate(50deg) brightness(120%);
     margin-left: -70px;
     margin-top: 10px;
     float: right;

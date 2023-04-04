@@ -14,23 +14,23 @@
               <i v-if="edit" class="fas fa-trash" @click="edit = false"></i>
               <i v-else class="fas fa-pen" @click="edit = true"></i>
             </div>
-            <q-input class="editInput" v-if="edit" v-model="editTitle" filled dense placeholder="nouveau titre"></q-input>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editTitle" filled dense placeholder="nouveau titre"></q-input>
             <h4 v-else>{{ getEventComputed.title }}</h4>
-            <q-input class="editInput" v-if="edit" v-model="editDescr" filled dense placeholder="nouvelle description"></q-input>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editDescr" filled dense placeholder="nouvelle description"></q-input>
             <div v-else>
               <p >Créé par: {{ getEventComputed.creator.name }}</p>
               <p >Description: {{ getEventComputed.description }}</p>
             </div>          
-            <q-input class="editInput" v-if="edit" v-model="editDate" filled dense type="date"></q-input>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editDate" filled dense type="date"></q-input>
             <p v-else>
               Date de rendez-vous:
               {{ new Date(getEventComputed.date.substr(0, 10)).toLocaleDateString() }}
             </p>
-            <q-input class="editInput" v-if="edit" v-model="editTime" filled dense type="time"></q-input>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editTime" filled dense type="time"></q-input>
             <p v-else>
               Heure de rendez-vous: {{ getEventComputed.date.substr(11, 5) }}
             </p>
-            <q-input class="editInput" v-if="edit" v-model="editAdress" filled dense></q-input>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editAdress" filled dense></q-input>
             <q-btn v-if="edit" color="green" @Click="editEvent">
               Modifier&emsp;<i class="fas fa-check"></i>
             </q-btn>
@@ -59,7 +59,7 @@
         <div class="center">
           <div class="row" v-if="button">
             <q-btn
-              color="primary"
+              color="green"
               class="col-5"
               @click="
                 join = true;
@@ -129,13 +129,7 @@
         </div>
         <div class="inputBox">
           <div>
-            <q-input
-              filled
-              v-model="comment"
-              dense
-              label="Commentaire"
-              autofocus
-            >
+            <q-input color="green" filled v-model="comment" dense label="Commentaire" autofocus>
               <template v-slot:after>
                 <q-btn flat @Click="addcomment">
                   <i class="fas fa-paper-plane"></i>
@@ -151,7 +145,7 @@
       <q-card class="modal">
         <q-card-section class="row items-center">
           <div class="q-ml-sm">
-            <q-input v-model="name" label="Nom" />
+            <q-input color="green" v-model="name" label="Nom" />
           </div>
         </q-card-section>
 
@@ -183,13 +177,8 @@
       <q-card class="modal">
         <q-card-section class="row items-center">
           <div class="q-ml-sm">
-            <q-input
-              v-if="this.$store.state.token === ''"
-              v-model="name"
-              label="Nom"
-              autofocus
-            />
-            <q-input v-model="message" label="Message (optionnel)" />
+            <q-input color="green" v-if="this.$store.state.token === ''" v-model="name" label="Nom" autofocus/>
+            <q-input color="green" v-model="message" label="Message (optionnel)" />
           </div>
         </q-card-section>
 
@@ -574,5 +563,8 @@ h4 {
   margin-left: -100px;
   float: right;
   color: #232323;
+}
+.edit:hover {
+  color: #4CAF50
 }
 </style>

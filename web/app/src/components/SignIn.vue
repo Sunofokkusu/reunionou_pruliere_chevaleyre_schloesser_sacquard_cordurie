@@ -3,8 +3,9 @@
     <div class="container">
       <div class="signinCard">
         <h4>Connexion</h4>
-        <q-input v-model="email" label="Adresse mail*" name="email" required />
+        <q-input color="green" v-model="email" label="Adresse mail*" name="email" required />
         <q-input
+          color="green"
           type="password"
           v-model="password"
           label="Mot de passe*"
@@ -12,8 +13,8 @@
           required
         />
         <q-btn
+          color="green"
           class="confirm"
-          color="primary"
           label="Connexion"
           @click="signin"
         />
