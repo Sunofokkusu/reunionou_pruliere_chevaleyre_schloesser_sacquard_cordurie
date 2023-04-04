@@ -264,10 +264,9 @@ export default {
   margin: 8px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
   min-height: 100px;
-  background-image: url("../assets/5120x2160.png");
+  background: url("../assets/back.svg");
   background-size: 100% auto;
   background-repeat: no-repeat;
-  filter: hue-rotate(40deg) brightness(120%) saturate(60%);
 }
 
 .eventCard {
@@ -322,7 +321,6 @@ export default {
 .white {
   font-size: 220%;
   padding: 15px 10px 10px 10px;
-  text-shadow: 1px 1px 1px #000;
 }
 
 .cardNav {
