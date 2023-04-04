@@ -1,23 +1,24 @@
+/// Classe modélisant un utilisateur
+
 class User {
+  /// Constructeur
   User({
     required this.id,
     required this.name,
     required this.email,
   });
 
+  /// id de l'utilisateur
   String id;
+
+  /// nom de l'utilisateur
   String name;
+
+  /// email de l'utilisateur
   String email;
 
+  /// Méthode de création d'un utilisateur à partir d'un json
   static User fromJson(data) {
-    return User(
-      id: data['id'],
-      name: data['name'],
-      email: data['mail'],
-    );
-  }
-
-  static User fromEventJson(data) {
     return User(
       id: data['id'],
       name: data['name'],

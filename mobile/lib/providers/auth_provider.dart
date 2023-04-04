@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:reunionou/models/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// TODO : Julien explique
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
   String _authToken = '';
@@ -40,8 +41,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-  Future<bool> update(String? name, String? password, String? newPassword) async {
+  Future<bool> update(
+      String? name, String? password, String? newPassword) async {
     var updated = false;
     if (_isLoggedIn && _user != null && _authToken != '') {
       final response = await http.put(

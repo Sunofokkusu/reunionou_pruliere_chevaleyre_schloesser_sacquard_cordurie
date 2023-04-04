@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:reunionou/screens/home_page.dart';
-import '../auth_provider.dart';
+import 'package:reunionou/providers/auth_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// TODO : Julien explique
 class LoginFormPage extends StatefulWidget {
   const LoginFormPage({super.key});
 
@@ -69,7 +70,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
               ),
               const SizedBox(height: 20),
               Consumer<AuthProvider>(
-                builder: (context, auth, child) {
+                builder: (context, authProvider, child) {
                   return ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
@@ -85,13 +86,14 @@ class _LoginFormPageState extends State<LoginFormPage> {
                           }),
                         );
                         if (response.statusCode == 200) {
-                          Future<bool> success = auth.login(
+                          Future<bool> success = authProvider.login(
                               (jsonDecode(response.body)['token'])
                                   .toString()
                                   .substring(7));
                           if (await success) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Connexion réussie')),
+                              const SnackBar(
+                                  content: Text('Connexion réussie')),
                             );
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
@@ -101,16 +103,21 @@ class _LoginFormPageState extends State<LoginFormPage> {
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Echec de la connexion')),
+                              const SnackBar(
+                                  content: Text('Echec de la connexion')),
                             );
                           }
                         } else if (response.statusCode == 502) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Connexion au serveur impossible')),
+                            const SnackBar(
+                                content:
+                                    Text('Connexion au serveur impossible')),
                           );
                         } else if (response.statusCode == 400) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Email ou mot de passe incorrect')),
+                            const SnackBar(
+                                content:
+                                    Text('Email ou mot de passe incorrect')),
                           );
                         } else {
                           print(response.statusCode);
