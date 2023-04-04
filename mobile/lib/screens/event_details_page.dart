@@ -100,6 +100,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       "Contact : ${widget.event.emailCreator}",
                       style: const TextStyle(fontSize: 16.0),
                     ),
+                    const SizedBox(height: 16.0),
                     // Barre d'actions
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,

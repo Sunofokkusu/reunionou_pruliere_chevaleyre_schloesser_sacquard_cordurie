@@ -19,7 +19,7 @@ router.post('/signup', userInsertValidator, async (req, res, next) => {
             return next({ error: 400, message: token.error });
         }
         info(`L'utilisateur :  ${name} à crée un compte`)
-        res.header("Authorization", "Bearer " + token.token).json({ token : "Bearer " + token.token });
+        res.json({ token : token.token });
     }
     catch(err){
         error(err.message);
@@ -34,7 +34,7 @@ router.post('/signin', userLoginValidator, async (req, res, next) => {
         if (token.error) {
             return next({ error: 400, message: token.error });
         }
-        res.header("Authorization", "Bearer " + token.token).json({ token : "Bearer " + token.token });
+        res.json({ token : token.token });
     }
     catch(err){
         error(err.message);
@@ -43,6 +43,7 @@ router.post('/signin', userLoginValidator, async (req, res, next) => {
 });
 
 router.post("/validate", async (req, res, next) => {
+    console.log("validate");
     try{
         const authorization = req.headers.authorization;
         if (!authorization) {

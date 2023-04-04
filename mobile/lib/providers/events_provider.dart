@@ -224,6 +224,8 @@ class EventsProvider with ChangeNotifier {
       exist = true;
     } else if (_eventsInvited.any((element) => element.id == id)) {
       exist = true;
+    } else if (_searchHistory.any((element) => element.id == id)) {
+      exist = true;
     }
     if (exist) {
       final response = await http.get(
@@ -324,7 +326,7 @@ class EventsProvider with ChangeNotifier {
         'Authorization': 'Bearer ${_authProvider!.token}',
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String?>{
+      body: jsonEncode(<String, String>{
         'idEvent': event.id,
         'title': event.title,
         'adress': event.adress,
@@ -334,6 +336,7 @@ class EventsProvider with ChangeNotifier {
         'lat': event.lat.toString(),
       }),
     );
+    print(event.datetime);
     // Si la requête est un succès, on retourne true
     if (response.statusCode == 200) {
       updated = true;

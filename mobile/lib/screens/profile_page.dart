@@ -23,49 +23,73 @@ class _ProfilePageState extends State<ProfilePage> {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Profil'),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Se déconnecter'),
+                      content: const Text(
+                          'Êtes-vous sûr de vouloir vous déconnecter ?'),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Annuler'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            authProvider.logout();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Se déconnecter'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.logout),
+              )
+            ],
+            elevation: 0,
           ),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Nom : ${authProvider.user?.name}'),
-                Text('Email : ${authProvider.user?.email}'),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const EditProfilePage(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Nom : ${authProvider.user?.name}',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                  child: const Text('Éditer le profil'),
+                    ),
+                    const SizedBox(height: 32),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const EditProfilePage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.edit),
+                    ),
+                  ],
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: const Text('Se déconnecter'),
-                                content: const Text(
-                                    'Êtes-vous sûr de vouloir vous déconnecter ?'),
-                                actions: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Annuler'),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      authProvider.logout();
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Se déconnecter'),
-                                  ),
-                                ],
-                              ));
-                    },
-                    child: const Text('Se déconnecter'))
+                const SizedBox(height: 16),
+                Text(
+                  'Email : ${authProvider.user?.email}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
               ],
             ),
           ),

@@ -8,9 +8,9 @@
     <div v-if="connected" class="row">
 
       <div class="cardNav">
-        <p class="unselectable card-select" @click="this.getEvents('all')">Voir tout</p>
-        <p class="unselectable card-select" @click="this.getEvents('events')">Mes évènements</p>
-        <p class="unselectable card-select" @click="this.getEvents('invited')">Mes participations</p>
+        <p class="unselectable card-select" :class="classActive1" @click="this.getEvents('all'); cardSelectActive(1)">Voir tout</p>
+        <p class="unselectable card-select" :class="classActive2" @click="this.getEvents('events'); cardSelectActive(2)">Mes évènements</p>
+        <p class="unselectable card-select" :class="classActive3" @click="this.getEvents('invited'); cardSelectActive(3)">Mes participations</p>
       </div>
 
       <div class="eventCard addCard col-2" label="Confirm" @click="confirm = true">
@@ -29,10 +29,10 @@
         <p class="unselectable">{{ event.title }}</p>
         <p class="unselectable">{{ event.description }}</p>
         <p class="unselectable">
-          {{ new Date(event.date).toLocaleDateString() }}
+          {{ new Date(event.date.substr(0, 10)).toLocaleDateString() }}
         </p>
         <p class="unselectable">
-          {{ new Date(event.date).getHours() - 2 }}h{{ new Date(event.date).getMinutes()}}
+          {{ event.date.substr(11, 5) }}<br/>
         </p>
         <p class="unselectable">{{ event.adress }}</p>
       </div>
@@ -49,11 +49,11 @@
         <q-card-section class="row items-center">
           <div class="q-ml-sm">
             <p class="text-h6">Nouvel évènement</p>
-            <q-input v-model="title" label="Libellé*" autofocus />
-            <q-input v-model="description" label="Description" />
-            <q-input v-model="meetingDate" type="date" label="Date de rendez-vous*"/>
-            <q-input v-model="meetingHour" type="time" label="Heure de rendez-vous*"/>
-            <q-input v-model="adress" label="Lieu de rendez-vous*" />
+            <q-input color="green" v-model="title" label="Libellé*" autofocus />
+            <q-input color="green" v-model="description" label="Description" />
+            <q-input color="green" v-model="meetingDate" type="date" label="Date de rendez-vous*"/>
+            <q-input color="green" v-model="meetingHour" type="time" label="Heure de rendez-vous*"/>
+            <q-input color="green" v-model="adress" label="Lieu de rendez-vous*" />
           </div>
         </q-card-section>
 
@@ -93,10 +93,15 @@ export default {
       errored: false,
       eventLoading: true,
       eventError: false,
+      classActive1: "card-select-active",
+      classActive2: "card-select-deactive",
+      classActive3: "card-select-deactive",
     };
   },
   mounted() {
-    this.getEvents('all');
+    if(this.$store.state.token){
+      this.getEvents('all');
+    }
   },
   computed: {
     connected() {
@@ -159,6 +164,7 @@ export default {
         this.errored = false;
 
         this.meetingDate = this.meetingDate + "T" + this.meetingHour + ":00";
+        console.log(this.meetingDate);
 
         try {
           await this.getadress(this.adress);
@@ -222,6 +228,30 @@ export default {
       this.meetingHour = "";
       this.adress = "";
     },
+
+    /**
+     * permet de changer la couleur de la carte en fonction de la selection
+     * @param {int} num numéro de la carte
+     */
+    cardSelectActive(num) {
+      switch (num) {
+        case 1:
+          this.classActive1 = "card-select-active";
+          this.classActive2 = "card-select-deactive";
+          this.classActive3 = "card-select-deactive";
+          break;
+        case 2:
+          this.classActive1 = "card-select-deactive";
+          this.classActive2 = "card-select-active";
+          this.classActive3 = "card-select-deactive";
+          break;
+        case 3:
+          this.classActive1 = "card-select-deactive";
+          this.classActive2 = "card-select-deactive";
+          this.classActive3 = "card-select-active";
+          break;
+      }
+    }
   },
 };
 </script>
@@ -234,10 +264,9 @@ export default {
   margin: 8px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
   min-height: 100px;
-  background-image: url("../assets/5120x2160.png");
+  background: url("../assets/back.svg");
   background-size: 100% auto;
   background-repeat: no-repeat;
-  filter: hue-rotate(40deg) brightness(120%) saturate(60%);
 }
 
 .eventCard {
@@ -254,20 +283,14 @@ export default {
 .eventCard > p {
   margin-top: -10px;
 }
-.addCard {
-  background-color: #e0e0e0;
-}
 .eventCard:hover {
   width: 207px !important;
   height: 207px !important;
   margin: 5px;
-  filter: brightness(96%);
+  filter: brightness(99%);
 }
 .eventCard:active {
-  filter: brightness(90%);
-}
-.addCard:hover > .add {
-  color: #39c3ff;
+  filter: brightness(93%);
 }
 .eventCard > p:first-of-type {
   margin-top: 30px;
@@ -277,7 +300,13 @@ export default {
 .add {
   margin-top: -45px !important;
   font-size: 7em;
-  color: gray;
+  color: #A5D6A7;
+}
+.addCard {
+  background-color: mintcream ;
+}
+.addCard:hover > .add {
+  color: #4CAF50;
 }
 
 .modal {
@@ -292,18 +321,18 @@ export default {
 .white {
   font-size: 220%;
   padding: 15px 10px 10px 10px;
-  text-shadow: 1px 1px 1px #000;
 }
 
 .cardNav {
   text-align: center;
   border-radius: 10px;
-  background-color: #fff;
+  background-color: mintcream;
   margin: 8px;
   width: 200px !important;
   height: 200px !important;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
 }
+
 .card-select {
   display: flex;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
@@ -312,7 +341,6 @@ export default {
   border-radius: 10px;
   margin: 12px;
   height: 50px !important;
-  background-color: #e0e0e0;
   font-size: 1.1em !important;
   align-items: center;
   justify-content: center;
@@ -328,6 +356,12 @@ export default {
 }
 .card-select:active {
   filter: brightness(90%);
+}
+.card-select-deactive {  
+  background-color: #A5D6A7;
+}
+.card-select-active {
+  background-color: #4CAF50;
 }
 
 

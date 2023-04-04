@@ -26,133 +26,137 @@ class _EditProfilePageState extends State<EditProfilePage> {
           appBar: AppBar(
             title: const Text('Éditer le profil'),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  TextFormField(
-                    initialValue: currentName,
-                    maxLength: 30,
-                    decoration: const InputDecoration(
-                      labelText: 'Nom',
-                      hintText: 'Entrer votre nom',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _name = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Entrer votre nom';
-                      } else if (value.length < 3) {
-                        return 'Le nom doit contenir au moins 3 caractères';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    initialValue: _newPassword,
-                    maxLength: 30,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Nouveau mot de passe',
-                      hintText: 'Entrer votre nouveau mot de passe',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _newPassword = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value != '' && value!.length < 6) {
-                        return 'Le mot de passe doit contenir au moins 6 caractères';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    initialValue: _confirmNewPassword,
-                    maxLength: 30,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Confirmation',
-                      hintText: 'Confirmer votre nouveau mot de passe',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _confirmNewPassword = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (_newPassword != '' && value == '') {
-                        return 'Confimer votre nouveau mot de passe';
-                      } else if (_newPassword != _confirmNewPassword) {
-                        return 'Les mots de passe ne correspondent pas';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    initialValue: _password,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Mot de passe actuel',
-                      hintText: 'Entrer votre mot de passe',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _password = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (_name == '') {
-                        _name = authProvider.user!.name;
-                      }
-                      if ((_newPassword != '' ||
-                              _name != authProvider.user!.name) &&
-                          value == '') {
-                        return 'Entrer votre mot de passe pour valider les changements';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        if (_name == authProvider.user!.name &&
-                            _newPassword == '') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Pas de changement')),
-                          );
-                          Navigator.of(context).pop();
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: currentName,
+                      maxLength: 30,
+                      decoration: const InputDecoration(
+                        labelText: 'Nom',
+                        hintText: 'Entrer votre nom',
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _name = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Entrer votre nom';
+                        } else if (value.length < 3) {
+                          return 'Le nom doit contenir au moins 3 caractères';
                         }
-                        Future<bool> updated = authProvider.update(
-                          _name,
-                          _password,
-                          _newPassword,
-                        );
-                        if (await updated) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Informations mises à jour')),
-                          );
-                          Navigator.of(context).pop();
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Erreur lors de la mise à jour')),
-                          );
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: _newPassword,
+                      maxLength: 30,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Nouveau mot de passe',
+                        hintText: 'Entrer votre nouveau mot de passe',
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _newPassword = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value != '' && value!.length < 6) {
+                          return 'Le mot de passe doit contenir au moins 6 caractères';
                         }
-                      }
-                    },
-                    child: const Text('Mettre à jour'),
-                  ),
-                ],
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: _confirmNewPassword,
+                      maxLength: 30,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Confirmation',
+                        hintText: 'Confirmer votre nouveau mot de passe',
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _confirmNewPassword = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (_newPassword != '' && value == '') {
+                          return 'Confimer votre nouveau mot de passe';
+                        } else if (_newPassword != _confirmNewPassword) {
+                          return 'Les mots de passe ne correspondent pas';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: _password,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Mot de passe actuel',
+                        hintText: 'Entrer votre mot de passe',
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _password = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (_name == '') {
+                          _name = authProvider.user!.name;
+                        }
+                        if ((_newPassword != '' ||
+                                _name != authProvider.user!.name) &&
+                            value == '') {
+                          return 'Entrer votre mot de passe pour valider les changements';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          if (_name == authProvider.user!.name &&
+                              _newPassword == '') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Pas de changement')),
+                            );
+                            Navigator.of(context).pop();
+                          }
+                          Future<bool> updated = authProvider.update(
+                            _name,
+                            _password,
+                            _newPassword,
+                          );
+                          if (await updated) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Informations mises à jour')),
+                            );
+                            Navigator.of(context).pop();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Erreur lors de la mise à jour')),
+                            );
+                          }
+                        }
+                      },
+                      child: const Text('Mettre à jour'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

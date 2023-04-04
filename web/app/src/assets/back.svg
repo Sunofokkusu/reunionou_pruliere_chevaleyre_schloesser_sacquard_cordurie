@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin:auto;background:#f1f2f3;display:block;z-index:1;position:relative" width="1659" height="787" preserveAspectRatio="xMidYMid" viewBox="0 0 1659 787">
+<g transform="translate(829.5,393.5) scale(1,1) translate(-829.5,-393.5)"><circle cx="0" cy="0" r="1836.2053262094628" fill="#4caf50" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-1.6666666666666667s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="1721.4424933213713" fill="#47a64c" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-1.5625s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="1606.6796604332799" fill="#439c47" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-1.4583333333333335s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="1491.9168275451884" fill="#3e9343" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-1.3541666666666667s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="1377.153994657097" fill="#3a8a3e" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-1.25s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="1262.3911617690057" fill="#36813a" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-1.1458333333333335s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="1147.6283288809143" fill="#327836" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-1.0416666666666667s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="1032.8654959928228" fill="#2d7032" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.9375s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="918.1026631047314" fill="#29672d" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.8333333333333334s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="803.3398302166399" fill="#255e29" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.7291666666666667s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="688.5769973285485" fill="#215625" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.625s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="573.8141644404571" fill="#1e4e21" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.5208333333333334s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="459.0513315523657" fill="#1a461d" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.4166666666666667s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="344.28849866427424" fill="#163e19" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.3125s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="229.52566577618285" fill="#133615" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.20833333333333334s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="114.76283288809142" fill="#0f2e12" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="-0.10416666666666667s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle><circle cx="0" cy="0" r="0" fill="#0c270d" fill-opacity="0.4">
+  <animateTransform attributeName="transform" type="scale" repeatCount="indefinite" dur="1.6666666666666667s" begin="0s" keyTimes="0;0.5;1" values="0.995;1.005;0.995" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" calcMode="spline"></animateTransform>
+</circle></g>
+</svg>

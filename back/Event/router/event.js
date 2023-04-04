@@ -101,6 +101,7 @@ router.post('/:id/comment', commentInsertValidator, async (req, res, next) => {
 });
 
 router.get('/user/:id', async (req, res, next) => {
+    console.log("event user");
     try{
         const {id} = req.params;
         let result = await Event.getEventUser(id);
