@@ -16,20 +16,14 @@
             </div>
             <q-input color="green" class="editInput" v-if="edit" v-model="editTitle" filled dense placeholder="nouveau titre"></q-input>
             <h4 v-else>{{ getEventComputed.title }}</h4>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editDate" filled dense type="date"></q-input>
+            <q-input color="green" class="editInput" v-if="edit" v-model="editTime" filled dense type="time"></q-input>
             <q-input color="green" class="editInput" v-if="edit" v-model="editDescr" filled dense placeholder="nouvelle description"></q-input>
             <div v-else>
-              <p >Créé par: {{ getEventComputed.creator.name }}</p>
+              <p> le {{ new Date(getEventComputed.date.substr(0, 10)).toLocaleDateString() }} à {{ getEventComputed.date.substr(11, 5) }}</p>
+              <p >Organisé par: {{ getEventComputed.creator.name }}</p>
               <p >Description: {{ getEventComputed.description }}</p>
             </div>          
-            <q-input color="green" class="editInput" v-if="edit" v-model="editDate" filled dense type="date"></q-input>
-            <p v-else>
-              Date de rendez-vous:
-              {{ new Date(getEventComputed.date.substr(0, 10)).toLocaleDateString() }}
-            </p>
-            <q-input color="green" class="editInput" v-if="edit" v-model="editTime" filled dense type="time"></q-input>
-            <p v-else>
-              Heure de rendez-vous: {{ getEventComputed.date.substr(11, 5) }}
-            </p>
             <q-input color="green" class="editInput" v-if="edit" v-model="editAdress" filled dense></q-input>
             <q-btn v-if="edit" color="green" @Click="editEvent">
               Modifier&emsp;<i class="fas fa-check"></i>
@@ -42,7 +36,10 @@
       <div class="card col-3">
         <p class="history-title">Participants</p>
         <div class="history">
-          <div v-for="part in participants" :key="part.name">
+          <div v-if="participants.length === 0">
+              <p>Pas encore de participants.<br/> Soyez le premier à rejoindre!</p>
+          </div>
+            <div v-else v-for="part in participants" :key="part.name">
             <p>
               <strong>{{ part.name }}</strong> &nbsp;<span
                 v-if="part.status === 1"
@@ -120,7 +117,10 @@
 
       <div class="col-4 card">
         <div class="history_comments">
-          <div v-for="com in comments" :key="com.id">
+          <div v-if="comments.length === 0">
+            <p>Pas encore de commentaires.<br/>Laissez le premier commentaire!</p>
+          </div>
+          <div v-else v-for="com in comments" :key="com.id">
             <p>
               <strong>{{ com.name }}</strong
               >: {{ com.comment }}
