@@ -6,7 +6,6 @@ router.post("/signup", async (req, res, next) => {
   axios
     .post(process.env.USER_SERVICE + "signup", req.body)
     .then((response) => {
-      res.header("Authorization", response.headers.authorization);
       res.json(response.data);
     })
     .catch((err) => {
@@ -18,13 +17,14 @@ router.post("/signin", async (req, res, next) => {
   axios
     .post(process.env.USER_SERVICE + "signin", req.body)
     .then((response) => {
-      res.header("Authorization", response.headers.authorization);
       res.json(response.data);
     })
     .catch((err) => {
       next(err.response.data);
     });
 });
+
+
 
 
 module.exports = router;
