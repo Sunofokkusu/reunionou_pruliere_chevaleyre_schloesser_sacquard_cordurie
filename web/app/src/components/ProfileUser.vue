@@ -68,7 +68,7 @@
             <p>Erreur lors du chargement des évènements</p>
           </div>
           <div v-else v-for="event in user.events" :key="event.id" class="card eventCard col-2" @click="this.$router.push({ name: 'Event', params: { event_id: event.id } })">
-            <button class="delete" @click.stop="">❌</button>
+            <button class="delete" @click.stop="deleteEvent(event.id)">❌</button>
             <p>{{ event.title }}</p>
             <p>{{ event.description }}</p>
             <p>{{ new Date(event.date).toLocaleDateString() }}</p>
@@ -146,6 +146,15 @@ export default {
       } catch (error) {
         console.log(error)
         window.alert("Erreur lors de la modification du profil, mot de passe incorrect")
+      }
+    },
+    async deleteEvent(id_event){
+      try{
+        this.axios.defaults.headers.delete['Authorization'] = this.$store.state.token;
+        await this.axios.delete(this.$store.state.base_url + "/event/" + id_event, {});
+        this.user.events = this.user.events.filter(event => event.id !== id_event);
+      }catch (error){
+        window.alert("Error lors de la suppression de l'évènement.")
       }
     }
   }
