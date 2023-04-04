@@ -25,7 +25,6 @@ function errorhandler(err, req, res, next) {
             message = "Internal Server Error";
             break;
     }
-    res.setHeader("Content-Type", "application/json");
     res.status(errorCode).json({
         type: "error",
         error: errorCode,

@@ -1,6 +1,13 @@
 const express = require("express");
 const app = express();
-const axios = require("axios");
+const cors = require("cors");
+
+app.use(cors({
+  origin: "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 
 app.use(express.json());
 

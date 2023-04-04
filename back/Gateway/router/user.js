@@ -4,8 +4,7 @@ const axios = require("axios");
 
 router.get("/me", async (req, res, next) => {
   try {
-    if (!req.headers.authorization)
-      return next({ error: 401, message: "Unauthorized" });
+    if (!req.headers.authorization) return next({ error: 401, message: "Unauthorized" });
     let validate = await axios.post(
       process.env.USER_SERVICE + "validate",
       {},
@@ -15,12 +14,14 @@ router.get("/me", async (req, res, next) => {
         },
       }
     );
+    console.log("here 1");
     let events = await axios.get(
       process.env.EVENT_SERVICE + "user/" + validate.data.id
     );
     let invited = await axios.get(
       process.env.EVENT_SERVICE + "user/" + validate.data.id + "/invited"
     );
+    console.log("here 2");
     for (let i = 0; i < events.data.length; i++) {
       let creator = await axios.get(
         process.env.USER_SERVICE + events.data[i].id_creator

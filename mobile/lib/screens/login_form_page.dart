@@ -34,97 +34,109 @@ class _LoginFormPageState extends State<LoginFormPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'Entrez votre email',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Entrez votre email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Mot de passe',
-                  hintText: 'Entrez votre mot de passe',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Entrez votre mot de passe';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              Consumer<AuthProvider>(
-                builder: (context, auth, child) {
-                  return ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await dotenv.load(fileName: "assets/.env");
-                        final response = await http.post(
-                          Uri.parse('${dotenv.env['BASE_URL']!}/auth/signin'),
-                          headers: <String, String>{
-                            'Content-Type': 'application/json; charset=UTF-8',
-                          },
-                          body: jsonEncode(<String, String>{
-                            'email': _emailController.text,
-                            'password': _passwordController.text,
-                          }),
-                        );
-                        if (response.statusCode == 200) {
-                          Future<bool> success = auth.login(
-                              (jsonDecode(response.body)['token'])
-                                  .toString()
-                                  .substring(7));
-                          if (await success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Connexion réussie')),
-                            );
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (context) => const HomePage(),
-                              ),
-                              (route) => false,
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Echec de la connexion')),
-                            );
-                          }
-                        } else if (response.statusCode == 502) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Connexion au serveur impossible')),
-                          );
-                        } else if (response.statusCode == 400) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Email ou mot de passe incorrect')),
-                          );
-                        } else {
-                          print(response.statusCode);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Erreur inconnue')),
-                          );
+        child: Center(
+          child: Container(
+            width: 250,
+            child: Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text("Connexion à l'application",
+                        style: TextStyle(fontSize: 20)),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Entrez votre email',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Entrez votre email';
                         }
-                      }
-                    },
-                    child: const Text('Login'),
-                  );
-                },
-              )
-            ],
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Mot de passe',
+                        hintText: 'Entrez votre mot de passe',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Entrez votre mot de passe';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Consumer<AuthProvider>(
+                      builder: (context, auth, child) {
+                        return ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              await dotenv.load(fileName: "assets/.env");
+                              final response = await http.post(
+                                Uri.parse('${dotenv.env['BASE_URL']!}/auth/signin'),
+                                headers: <String, String>{
+                                  'Content-Type': 'application/json; charset=UTF-8',
+                                },
+                                body: jsonEncode(<String, String>{
+                                  'email': _emailController.text,
+                                  'password': _passwordController.text,
+                                }),
+                              );
+                              if (response.statusCode == 200) {
+                                Future<bool> success = auth.login(
+                                    (jsonDecode(response.body)['token'])
+                                        .toString()
+                                        .substring(7));
+                                if (await success) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Connexion réussie')),
+                                  );
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomePage(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Echec de la connexion')),
+                                  );
+                                }
+                              } else if (response.statusCode == 502) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Connexion au serveur impossible')),
+                                );
+                              } else if (response.statusCode == 400) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Email ou mot de passe incorrect')),
+                                );
+                              } else {
+                                print(response.statusCode);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Erreur inconnue')),
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(250, 30)
+                          ),
+                          child: const Text('Se connecter'),
+                        );
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
