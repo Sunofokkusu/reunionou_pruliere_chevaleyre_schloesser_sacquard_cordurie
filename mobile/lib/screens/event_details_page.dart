@@ -96,7 +96,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return MembersModal(event: widget.messages);
+                                return MembersModal(messages: widget.messages);
                               },
                             );
                           },
@@ -104,73 +104,80 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         ),
                         Consumer<AuthProvider>(
                           builder: (context, auth, child) {
-                            if (auth.isLoggedIn && auth.user!.id == widget.event.idCreator) {
-                              return Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
+                            if (auth.isLoggedIn &&
+                                auth.user!.id == widget.event.idCreator) {
+                              return Row(children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
                                           builder: (context) => EventFormPage(
-                                            event: widget.event,
-                                          )
-                                        ),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.edit),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text("Supprimer l'événement"),
-                                            content: const Text("Êtes-vous sûr de vouloir supprimer cet événement ?"),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
+                                                event: widget.event,
+                                              )),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text(
+                                              "Supprimer l'événement"),
+                                          content: const Text(
+                                              "Êtes-vous sûr de vouloir supprimer cet événement ?"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Annuler"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                bool deleted =
+                                                    await events.deleteEvent(
+                                                        widget.event.id);
+                                                if (deleted) {
                                                   Navigator.of(context).pop();
-                                                },
-                                                child: const Text("Annuler"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  bool deleted = await events.deleteEvent(widget.event.id);
-                                                  if (deleted) {
-                                                    Navigator.of(context).pop();
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text('Événement supprimé'),
-                                                      ),
-                                                    );
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) => const  HomePage(),
-                                                      ),
-                                                    );
-                                                    Navigator.of(context).pop();
-                                                    Navigator.of(context).pop();
-                                                  } else {
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text('Erreur lors de la suppression de l\'événement'),
-                                                      ),
-                                                    );
-                                                    Navigator.of(context).pop();
-                                                  }
-                                                },
-                                                child: const Text("Supprimer"),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.delete),
-                                  )
-                                ]
-                              );
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'Événement supprimé'),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const HomePage(),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).pop();
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'Erreur lors de la suppression de l\'événement'),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                }
+                                              },
+                                              child: const Text("Supprimer"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                )
+                              ]);
                             } else {
                               return Container();
                             }
