@@ -274,4 +274,26 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           ),
         ));
   }
+
+  /// Méthode qui retourne true si l'utilisateur n'est pas le créateur de l'événement et qu'il n'a pas déjà répondu au formulaire de participation
+  bool isntCreatorOrParticipant(String idUserLogged) {
+    return (idUserLogged != widget.event.idCreator &&
+        !widget.messages.any((element) => element.idAuthor == idUserLogged));
+  }
+
+  /// Méthode qui envoie le formulaire de participation
+  void sendFormParticipant(
+      String idUserLogged, EventsProvider events, int status) async {
+    if (!hasSentParticipation) {
+      hasSentParticipation = true;
+      if (isntCreatorOrParticipant(idUserLogged)) {
+        await events.postMessage(widget.event, message, status);
+        var newMessages = await events.getMessages(widget.event.id);
+        setState(() {
+          widget.messages = newMessages;
+          message = "";
+        });
+      }
+    }
+  }
 }
