@@ -66,7 +66,7 @@ export default {
           "password": this.password,
         })
         .then((response) => {
-          this.$store.commit("setToken", response.data.token)
+          this.$store.commit("setToken", "Bearer " + response.data.token)
           this.$store.commit("setConnected", true)
           this.axios.defaults.headers.get['Authorization'] = this.$store.state.token;
           this.axios.get(this.$store.state.base_url + "/user/me")
