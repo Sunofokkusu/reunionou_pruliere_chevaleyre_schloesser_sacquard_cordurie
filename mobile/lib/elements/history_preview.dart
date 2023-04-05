@@ -35,11 +35,23 @@ class _HistoryPreviewState extends State<HistoryPreview> {
             },
           ),
           onTap: () async {
-            var messages = await eventsProvider.getMessages(widget.event.id);
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  EventDetailsPage(event: widget.event, messages: messages),
-            ));
+            Event? event = await eventsProvider.getEventById(widget.event.id);
+            if (event == null) {
+              eventsProvider.removeFromHistory(widget.event);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Impossible de récupérer l'événement"),
+                ),
+              );
+              return;
+            } else {
+              var messages = await eventsProvider.getMessages(widget.event.id);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    EventDetailsPage(event: widget.event, messages: messages),
+              ));
+            }
           });
     });
   }

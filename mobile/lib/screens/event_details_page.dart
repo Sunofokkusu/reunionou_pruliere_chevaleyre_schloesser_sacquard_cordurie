@@ -169,16 +169,16 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                                           'Événement supprimé'),
                                                     ),
                                                   );
-                                                  Navigator.of(context)
-                                                    ..pop()
-                                                    ..push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const HomePage(),
-                                                      ),
-                                                    )
-                                                    ..pop()
-                                                    ..pop();
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const HomePage(),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).pop();
+
+                                                  Navigator.of(context).pop();
                                                 }
                                                 // Si suppression échouée, affichage d'un message d'erreur
                                                 else {
@@ -255,7 +255,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                 // Champ de message optionnel
                                 child: TextFormField(
                                   initialValue: message,
-                                  maxLength: 200,
+                                  maxLength: 80,
                                   maxLines: null,
                                   decoration: const InputDecoration(
                                     labelText: "Message optionnel",
