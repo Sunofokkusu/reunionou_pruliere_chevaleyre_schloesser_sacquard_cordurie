@@ -85,7 +85,7 @@
         </div>
       </div>
 
-      <div class="card col-3">
+      <div class="card col-3 meteo">
         <div v-if="meteoLoading">
           <SpinnerComp> Recherche de prévisions météo en cours... </SpinnerComp>
         </div>
@@ -94,6 +94,7 @@
         </div>
         <div v-else>
           <div v-if="meteo">
+            <h4>Météo</h4>
             <p>ville: {{ meteo.city.name }}</p>
             <p>tendance: {{ meteo.list[0].weather[0].description }}</p>
             <p>
@@ -601,5 +602,9 @@ h4 {
 }
 .edit:hover {
   color: #4CAF50
+}
+
+.meteo {
+  background: url("../assets/meteo.svg") no-repeat;
 }
 </style>
