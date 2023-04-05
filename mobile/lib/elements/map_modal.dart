@@ -1,4 +1,3 @@
-
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,6 @@ class MapModal extends StatefulWidget {
 }
 
 class _MapModalState extends State<MapModal> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,18 +29,27 @@ class _MapModalState extends State<MapModal> {
                   double.parse(widget.longitude.toString()))
               : LatLng(48.692054, 6.184417),
           zoom: 13.0,
-          onMapCreated: (mapController) async {
+
+          onMapReady: () async {
             if (widget.latitude != 0.0 && widget.longitude != 0.0) {
-              Provider.of<MapProvider>(context, listen: false).setLat(widget.latitude);
-              Provider.of<MapProvider>(context, listen: false).setLong(widget.longitude);
-              Provider.of<MapProvider>(context, listen: false).setAdress(await mapHelper.getAddressFromCoordinates(widget.latitude, widget.longitude));
-            }else{
-              Provider.of<MapProvider>(context, listen: false).setLat(48.692054);
-              Provider.of<MapProvider>(context, listen: false).setLong(6.184417);
-              Provider.of<MapProvider>(context, listen: false).setAdress("Place de la République, 54000 Nancy");
+              Provider.of<MapProvider>(context, listen: false)
+                  .setLat(widget.latitude);
+              Provider.of<MapProvider>(context, listen: false)
+                  .setLong(widget.longitude);
+              Provider.of<MapProvider>(context, listen: false).setAdress(
+                  await mapHelper.getAddressFromCoordinates(
+                      widget.latitude, widget.longitude));
+            } else {
+              Provider.of<MapProvider>(context, listen: false)
+                  .setLat(48.692054);
+              Provider.of<MapProvider>(context, listen: false)
+                  .setLong(6.184417);
+              Provider.of<MapProvider>(context, listen: false)
+                  .setAdress("Place de la République, 54000 Nancy");
             }
           },
-          onTap: (point) async => {
+          //on tap to get the coordinates of the point
+          onTap: (tapPosition, point) async => {
             Provider.of<MapProvider>(context, listen: false).setAdress(
                 await mapHelper.getAddressFromCoordinates(
                     point.latitude, point.longitude)),
@@ -56,12 +63,12 @@ class _MapModalState extends State<MapModal> {
             })
           },
         ),
-        layers: [
-          TileLayerOptions(
+        children: [
+          TileLayer(
             urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             subdomains: ['a', 'b', 'c'],
           ),
-          MarkerLayerOptions(
+          MarkerLayer(
             markers: [
               widget.latitude != 0.0 && widget.longitude != 0.0
                   ? Marker(

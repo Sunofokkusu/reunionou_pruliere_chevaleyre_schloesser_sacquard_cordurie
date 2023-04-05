@@ -42,6 +42,7 @@ class AuthProvider with ChangeNotifier {
   // Méthode pour se connecter à l'application
   // La méthode retourne un booléen pour savoir si la connexion a été effectuée
   // Elle prend en paramètre le token d'accès
+
   Future<bool> getUserInfo(String token) async {
     final response = await http.get( // requête GET à l'api User sur la route /user/me
       Uri.parse('${dotenv.env["BASE_URL"]!}/user/me'),
@@ -51,8 +52,8 @@ class AuthProvider with ChangeNotifier {
     );
     if (response.statusCode == 200) { // Si la requête a été effectuée
       _user = User.fromJson(jsonDecode(response.body)); // On récupère l'utilisateur
-      _isLoggedIn = true; // On passe à true le booléen
 
+      _isLoggedIn = true; // On passe à true le booléen
     } else {
       _authToken = ''; // On vide le token
     }

@@ -21,10 +21,13 @@ dependencies:
   faker: ^2.1.0
   uuid: ^3.0.7
   auto_size_text: ^3.0.0
-  flutter_map: ^0.13.0
+  flutter_map: ^3.1.0
   geocoding: ^2.0.0
+  geolocator: ^7.6.0
   shared_preferences: ^2.0.20
   url_launcher: ^6.0.3
+  routing_client_dart: ^0.3.0
+  flutter_map_marker_popup: ^4.0.2
 
 dev_dependencies:
   flutter_test:
