@@ -53,9 +53,7 @@
                 >viens</span
               >
               <span v-if="part.status === 2">ne viens pas</span>
-              &nbsp;<span v-if="part.message !== undefined"
-                >(<i>{{ part.message.toLowerCase() }}</i
-                >)</span
+              &nbsp;<span v-if="part.message !== ''">(<i>{{ part.message.toLowerCase() }}</i>)</span
               >
             </p>
           </div>
