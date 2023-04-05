@@ -133,7 +133,7 @@ class EventsProvider with ChangeNotifier {
         datetime: DateTime.parse(date!),
       ));
     } else {
-      print(response.statusCode);
+
     }
     // On notifie les listeners pour mettre à jour les événements créés et on retourne l'id du nouvel événement
     notifyListeners();
@@ -195,8 +195,6 @@ class EventsProvider with ChangeNotifier {
       } else if (index == 1) {
         _eventsCreator = events.map((e) => Event.fromJson(e)).toList();
       }
-    } else {
-      print(response.statusCode);
     }
     // On notifie les listeners pour mettre à jour les événements invités et créés
     notifyListeners();
@@ -215,8 +213,6 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return Event.fromJson(data);
-    } else {
-      print(response.statusCode);
     }
     return null;
   }
@@ -329,8 +325,6 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       posted = true;
       _eventsInvited.add(event);
-    } else {
-      print(response.statusCode);
     }
     return posted;
   }

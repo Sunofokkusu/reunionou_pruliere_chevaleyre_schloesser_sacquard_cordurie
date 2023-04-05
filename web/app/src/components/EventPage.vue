@@ -114,7 +114,17 @@
             layer-type="base"
             name="OpenStreetMap"
           ></l-tile-layer>
-          <l-marker :lat-lng="markerLatLng" ></l-marker>
+          <l-marker :lat-lng="markerLatLng" >
+            <l-popup><strong>Lieu de rendez-vous:</strong><br/>{{ getEventComputed.adress }}</l-popup>
+          </l-marker>
+          <div v-if="selflocation">
+            <l-marker :lat-lng="currentLatLng" >
+            <l-popup><strong>Vous êtes ici</strong><br/></l-popup>
+          </l-marker>
+          </div>
+          <div v-if="geoloc">
+            <l-polyline :lat-lngs="lnglats" color="red"></l-polyline>
+          </div>       
         </l-map>
       </div>
       <div v-else>
@@ -217,7 +227,7 @@
 
 <script>
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LMarker, LPolyline, LPopup } from "@vue-leaflet/vue-leaflet";
 import SpinnerComp from "@/components/Spinner.vue";
 export default {
   name: "EventPage",
@@ -226,6 +236,8 @@ export default {
     LTileLayer,
     LMarker,
     SpinnerComp,
+    LPolyline,
+    LPopup
   },
   data() {
     return {
@@ -249,6 +261,7 @@ export default {
       comment_logoff: false,
       addComment: "",
       markerLatLng:[],
+      currentLatLng: [],
       lat: "",
       long: "",
       currentLat: "",
@@ -264,6 +277,9 @@ export default {
       editlat: 0,
       editlng: 0,
       tooltip: "copier le lien",
+      geoloc: false,
+      lnglats: [],
+      selflocation: false
     };
   },
   async mounted() {
@@ -313,6 +329,23 @@ export default {
         console.log(error);
       }
     }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      this.currentLat = position.coords.latitude;
+      this.currentLong = position.coords.longitude;
+      this.currentLatLng = [this.currentLat,this.currentLong]
+      this.selflocation = true
+      try {
+        let response = await fetch('http://router.project-osrm.org/route/v1/driving/'+this.currentLong+','+this.currentLat+';'+this.long+','+this.lat+"?steps=true&overview=full")
+        let json = await response.json()
+        json.routes[0].legs[0].steps.forEach((e) => {
+          this.lnglats.push([e.maneuver.location[1], e.maneuver.location[0]])
+        });
+        this.geoloc = true
+      } catch (error) {
+        console.log(error);
+      }
+    });
   },
   async created() {
     /**
@@ -342,14 +375,7 @@ export default {
       return this.event;
     },
 
-    itinerary() {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.currentLat = position.coords.latitude;
-        this.currentLong = position.coords.longitude;
-      });
-      console.log(this.currentLat, this.currentLong);
-      return null
-    }
+
   },
   methods: {
     /**
