@@ -216,58 +216,58 @@ class EventsProvider with ChangeNotifier {
     return null;
   }
 
-  /// Méthode de récupération des commentaires d'un événement par son id
-  /// TODO : Julien explique
+  // Méthode de récupération des commentaires d'un événement
+  // Cette méthode retourne une liste de commentaires
+  // Elle prend en paramètre l'id de l'événement
   Future<List<Comment>> getComments(String id) async {
-    bool exist = false;
-    if (_eventsCreator.any((element) => element.id == id)) {
+    bool exist = false; // Booléen pour savoir si l'événement existe dans une des listes d'événements
+    if (_eventsCreator.any((element) => element.id == id)) { // Si l'événement existe dans la liste des événements créés
       exist = true;
-    } else if (_eventsInvited.any((element) => element.id == id)) {
+    } else if (_eventsInvited.any((element) => element.id == id)) { // Si l'événement existe dans la liste des événements invités
       exist = true;
-    } else if (_searchHistory.any((element) => element.id == id)) {
+    } else if (_searchHistory.any((element) => element.id == id)) { // Si l'événement existe dans la liste des événements recherchés
       exist = true;
     }
-    if (exist) {
-      final response = await http.get(
+    if (exist) { // Si l'événement existe dans une des listes d'événements
+      final response = await http.get( // requête GET à l'API Event sur la route /event/{id}
           Uri.parse("${dotenv.env["BASE_URL"]!}/event/$id"),
-          headers: <String, String>{
+          headers: <String, String>{ // On envoie le token dans le header de la requête
             'Authorization': 'Bearer ${_authProvider!.token}',
           });
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final list = data['comments'] as List;
-        _comments = list.map((e) => Comment.fromJson(e)).toList();
-        _comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      if (response.statusCode == 200) { // Si la requête est un succès
+        final data = jsonDecode(response.body); // On récupère les données de la réponse
+        final list = data['comments'] as List; // On fait une liste avec la clé 'comments' de la réponse
+        _comments = list.map((e) => Comment.fromJson(e)).toList(); // On formate la liste en une liste de Comment
+        _comments.sort((a, b) => b.createdAt.compareTo(a.createdAt)); // On trie la liste par date de création
       } else {
         print(response.statusCode);
       }
     }
-    return _comments;
+    return _comments; // On retourne la liste de commentaires
   }
 
-  /// Méthode de création d'un commentaire pour un événement par son id
+  // Méthode d'envoi d'un commentaire
+  // Cette méthode retourne un booléen
+  // Elle prend en paramètre l'id de l'événement et le commentaire 
   Future<bool> postComment(String idEvent, String comment) async {
-    bool posted = false;
-    // On envoie la requête à l'API
-    final response = await http.post(
+    bool posted = false; // Booléen pour savoir si le commentaire a été posté
+    final response = await http.post( // requête POST à l'API Event sur la route /event/{id}/comment
       Uri.parse("${dotenv.env["BASE_URL"]!}/event/$idEvent/comment/"),
-      headers: <String, String>{
+      headers: <String, String>{ // On envoie le token dans le header de la requête
         'Authorization': 'Bearer ${_authProvider!.token}',
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8', // On précise le type de contenu
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, String>{ // On envoie le commentaire dans le body de la requête
         'message': comment,
       }),
     );
-    // Si la requête est un succès, on retourne true
-    if (response.statusCode == 200) {
-      posted = true;
+    if (response.statusCode == 200) { // Si la requête est un succès
+      posted = true; // On met le booléen à true
     } else {
       print(response.statusCode);
     }
-    // On notifie les listeners pour mettre à jour les commentaires de l'événement
-    notifyListeners();
-    return posted;
+    notifyListeners(); // On notifie les listeners pour mettre à jour la liste de commentaires
+    return posted; // On retourne le booléen
   }
 
   /// Méthode de récupération des messages de participation d'un événement par son id
@@ -316,56 +316,53 @@ class EventsProvider with ChangeNotifier {
     return posted;
   }
 
-  /// Méthode de mise à jour d'un événement
+  // Méthode de mise à jour d'un événement
+  // Cette méthode retourne un booléen
+  // Elle prend en paramètre un événement
   Future<bool> updateEvent(Event event) async {
-    bool updated = false;
-    // On envoie la requête à l'API
-    final response = await http.put(
+    bool updated = false; // Booléen pour savoir si l'événement a été mis à jour
+    final response = await http.put( // requête PUT à l'API Event sur la route /event/
       Uri.parse('${dotenv.env["BASE_URL"]!}/event/'),
-      headers: <String, String>{
+      headers: <String, String>{ // On envoie le token dans le header de la requête
         'Authorization': 'Bearer ${_authProvider!.token}',
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8', // On précise le type de contenu
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, String>{ // On envoie les données de l'événement dans le body de la requête
         'idEvent': event.id,
         'title': event.title,
         'adress': event.adress,
         'description': event.desc,
-        'date': event.datetime.toString(),
-        'long': event.long.toString(),
-        'lat': event.lat.toString(),
+        'date': event.datetime.toString(), // On convertit la date en String
+        'long': event.long.toString(), // On convertit la longitude en String
+        'lat': event.lat.toString(), // On convertit la latitude en String
       }),
     );
-    print(event.datetime);
-    // Si la requête est un succès, on retourne true
-    if (response.statusCode == 200) {
-      updated = true;
+    if (response.statusCode == 200) { // Si la requête est un succès
+      updated = true; // On met le booléen à true
     } else {
       print(response.statusCode);
     }
-    // On notifie les listeners pour mettre à jour l'événement
-    notifyListeners();
-    return updated;
+    notifyListeners(); // On notifie les listeners pour mettre à jour la liste des événements créés
+    return updated; // On retourne le booléen
   }
 
-  /// Méthode de suppression d'un événement par son id
+  // Méthode de suppression d'un événement
+  // Cette méthode retourne un booléen
+  // Elle prend en paramètre l'id de l'événement à supprimer
   Future<bool> deleteEvent(String id) async {
-    bool deleted = false;
-    // On envoie la requête à l'API
-    final response = await http.delete(
+    bool deleted = false; // Booléen pour savoir si l'événement a été supprimé
+    final response = await http.delete( // requête DELETE à l'API Event sur la route /event/{id}
         Uri.parse('${dotenv.env["BASE_URL"]!}/event/$id'),
-        headers: <String, String>{
+        headers: <String, String>{ // On envoie le token dans le header de la requête
           'Authorization': 'Bearer ${_authProvider!.token}'
         });
-    // Si la requête est un succès, on retourne true
-    if (response.statusCode == 200) {
-      _eventsCreator.removeWhere((element) => element.id == id);
-      deleted = true;
+    if (response.statusCode == 200) { // Si la requête est un succès
+      _eventsCreator.removeWhere((element) => element.id == id); // On supprime l'événement de la liste des événements créés
+      deleted = true; // On met le booléen à true
     } else {
       print(response.statusCode);
     }
-    // On notifie les listeners pour mettre à jour la liste des événements créés
-    notifyListeners();
-    return deleted;
+    notifyListeners(); // On notifie les listeners pour mettre à jour la liste des événements créés
+    return deleted; // On retourne le booléen
   }
 }
