@@ -15,6 +15,11 @@
     - Mise en oeuvre du travail d’équipe: répartition des tâches, utilisation de git.
     - Liste des fonctionnalités réalisées
 
+## Mise en route
+
+    - Clôner le projet
+    - Voir le README de chaque sous-projet
+
 ## Tableau de bord
 
 https://docs.google.com/spreadsheets/d/1L6OGrKar0hYIgE_Bb3Emqtsc8-AMFg4qYooKoX-w7yM/edit?usp=sharing
