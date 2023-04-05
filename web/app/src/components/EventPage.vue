@@ -10,7 +10,7 @@
         </div>
         <div v-else>
           <div v-if="getEventComputed.title">
-            <div class="edit">
+            <div v-if="editUser" class="edit">
               <i v-if="edit" class="fas fa-trash" @click="edit = false"></i>
               <i v-else class="fas fa-pen" @click="edit = true"></i>
             </div>
@@ -53,9 +53,7 @@
                 >viens</span
               >
               <span v-if="part.status === 2">ne viens pas</span>
-              &nbsp;<span v-if="part.message !== undefined"
-                >(<i>{{ part.message.toLowerCase() }}</i
-                >)</span
+              &nbsp;<span v-if="part.message !== ''">(<i>{{ part.message.toLowerCase() }}</i>)</span
               >
             </p>
           </div>
@@ -85,7 +83,7 @@
         </div>
       </div>
 
-      <div class="card col-3">
+      <div class="card col-3 meteo">
         <div v-if="meteoLoading">
           <SpinnerComp> Recherche de prévisions météo en cours... </SpinnerComp>
         </div>
@@ -94,6 +92,7 @@
         </div>
         <div v-else>
           <div v-if="meteo">
+            <h4>Météo</h4>
             <p>ville: {{ meteo.city.name }}</p>
             <p>tendance: {{ meteo.list[0].weather[0].description }}</p>
             <p>
@@ -252,8 +251,11 @@ export default {
       markerLatLng:[],
       lat: "",
       long: "",
+      currentLat: "",
+      currentLong: "",
       loaded: false,
       edit: false,
+      editUser: false,
       editTitle: "",
       editDescr: "",
       editDate: "",
@@ -299,10 +301,8 @@ export default {
     //permet de désactiver les boutons si l'utilisateur est déjà inscrit à l'événement
     if (this.$store.state.token !== "") {
       try {
-        let response = await this.axios.get(
-          this.$store.state.base_url + "/user/me?embed=all",
-          {}
-        );
+        this.axios.defaults.headers.get["Authorization"] = this.$store.state.token;
+        let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=all");
         this.user = response.data;
         this.user.events.forEach((e) => {
           if (e.id === this.$route.params.event_id) {
@@ -314,6 +314,24 @@ export default {
       }
     }
   },
+  async created() {
+    /**
+     * vérifie si l'utilisateur est le créateur de l'événement pour la modification d'évènement
+     */
+      try {
+        if (this.$store.state.token !== "") {
+          this.axios.defaults.headers.get["Authorization"] = this.$store.state.token;
+          let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=events");
+          response.data.events.forEach((e) => {
+            if (e.id === this.$route.params.event_id) {
+              this.editUser = true;
+            }
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+  },
   computed: {
     /**
      * récupère l'événement
@@ -323,6 +341,15 @@ export default {
       this.getEvent();
       return this.event;
     },
+
+    itinerary() {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.currentLat = position.coords.latitude;
+        this.currentLong = position.coords.longitude;
+      });
+      console.log(this.currentLat, this.currentLong);
+      return null
+    }
   },
   methods: {
     /**
@@ -373,8 +400,7 @@ export default {
           }
         );
       } else {
-        this.axios.defaults.headers.post["Authorization"] =
-          this.$store.state.token;
+        this.axios.defaults.headers.post["Authorization"] = this.$store.state.token;
         this.axios.post(
           this.$store.state.base_url +
             "/event/" +
@@ -585,5 +611,9 @@ h4 {
 }
 .edit:hover {
   color: #4CAF50
+}
+
+.meteo {
+  background: url("../assets/meteo.svg") no-repeat;
 }
 </style>

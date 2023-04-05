@@ -257,8 +257,6 @@ class EventsProvider with ChangeNotifier {
             .toList(); // On formate la liste en une liste de Comment
         _comments.sort((a, b) => b.createdAt
             .compareTo(a.createdAt)); // On trie la liste par date de création
-      } else {
-        print(response.statusCode);
       }
     }
     return _comments; // On retourne la liste de commentaires
@@ -286,8 +284,6 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       // Si la requête est un succès
       posted = true; // On met le booléen à true
-    } else {
-      print(response.statusCode);
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste de commentaires
     return posted; // On retourne le booléen
@@ -367,8 +363,6 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       // Si la requête est un succès
       updated = true; // On met le booléen à true
-    } else {
-      print(response.statusCode);
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste des événements créés
     return updated; // On retourne le booléen
@@ -392,8 +386,6 @@ class EventsProvider with ChangeNotifier {
           element.id ==
           id); // On supprime l'événement de la liste des événements créés
       deleted = true; // On met le booléen à true
-    } else {
-      print(response.statusCode);
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste des événements créés
     return deleted; // On retourne le booléen

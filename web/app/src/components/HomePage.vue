@@ -132,6 +132,7 @@ export default {
      */
     async getEvents(select) {
       try {
+        // this.axios.defaults.headers.get["ngrok-skip-browser-warning"] = "true"
         this.axios.defaults.headers.get["Authorization"] = this.$store.state.token
         let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed="+select, {})
         if(response.data.events !== undefined || response.data.events !== []){
@@ -188,7 +189,6 @@ export default {
             lat: this.lat,
             long: this.lng,
           });
-          localStorage.setItem("events", JSON.stringify(this.events));
 
           this.reset();
           this.$router.push({name:'Event', params: { event_id: response.data.id }})
