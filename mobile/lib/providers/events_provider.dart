@@ -132,7 +132,7 @@ class EventsProvider with ChangeNotifier {
         datetime: DateTime.parse(date!),
       ));
     } else {
-      print(response.statusCode);
+
     }
     // On notifie les listeners pour mettre à jour les événements créés et on retourne l'id du nouvel événement
     notifyListeners();
@@ -190,8 +190,6 @@ class EventsProvider with ChangeNotifier {
       } else if (index == 1) {
         _eventsCreator = events.map((e) => Event.fromJson(e)).toList();
       }
-    } else {
-      print(response.statusCode);
     }
     // On notifie les listeners pour mettre à jour les événements invités et créés
     notifyListeners();
@@ -210,8 +208,6 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return Event.fromJson(data);
-    } else {
-      print(response.statusCode);
     }
     return null;
   }
@@ -239,8 +235,6 @@ class EventsProvider with ChangeNotifier {
         final list = data['comments'] as List; // On fait une liste avec la clé 'comments' de la réponse
         _comments = list.map((e) => Comment.fromJson(e)).toList(); // On formate la liste en une liste de Comment
         _comments.sort((a, b) => b.createdAt.compareTo(a.createdAt)); // On trie la liste par date de création
-      } else {
-        print(response.statusCode);
       }
     }
     return _comments; // On retourne la liste de commentaires
@@ -263,8 +257,6 @@ class EventsProvider with ChangeNotifier {
     );
     if (response.statusCode == 200) { // Si la requête est un succès
       posted = true; // On met le booléen à true
-    } else {
-      print(response.statusCode);
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste de commentaires
     return posted; // On retourne le booléen
@@ -310,8 +302,6 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       posted = true;
       _eventsInvited.add(event);
-    } else {
-      print(response.statusCode);
     }
     return posted;
   }
@@ -339,8 +329,6 @@ class EventsProvider with ChangeNotifier {
     );
     if (response.statusCode == 200) { // Si la requête est un succès
       updated = true; // On met le booléen à true
-    } else {
-      print(response.statusCode);
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste des événements créés
     return updated; // On retourne le booléen
@@ -359,8 +347,6 @@ class EventsProvider with ChangeNotifier {
     if (response.statusCode == 200) { // Si la requête est un succès
       _eventsCreator.removeWhere((element) => element.id == id); // On supprime l'événement de la liste des événements créés
       deleted = true; // On met le booléen à true
-    } else {
-      print(response.statusCode);
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste des événements créés
     return deleted; // On retourne le booléen

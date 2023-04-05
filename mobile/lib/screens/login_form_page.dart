@@ -90,7 +90,6 @@ class _LoginFormPageState extends State<LoginFormPage> {
                               }),
                             );
                             if (response.statusCode == 200) { // Si la requête est réussie
-                              print("coucou");
                               Future<bool> success = authProvider.login(// Appel de la fonction login de auth_provider en lui fournissant le token
                                   (jsonDecode(response.body)['token'])
                                       .toString());
@@ -124,7 +123,6 @@ class _LoginFormPageState extends State<LoginFormPage> {
                                         'Email ou mot de passe incorrect')),
                               );
                             } else { // Si il y a une autre erreur
-                              print(response.statusCode);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text('Erreur inconnue')),
