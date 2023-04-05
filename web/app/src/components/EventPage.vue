@@ -327,8 +327,8 @@ export default {
         let lnglats = []
         let json = await response.json()
         console.log(json)
-        json.waypoints.location.forEach((e) => {
-          lnglats.push([e[1], e[0]])
+        json.waypoints.forEach((e) => {
+          lnglats.push([e.location[1], e.location[0]])
         });
         this.geoloc = true
       } catch (error) {
