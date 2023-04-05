@@ -115,6 +115,9 @@
             name="OpenStreetMap"
           ></l-tile-layer>
           <l-marker :lat-lng="markerLatLng" ></l-marker>
+          <div v-if="geoloc">
+            <l-polyline :lat-lngs="lnglats" color="red"></l-polyline>
+          </div>       
         </l-map>
       </div>
       <div v-else>
@@ -217,7 +220,7 @@
 
 <script>
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LMarker, LPolyline } from "@vue-leaflet/vue-leaflet";
 import SpinnerComp from "@/components/Spinner.vue";
 export default {
   name: "EventPage",
@@ -226,6 +229,7 @@ export default {
     LTileLayer,
     LMarker,
     SpinnerComp,
+    LPolyline
   },
   data() {
     return {
@@ -264,6 +268,7 @@ export default {
       editlat: 0,
       editlng: 0,
       tooltip: "copier le lien",
+      geoloc: false,
     };
   },
   async mounted() {
@@ -313,6 +318,23 @@ export default {
         console.log(error);
       }
     }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      this.currentLat = position.coords.latitude;
+      this.currentLong = position.coords.longitude;
+      try {
+        let response = await fetch('http://router.project-osrm.org/route/v1/driving/'+this.currentLong+','+this.currentLat+';'+this.long+','+this.lat)
+        let lnglats = []
+        let json = await response.json()
+        console.log(json)
+        json.waypoints.location.forEach((e) => {
+          lnglats.push([e[1], e[0]])
+        });
+        this.geoloc = true
+      } catch (error) {
+        console.log(error);
+      }
+    });
   },
   async created() {
     /**
@@ -342,14 +364,7 @@ export default {
       return this.event;
     },
 
-    itinerary() {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.currentLat = position.coords.latitude;
-        this.currentLong = position.coords.longitude;
-      });
-      console.log(this.currentLat, this.currentLong);
-      return null
-    }
+
   },
   methods: {
     /**
