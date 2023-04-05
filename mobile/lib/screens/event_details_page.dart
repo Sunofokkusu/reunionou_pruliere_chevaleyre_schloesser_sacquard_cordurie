@@ -20,7 +20,7 @@ class EventDetailsPage extends StatefulWidget {
   EventDetailsPage({super.key, required this.event, this.messages = const []});
 
   /// Evénement à afficher
-  late Event event;
+  final Event event;
 
   /// Liste des messages de participation à l'événement, à obtenir en amont pour décider d'une partie de l'affichage
   late List<Message> messages;
@@ -82,7 +82,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 16.0),
                     // Date de l'événement
                     Text(
                       "Programmé pour le  ${DateHelper.formatDate(widget.event.datetime)} à ${DateHelper.formatTime(widget.event.datetime)}",
@@ -98,7 +97,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     ),
                     Text(
                       "Contact : ${widget.event.emailCreator}",
-                      style: const TextStyle(fontSize: 16.0),
                     ),
                     const SizedBox(height: 16.0),
                     // Barre d'actions
@@ -225,6 +223,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     widget.event.desc.isNotEmpty
                         ? const SizedBox(height: 16.0)
                         : Container(),
+                    Text(
+                      "Adresse : ${widget.event.adress}",
+                    ),
                     // Carte embarquée, lieu de l'événement
                     MapView(
                       latitude: widget.event.lat,
