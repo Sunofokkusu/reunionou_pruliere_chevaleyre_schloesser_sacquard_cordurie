@@ -31,7 +31,7 @@ class _HistoryPreviewState extends State<HistoryPreview> {
             icon: const Icon(Icons.delete),
             // Supprime l'événement de l'historique
             onPressed: () {
-              eventsProvider.removeHistory(widget.event);
+              eventsProvider.removeFromHistory(widget.event);
             },
           ),
           onTap: () async {

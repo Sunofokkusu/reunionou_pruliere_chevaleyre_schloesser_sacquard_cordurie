@@ -22,6 +22,8 @@ class _MembersModalState extends State<MembersModal> {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
+    widget.messages.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(

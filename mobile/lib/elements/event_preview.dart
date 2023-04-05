@@ -26,17 +26,22 @@ class _EventPreviewState extends State<EventPreview> {
       return ListTile(
           title: Row(
             children: [
+              // Le titre est affiché en premier
               Text(widget.event.title),
               const Spacer(),
+              // La date est affichée en petit à droite du titre
               Text(DateHelper.formatDateTime(widget.event.datetime),
                   style: const TextStyle(fontSize: 12)),
             ],
           ),
+          // La description de 3 lignes maximum est affichée en dessous du titre
           subtitle: Text(
             widget.event.desc,
             maxLines: widget.event.desc.isEmpty ? null : 3,
             overflow: TextOverflow.ellipsis,
           ),
+          tileColor: widget.event.isPast() ? Colors.grey[300] : null,
+          // Lorsque l'on clique sur la tuile, on affiche la page de détails de l'événement
           onTap: () async {
             var messages = await eventsProvider.getMessages(widget.event.id);
             Navigator.of(context).push(
