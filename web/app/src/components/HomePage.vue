@@ -165,7 +165,6 @@ export default {
         this.errored = false;
 
         this.meetingDate = this.meetingDate + "T" + this.meetingHour + ":00";
-        console.log(this.meetingDate);
 
         try {
           await this.getadress(this.adress);
