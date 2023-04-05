@@ -18,19 +18,3 @@
 ## Tableau de bord
 
 https://docs.google.com/spreadsheets/d/1L6OGrKar0hYIgE_Bb3Emqtsc8-AMFg4qYooKoX-w7yM/edit?usp=sharing
-
-## Mise en route
-
-    - Dans /back/
-    - docker-compose up -d
-    - Dans /web/app/
-    - vue add quasar
-    - vue add vue-router@4
-        >No
-        >SCSS
-        >Fontawesome
-        >en-US
-        >No
-        >Recommended
-    - npm i
-    - npm run serve
