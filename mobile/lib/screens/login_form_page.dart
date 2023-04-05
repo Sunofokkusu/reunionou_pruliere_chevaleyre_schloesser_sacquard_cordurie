@@ -93,8 +93,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
                               print("coucou");
                               Future<bool> success = authProvider.login(// Appel de la fonction login de auth_provider en lui fournissant le token
                                   (jsonDecode(response.body)['token'])
-                                      .toString()
-                                      .substring(7));
+                                      .toString());
                               if (await success) { // Si la connexion est réussie
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
