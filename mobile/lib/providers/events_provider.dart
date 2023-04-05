@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class EventsProvider with ChangeNotifier {
   /// Provider d'authentification pour récupérer le token
   final AuthProvider? _authProvider;
+  get authProvider => _authProvider;
 
   /// Storage local
   SharedPreferences? _storage;
@@ -57,7 +58,7 @@ class EventsProvider with ChangeNotifier {
   }
 
   /// Méthode de suppression d'un événement de l'historique de recherche
-  Future<bool> removeHistory(Event event) async {
+  Future<bool> removeFromHistory(Event event) async {
     // Si l'événement est dans l'historique, on le supprime et on met à jour le storage
     if (_searchHistory.remove(event)) {
       _storage!.setString('searchHistory', Event.encode(_searchHistory));
@@ -149,6 +150,8 @@ class EventsProvider with ChangeNotifier {
           await fetchEvents(index);
           _initInvited = true;
         } else {
+          // On trie les événements par date (plus grande date en premier)
+          _eventsInvited.sort((a, b) => b.datetime.compareTo(a.datetime));
           return _eventsInvited;
         }
       }
@@ -158,6 +161,8 @@ class EventsProvider with ChangeNotifier {
           await fetchEvents(index);
           _initCreator = true;
         } else {
+          // On trie les événements par date (plus lointain en premier)
+          _eventsInvited.sort((a, b) => b.datetime.compareTo(a.datetime));
           return _eventsCreator;
         }
       }
@@ -216,25 +221,38 @@ class EventsProvider with ChangeNotifier {
   // Cette méthode retourne une liste de commentaires
   // Elle prend en paramètre l'id de l'événement
   Future<List<Comment>> getComments(String id) async {
-    bool exist = false; // Booléen pour savoir si l'événement existe dans une des listes d'événements
-    if (_eventsCreator.any((element) => element.id == id)) { // Si l'événement existe dans la liste des événements créés
+    bool exist =
+        false; // Booléen pour savoir si l'événement existe dans une des listes d'événements
+    if (_eventsCreator.any((element) => element.id == id)) {
+      // Si l'événement existe dans la liste des événements créés
       exist = true;
-    } else if (_eventsInvited.any((element) => element.id == id)) { // Si l'événement existe dans la liste des événements invités
+    } else if (_eventsInvited.any((element) => element.id == id)) {
+      // Si l'événement existe dans la liste des événements invités
       exist = true;
-    } else if (_searchHistory.any((element) => element.id == id)) { // Si l'événement existe dans la liste des événements recherchés
+    } else if (_searchHistory.any((element) => element.id == id)) {
+      // Si l'événement existe dans la liste des événements recherchés
       exist = true;
     }
-    if (exist) { // Si l'événement existe dans une des listes d'événements
-      final response = await http.get( // requête GET à l'API Event sur la route /event/{id}
+    if (exist) {
+      // Si l'événement existe dans une des listes d'événements
+      final response = await http.get(
+          // requête GET à l'API Event sur la route /event/{id}
           Uri.parse("${dotenv.env["BASE_URL"]!}/event/$id"),
-          headers: <String, String>{ // On envoie le token dans le header de la requête
+          headers: <String, String>{
+            // On envoie le token dans le header de la requête
             'Authorization': 'Bearer ${_authProvider!.token}',
           });
-      if (response.statusCode == 200) { // Si la requête est un succès
-        final data = jsonDecode(response.body); // On récupère les données de la réponse
-        final list = data['comments'] as List; // On fait une liste avec la clé 'comments' de la réponse
-        _comments = list.map((e) => Comment.fromJson(e)).toList(); // On formate la liste en une liste de Comment
-        _comments.sort((a, b) => b.createdAt.compareTo(a.createdAt)); // On trie la liste par date de création
+      if (response.statusCode == 200) {
+        // Si la requête est un succès
+        final data =
+            jsonDecode(response.body); // On récupère les données de la réponse
+        final list = data['comments']
+            as List; // On fait une liste avec la clé 'comments' de la réponse
+        _comments = list
+            .map((e) => Comment.fromJson(e))
+            .toList(); // On formate la liste en une liste de Comment
+        _comments.sort((a, b) => b.createdAt
+            .compareTo(a.createdAt)); // On trie la liste par date de création
       }
     }
     return _comments; // On retourne la liste de commentaires
@@ -242,20 +260,25 @@ class EventsProvider with ChangeNotifier {
 
   // Méthode d'envoi d'un commentaire
   // Cette méthode retourne un booléen
-  // Elle prend en paramètre l'id de l'événement et le commentaire 
+  // Elle prend en paramètre l'id de l'événement et le commentaire
   Future<bool> postComment(String idEvent, String comment) async {
     bool posted = false; // Booléen pour savoir si le commentaire a été posté
-    final response = await http.post( // requête POST à l'API Event sur la route /event/{id}/comment
+    final response = await http.post(
+      // requête POST à l'API Event sur la route /event/{id}/comment
       Uri.parse("${dotenv.env["BASE_URL"]!}/event/$idEvent/comment/"),
-      headers: <String, String>{ // On envoie le token dans le header de la requête
+      headers: <String, String>{
+        // On envoie le token dans le header de la requête
         'Authorization': 'Bearer ${_authProvider!.token}',
-        'Content-Type': 'application/json; charset=UTF-8', // On précise le type de contenu
+        'Content-Type':
+            'application/json; charset=UTF-8', // On précise le type de contenu
       },
-      body: jsonEncode(<String, String>{ // On envoie le commentaire dans le body de la requête
+      body: jsonEncode(<String, String>{
+        // On envoie le commentaire dans le body de la requête
         'message': comment,
       }),
     );
-    if (response.statusCode == 200) { // Si la requête est un succès
+    if (response.statusCode == 200) {
+      // Si la requête est un succès
       posted = true; // On met le booléen à true
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste de commentaires
@@ -311,13 +334,17 @@ class EventsProvider with ChangeNotifier {
   // Elle prend en paramètre un événement
   Future<bool> updateEvent(Event event) async {
     bool updated = false; // Booléen pour savoir si l'événement a été mis à jour
-    final response = await http.put( // requête PUT à l'API Event sur la route /event/
+    final response = await http.put(
+      // requête PUT à l'API Event sur la route /event/
       Uri.parse('${dotenv.env["BASE_URL"]!}/event/'),
-      headers: <String, String>{ // On envoie le token dans le header de la requête
+      headers: <String, String>{
+        // On envoie le token dans le header de la requête
         'Authorization': 'Bearer ${_authProvider!.token}',
-        'Content-Type': 'application/json; charset=UTF-8', // On précise le type de contenu
+        'Content-Type':
+            'application/json; charset=UTF-8', // On précise le type de contenu
       },
-      body: jsonEncode(<String, String>{ // On envoie les données de l'événement dans le body de la requête
+      body: jsonEncode(<String, String>{
+        // On envoie les données de l'événement dans le body de la requête
         'idEvent': event.id,
         'title': event.title,
         'adress': event.adress,
@@ -327,7 +354,8 @@ class EventsProvider with ChangeNotifier {
         'lat': event.lat.toString(), // On convertit la latitude en String
       }),
     );
-    if (response.statusCode == 200) { // Si la requête est un succès
+    if (response.statusCode == 200) {
+      // Si la requête est un succès
       updated = true; // On met le booléen à true
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste des événements créés
@@ -339,13 +367,18 @@ class EventsProvider with ChangeNotifier {
   // Elle prend en paramètre l'id de l'événement à supprimer
   Future<bool> deleteEvent(String id) async {
     bool deleted = false; // Booléen pour savoir si l'événement a été supprimé
-    final response = await http.delete( // requête DELETE à l'API Event sur la route /event/{id}
+    final response = await http.delete(
+        // requête DELETE à l'API Event sur la route /event/{id}
         Uri.parse('${dotenv.env["BASE_URL"]!}/event/$id'),
-        headers: <String, String>{ // On envoie le token dans le header de la requête
+        headers: <String, String>{
+          // On envoie le token dans le header de la requête
           'Authorization': 'Bearer ${_authProvider!.token}'
         });
-    if (response.statusCode == 200) { // Si la requête est un succès
-      _eventsCreator.removeWhere((element) => element.id == id); // On supprime l'événement de la liste des événements créés
+    if (response.statusCode == 200) {
+      // Si la requête est un succès
+      _eventsCreator.removeWhere((element) =>
+          element.id ==
+          id); // On supprime l'événement de la liste des événements créés
       deleted = true; // On met le booléen à true
     }
     notifyListeners(); // On notifie les listeners pour mettre à jour la liste des événements créés

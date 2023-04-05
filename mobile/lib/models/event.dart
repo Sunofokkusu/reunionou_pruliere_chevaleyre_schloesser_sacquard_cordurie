@@ -97,4 +97,8 @@ class Event {
             .map<Map<String, dynamic>>((event) => Event.toMap(event))
             .toList(),
       );
+
+  bool isPast() {
+    return datetime.isBefore(DateTime.now());
+  }
 }
