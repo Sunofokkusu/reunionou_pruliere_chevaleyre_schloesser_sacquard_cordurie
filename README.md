@@ -22,15 +22,15 @@ https://docs.google.com/spreadsheets/d/1L6OGrKar0hYIgE_Bb3Emqtsc8-AMFg4qYooKoX-w
 ## Mise en route
 
     - Dans /back/
-    - `docker-compose up -d`
+    - docker-compose up -d
     - Dans /web/app/
-    - `vue add quasar`
-    - `vue add vue-router@4`
+    - vue add quasar
+    - vue add vue-router@4
         >No
         >SCSS
         >Fontawesome
         >en-US
         >No
         >Recommended
-    - `npm i`
-    - `npm run serve`
+    - npm i
+    - npm run serve
