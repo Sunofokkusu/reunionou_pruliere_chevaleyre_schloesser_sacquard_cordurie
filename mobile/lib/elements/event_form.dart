@@ -167,15 +167,24 @@ class _EventFormState extends State<EventForm> {
                                   Map<String, dynamic> data =
                                       jsonDecode(response.body);
                                   setState(() {
-                                    lat = data["features"][0]["geometry"]
-                                        ["coordinates"][1];
-                                    long = data["features"][0]["geometry"]
-                                        ["coordinates"][0];
+                                    try {
+                                      lat = data["features"][0]["geometry"]
+                                          ["coordinates"][1];
+                                      long = data["features"][0]["geometry"]
+                                          ["coordinates"][0];
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('Localisation réussie')),
+                                      );
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'Localisation impossible')));
+                                    }
                                   });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Localisation réussie')),
-                                  );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
