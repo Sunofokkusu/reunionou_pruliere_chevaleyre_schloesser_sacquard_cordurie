@@ -114,17 +114,26 @@
             layer-type="base"
             name="OpenStreetMap"
           ></l-tile-layer>
-          <l-marker :lat-lng="markerLatLng" >
+          <l-marker class="rdv" :lat-lng="markerLatLng" >
             <l-popup><strong>Lieu de rendez-vous:</strong><br/>{{ getEventComputed.adress }}</l-popup>
+              <l-icon icon-url='https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png' :icon-anchor='[16,37]' :icon-size='[26, 41]'></l-icon>
           </l-marker>
           <div v-if="selflocation">
-            <l-marker :lat-lng="currentLatLng" >
-            <l-popup><strong>Vous êtes ici</strong><br/></l-popup>
-          </l-marker>
+            <l-marker class="rdv" :lat-lng="currentLatLng" >
+              <l-popup><strong>Vous êtes ici</strong><br/></l-popup>
+              <l-icon icon-url='https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png' :icon-anchor='[16,37]' :icon-size='[26, 41]'></l-icon>
+            </l-marker>
           </div>
           <div v-if="geoloc">
             <l-polyline :lat-lngs="lnglats" color="red"></l-polyline>
-          </div>       
+          </div>
+          <div v-if="interestPointsBool">
+            <div v-for="interest in interestPoints" :key="interest.name">
+              <l-marker :lat-lng="[interest.lat, interest.lng]" >
+                <l-popup>{{interest.name}}</l-popup>
+              </l-marker>
+            </div>
+          </div>   
         </l-map>
       </div>
       <div v-else>
@@ -227,7 +236,7 @@
 
 <script>
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer, LMarker, LPolyline, LPopup } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LMarker, LPolyline, LPopup, LIcon } from "@vue-leaflet/vue-leaflet";
 import SpinnerComp from "@/components/Spinner.vue";
 export default {
   name: "EventPage",
@@ -237,7 +246,8 @@ export default {
     LMarker,
     SpinnerComp,
     LPolyline,
-    LPopup
+    LPopup,
+    LIcon
   },
   data() {
     return {
@@ -279,7 +289,9 @@ export default {
       tooltip: "copier le lien",
       geoloc: false,
       lnglats: [],
-      selflocation: false
+      selflocation: false,
+      interestPoints: [],
+      interestPointsBool: false,
     };
   },
   async mounted() {
@@ -330,6 +342,7 @@ export default {
       }
     }
 
+    //permet de définir un itinéraire entre l'utilisateur et l'événement
     navigator.geolocation.getCurrentPosition(async (position) => {
       this.currentLat = position.coords.latitude;
       this.currentLong = position.coords.longitude;
@@ -346,6 +359,20 @@ export default {
         console.log(error);
       }
     });
+
+    //permet d'indiquer les centres d'intérêts autour de l'événement
+    try {
+      let response = await fetch('http://api.opentripmap.com/0.1/en/places/radius?radius=2000&lat='+this.lat+'&lon='+this.long+'&kinds=museums&format=geojson&apikey=5ae2e3f221c38a28845f05b6e2a8e46ada1e1b97bff7a6d3f0890b2e')
+      let json = await response.json()
+      console.log(json)
+      json.features.forEach((e) => {
+        this.interestPoints.push({lat: e.geometry.coordinates[1], lng: e.geometry.coordinates[0], name: e.properties.name}) 
+      });
+      this.interestPointsBool = true
+    } catch (error) {
+      console.log(error);
+    }
+      
   },
   async created() {
     /**
@@ -641,5 +668,9 @@ h4 {
 
 .meteo {
   background: url("../assets/meteo.svg") no-repeat;
+}
+
+.rdv {
+  filter: hue-rotate(120deg)
 }
 </style>
