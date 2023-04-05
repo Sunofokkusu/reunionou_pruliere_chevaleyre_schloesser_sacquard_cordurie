@@ -40,9 +40,10 @@ export default {
          * @return, inutilisable
          */
         logout () {
-            this.$store.commit("setToken", "")
-            this.$store.commit("setConnected", false)
-            this.$store.commit("setName", "")
+            this.$store.commit("setToken", "");
+            this.$store.commit("setConnected", false);
+            this.$store.commit("setName", "");
+            this.$router.push({name:'HomePage'});
         }
     }
 }

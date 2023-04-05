@@ -10,7 +10,7 @@
         </div>
         <div v-else>
           <div v-if="getEventComputed.title">
-            <div class="edit">
+            <div v-if="editUser" class="edit">
               <i v-if="edit" class="fas fa-trash" @click="edit = false"></i>
               <i v-else class="fas fa-pen" @click="edit = true"></i>
             </div>
@@ -254,6 +254,7 @@ export default {
       long: "",
       loaded: false,
       edit: false,
+      editUser: false,
       editTitle: "",
       editDescr: "",
       editDate: "",
@@ -299,10 +300,8 @@ export default {
     //permet de désactiver les boutons si l'utilisateur est déjà inscrit à l'événement
     if (this.$store.state.token !== "") {
       try {
-        let response = await this.axios.get(
-          this.$store.state.base_url + "/user/me?embed=all",
-          {}
-        );
+        this.axios.defaults.headers.get["Authorization"] = this.$store.state.token;
+        let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=all");
         this.user = response.data;
         this.user.events.forEach((e) => {
           if (e.id === this.$route.params.event_id) {
@@ -313,6 +312,24 @@ export default {
         console.log(error);
       }
     }
+  },
+  async created() {
+    /**
+     * vérifie si l'utilisateur est le créateur de l'événement pour la modification d'évènement
+     */
+      try {
+        if (this.$store.state.token !== "") {
+          this.axios.defaults.headers.get["Authorization"] = this.$store.state.token;
+          let response = await this.axios.get(this.$store.state.base_url + "/user/me?embed=events");
+          response.data.events.forEach((e) => {
+            if (e.id === this.$route.params.event_id) {
+              this.editUser = true;
+            }
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
   },
   computed: {
     /**
@@ -373,8 +390,7 @@ export default {
           }
         );
       } else {
-        this.axios.defaults.headers.post["Authorization"] =
-          this.$store.state.token;
+        this.axios.defaults.headers.post["Authorization"] = this.$store.state.token;
         this.axios.post(
           this.$store.state.base_url +
             "/event/" +
