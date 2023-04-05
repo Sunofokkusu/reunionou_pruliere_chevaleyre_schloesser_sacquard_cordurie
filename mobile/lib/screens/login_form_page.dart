@@ -77,59 +77,39 @@ class _LoginFormPageState extends State<LoginFormPage> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) { // Si le formulaire est valide
                             await dotenv.load(fileName: "assets/.env"); // On charge les variables d'environnement
-                            final response = await http.post( // On envoie une requête POST au serveur
-                              Uri.parse(
-                                  '${dotenv.env['BASE_URL']!}/auth/signin'),
-                              headers: <String, String>{  // headers
-                                'Content-Type':
-                                    'application/json; charset=UTF-8', // On précise que le contenu est du JSON
-                              },
-                              body: jsonEncode(<String, String>{ // body
-                                'email': _emailController.text,
-                                'password': _passwordController.text,
-                              }),
+                            final statusCode = await authProvider.login( // On appelle la fonction login de auth_provider
+                              _emailController.text,
+                              _passwordController.text,
                             );
-                            if (response.statusCode == 200) { // Si la requête est réussie
-                              print("coucou");
-                              Future<bool> success = authProvider.login(// Appel de la fonction login de auth_provider en lui fournissant le token
-                                  (jsonDecode(response.body)['token'])
-                                      .toString());
-                              if (await success) { // Si la connexion est réussie
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Connexion réussie')),
-                                );
-                                Navigator.of(context).pushAndRemoveUntil( // On enlève toutes les pages de la pile de navigation et on affiche la page d'accueil
-                                  MaterialPageRoute(
-                                    builder: (context) => const HomePage(),
-                                  ),
-                                  (route) => false,
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Echec de la connexion')),
-                                );
-                              }
-                            } else if (response.statusCode == 502) { // Si il y a une erreur de connexion au serveur
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Connexion au serveur impossible')),
-                              );
-                            } else if (response.statusCode == 400) { // Si l'email ou le mot de passe est incorrect
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Email ou mot de passe incorrect')),
-                              );
-                            } else { // Si il y a une autre erreur
-                              print(response.statusCode);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Erreur inconnue')),
-                              );
+                            String message = '';
+                            switch(statusCode) {
+                              case 200: // Si la connexion est réussie
+                                await authProvider.getUserInfo(authProvider.token); // On récupère l'utilisateur
+                                if (authProvider.isLoggedIn) { // Si on a réussi à récupérer l'utilisateur
+                                  message = 'Connexion réussie';
+                                  Navigator.of(context).pushAndRemoveUntil( // On enlève toutes les pages de la pile de navigation et on affiche la page d'accueil
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomePage(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                } else {
+                                  message = 'Echec de la connexion';
+                                }
+                                break;
+                              case 502: // Si il y a une erreur de connexion au serveur
+                                message = 'Connexion au serveur impossible';
+                                break;
+                              case 400: // Si l'email ou le mot de passe est incorrect
+                                message = 'Email ou mot de passe incorrect';
+                                break;
+                              default: // Si il y a une autre erreur
+                                message = 'Erreur inconnue';
+                                break;
                             }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(message)),
+                            );
                           }
                         },
                         child: const Text('Se connecter'),
