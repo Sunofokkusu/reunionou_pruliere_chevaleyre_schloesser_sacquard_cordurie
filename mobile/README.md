@@ -1,2 +1,2 @@
 ## Mise en route
-    - lancer le main 
+    - Lancer le main 
