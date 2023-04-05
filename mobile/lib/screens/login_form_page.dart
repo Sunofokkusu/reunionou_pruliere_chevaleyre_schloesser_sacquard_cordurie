@@ -9,7 +9,7 @@ import 'package:reunionou/providers/auth_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// TODO : Julien explique
+// Widget qui affiche la page de connexion
 class LoginFormPage extends StatefulWidget {
   const LoginFormPage({super.key});
 
@@ -18,9 +18,9 @@ class LoginFormPage extends StatefulWidget {
 }
 
 class _LoginFormPageState extends State<LoginFormPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // Clé pour le formulaire
+  final _emailController = TextEditingController(); // Contrôleur pour l'email
+  final _passwordController = TextEditingController(); // Contrôleur pour le mot de passe
 
   @override
   Widget build(BuildContext context) {
@@ -42,64 +42,65 @@ class _LoginFormPageState extends State<LoginFormPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  TextFormField(
+                  TextFormField( // Champ pour l'email
                     controller: _emailController,
                     decoration: const InputDecoration(
                       labelText: 'Email',
                       hintText: 'Entrez votre email',
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
+                    validator: (value) { // On vérifie que l'email est valide
+                      if (value!.isEmpty) { // Si l'email est vide
                         return 'Entrez votre email';
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 20),
-                  TextFormField(
+                  TextFormField( // Champ pour le mot de passe
                     controller: _passwordController,
                     obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'Mot de passe',
                       hintText: 'Entrez votre mot de passe',
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
+                    validator: (value) { // On vérifie que le mot de passe est valide
+                      if (value!.isEmpty) { // Si le mot de passe est vide
                         return 'Entrez votre mot de passe';
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 20),
-                  Consumer<AuthProvider>(
+                  Consumer<AuthProvider>( // On utilise Consumer pour récupérer l'état de l'utilisateur
                     builder: (context, authProvider, child) {
-                      return ElevatedButton(
+                      return ElevatedButton( // Bouton pour se connecter
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            await dotenv.load(fileName: "assets/.env");
-                            final response = await http.post(
+                          if (_formKey.currentState!.validate()) { // Si le formulaire est valide
+                            await dotenv.load(fileName: "assets/.env"); // On charge les variables d'environnement
+                            final response = await http.post( // On envoie une requête POST au serveur
                               Uri.parse(
                                   '${dotenv.env['BASE_URL']!}/auth/signin'),
-                              headers: <String, String>{
+                              headers: <String, String>{  // headers
                                 'Content-Type':
-                                    'application/json; charset=UTF-8',
+                                    'application/json; charset=UTF-8', // On précise que le contenu est du JSON
                               },
-                              body: jsonEncode(<String, String>{
+                              body: jsonEncode(<String, String>{ // body
                                 'email': _emailController.text,
                                 'password': _passwordController.text,
                               }),
                             );
-                            if (response.statusCode == 200) {
-                              Future<bool> success = authProvider.login(
+                            if (response.statusCode == 200) { // Si la requête est réussie
+                              print("coucou");
+                              Future<bool> success = authProvider.login(// Appel de la fonction login de auth_provider en lui fournissant le token
                                   (jsonDecode(response.body)['token'])
                                       .toString()
                                       .substring(7));
-                              if (await success) {
+                              if (await success) { // Si la connexion est réussie
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('Connexion réussie')),
                                 );
-                                Navigator.of(context).pushAndRemoveUntil(
+                                Navigator.of(context).pushAndRemoveUntil( // On enlève toutes les pages de la pile de navigation et on affiche la page d'accueil
                                   MaterialPageRoute(
                                     builder: (context) => const HomePage(),
                                   ),
@@ -111,19 +112,19 @@ class _LoginFormPageState extends State<LoginFormPage> {
                                       content: Text('Echec de la connexion')),
                                 );
                               }
-                            } else if (response.statusCode == 502) {
+                            } else if (response.statusCode == 502) { // Si il y a une erreur de connexion au serveur
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text(
                                         'Connexion au serveur impossible')),
                               );
-                            } else if (response.statusCode == 400) {
+                            } else if (response.statusCode == 400) { // Si l'email ou le mot de passe est incorrect
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text(
                                         'Email ou mot de passe incorrect')),
                               );
-                            } else {
+                            } else { // Si il y a une autre erreur
                               print(response.statusCode);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -137,10 +138,10 @@ class _LoginFormPageState extends State<LoginFormPage> {
                     },
                   ),
                   TextButton(
-                    onPressed: () async {
-                      final url = Uri.parse('https://ent.univ-lorraine.fr/');
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url);
+                    onPressed: () async { // Bouton de redirection si l'utilisateur n'a pas de compte
+                      final url = Uri.parse('https://ent.univ-lorraine.fr/'); // On redirige vers la page d'inscription web (TODO)
+                      if (await canLaunchUrl(url)) { // Si on peut rediriger vers l'url
+                        await launchUrl(url); // On redirige
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

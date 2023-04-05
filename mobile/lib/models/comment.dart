@@ -1,6 +1,6 @@
 /// Classe modélisant un commentaire sur un événement
 class Comment {
-  Comment({
+  Comment({ // Constructeur de la classe
     required this.id,
     required this.idEvent,
     required this.idUser,
@@ -9,23 +9,12 @@ class Comment {
     required this.createdAt,
   });
 
-  /// id du commentaire
-  String id;
-
-  /// id de l'événement auquel le commentaire est associé
-  String idEvent;
-
-  /// id de l'utilisateur qui a posté le commentaire
-  String idUser;
-
-  /// nom de l'utilisateur qui a posté le commentaire
-  String name;
-
-  /// message du commentaire
-  String comment = "";
-
-  /// date de création du commentaire
-  DateTime createdAt;
+  String id; // id du commentaire
+  String idEvent; // id de l'événement auquel le commentaire est associé
+  String idUser; // id de l'utilisateur qui a posté le commentaire
+  String name; // nom de l'utilisateur qui a posté le commentaire
+  String comment = ""; // commentaire
+  DateTime createdAt; // date de création
 
   /// Méthode de création d'un commentaire à partir d'un json
   static Comment fromJson(data) {
