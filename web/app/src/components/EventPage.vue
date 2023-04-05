@@ -251,6 +251,8 @@ export default {
       markerLatLng:[],
       lat: "",
       long: "",
+      currentLat: "",
+      currentLong: "",
       loaded: false,
       edit: false,
       editUser: false,
@@ -339,6 +341,15 @@ export default {
       this.getEvent();
       return this.event;
     },
+
+    itinerary() {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.currentLat = position.coords.latitude;
+        this.currentLong = position.coords.longitude;
+      });
+      console.log(this.currentLat, this.currentLong);
+      return null
+    }
   },
   methods: {
     /**
